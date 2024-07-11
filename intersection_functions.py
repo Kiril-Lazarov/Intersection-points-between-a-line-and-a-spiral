@@ -133,6 +133,8 @@ def get_y_intersection_points(spiral_radius_velocity, spiral_angle_velocity, ini
       
     return y_intersection_points
 
+
+
 def calc_angles_sequence_limit(b, input_spiral_vector, spiral_radius_velocity, 
                                     init_spiral_angle, spiral_angle_velocity, min_distance):
        
@@ -185,44 +187,8 @@ def calc_angles_sequence_limit(b, input_spiral_vector, spiral_radius_velocity,
                     return 0, 0
             else:
                 return 0, 0
+
             
-
-def calc_vertical_line_intersects(x_distance, input_spiral_vector_len, spiral_radius_velocity, 
-                                    init_spiral_angle, spiral_angle_velocity):
-    
-    original_const_vector_length = np.copy(input_spiral_vector_len)
-    
-    init_angle =init_spiral_angle +  abs(input_spiral_vector_len) / spiral_radius_velocity*spiral_angle_velocity
-
-    delta_angle = np.arctan(x_distance/input_spiral_vector_len)
-
-    while True:
-     
-        last_spiral_vector = np.copy(abs(input_spiral_vector_len))
-
-        delta_angle = np.arctan(x_distance/input_spiral_vector_len)
-        curr_angle = init_angle - delta_angle
-        length_to_add = delta_angle / spiral_angle_velocity * spiral_radius_velocity
-
-        new_spiral_vector_len = abs(original_const_vector_length) - length_to_add
-        rotate_t = curr_angle/spiral_angle_velocity
-
-
-        new_x = new_spiral_vector_len * np.cos(curr_angle)
-        new_y = new_spiral_vector_len * np.sin(curr_angle)
-
-        new_spiral_vector_len = get_streched_unit_vector(new_x, new_y)
-
-        if original_const_vector_length <0:
-            input_spiral_vector_len = -new_spiral_vector_len*np.cos(delta_angle)
-
-        elif original_const_vector_length >0:
-            input_spiral_vector_len = new_spiral_vector_len*np.cos(delta_angle)
-        if abs(input_spiral_vector_len) == last_spiral_vector:
-                if new_spiral_vector_len >= abs(x_distance):
-                    print(new_x, new_y)
-                    break
-                
 def rotate_y_intersection_points(a, b, y_intersects,angle, init_spiral_angle, spiral_radius_velocity, spiral_angle_velocity, min_distance):
         
         updated_y_intersection_points = []
