@@ -65,9 +65,10 @@ def get_angle(slope, degrees = False):
 
 # Calculates the minimum distance between the linear function and the center of the spiral.
 def get_little_radius_vec(slope, constant):
-    if slope == 'inf' or slope == 0:
-        return constant
-
+    if slope == 'inf':
+        return 0, np.pi/2
+    if slope == 0:
+        return constant, 0
     # The value of the x at y = 0
     x = -constant/slope
     angle = get_angle(slope)
@@ -223,3 +224,15 @@ def rotate_y_intersection_points(a, b, y_intersects,angle, init_spiral_angle, sp
                 
         return updated_y_intersection_points, real_intersection_points
     
+def get_quadrant(angle):
+    if angle > 2 * np.pi:
+        raise ValueError('Angle must be between 0 and 2pi')
+        
+    if 0 <= angle < np.pi/2 or angle == 2 * np.pi:
+        return 1
+    if np.pi/2 <= angle < np.pi:
+        return 2
+    if np.pi<= angle < 3 *np.pi/2:
+        return 3
+    if 3 *np.pi/2 <= angle < 2 * np.pi:
+        return 4
