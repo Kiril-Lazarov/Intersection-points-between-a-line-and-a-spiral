@@ -91,38 +91,40 @@ def get_spiral_vec_coords(spiral_vec_magnitude,spiral_vec_velocity, angle_veloci
     # Връща началните координати на вектора - 0,0 - и крайните координати - x,y
     return 0, 0, x, y
 
-def get_y_intersection_points(spiral_radius_velocity, spiral_angle_velocity, init_spiral_angle, y_lim):
-
-    if init_spiral_angle < 0:
-        raise ValueError('Init spiral angle must be non-negative')
+def get_y_intersection_points(first_y_intersection_point, spiral_radius_velocity, 
+                              spiral_angle_velocity, angle_diff,
+                              y_lim):
+    
+    if spiral_angle_velocity >0:
+        if first_y_intersection_point >0:
+            start_angle = np.pi/2
+        else:
+            start_angle = 3 * np.pi/2
+    else:
+        if first_y_intersection_point >0:
+            start_angle =  - 3 *np.pi/2
+        else:
+            start_angle = -np.pi/2
         
-    if init_spiral_angle == 2 * (np.pi):
-        init_spiral_angle = 0
+    
+    direction_coeff = 1 if spiral_angle_velocity > 0 else -1
         
     y_intersection_points = []
     
-    direction_coeff = 1 if spiral_angle_velocity > 0 else -1
-
-    quadrant = get_quadrant(init_spiral_angle)
-
-    start_angle, angle_diff = get_initial_parameters(quadrant, spiral_angle_velocity, init_spiral_angle)
-            
-        
-    t = angle_diff / spiral_angle_velocity
-    spiral_radius_magnitude = t * spiral_radius_velocity
-    y_intersection_points.append([0, direction_coeff * spiral_radius_magnitude * np.sin(start_angle)])
+    y_intersection_points.append([0, first_y_intersection_point])
+    
+    init_t = angle_diff / spiral_angle_velocity
+    spiral_radius_magnitude = init_t * spiral_radius_velocity
 
     if abs(spiral_radius_magnitude)< np.mean([abs(y_lim[0]), abs(y_lim[1])]):
-
+        t = np.pi / spiral_angle_velocity
         while abs(spiral_radius_magnitude)< np.mean([abs(y_lim[0]), abs(y_lim[1])]):
-            # print('spiral_radius_magnitude: ', spiral_radius_magnitude, spiral_radius_magnitude< np.mean([abs(y_lim[0]), abs(y_lim[1])]))
-            if spiral_angle_velocity >0:
-                start_angle -=  np.pi
-            else:
-                start_angle += np.pi
-            t = np.pi / spiral_angle_velocity
+
+            start_angle += np.pi
             spiral_radius_magnitude += t * spiral_radius_velocity
-            y_intersection_points.append([0,direction_coeff * spiral_radius_magnitude * np.sin(start_angle)])
+            y = direction_coeff * spiral_radius_magnitude * np.sin(start_angle)
+            if y != 0:
+                y_intersection_points.append([0,y])
 
       
     return y_intersection_points
@@ -235,17 +237,22 @@ def get_initial_angle_to_y_axis(quadrant, spiral_angle_velocity, init_spiral_ang
     # Специални случаи за началният ъгъл, които изискват допълнителна логика
     if init_spiral_angle == 2 * np.pi:
         init_spiral_angle = 0
+        
     if init_spiral_angle == np.pi/2 and spiral_angle_velocity <0:
         init_spiral_angle = -np.pi/2
         
     if init_spiral_angle == 3 * np.pi/2 and spiral_angle_velocity <0:
         init_spiral_angle = 5 * np.pi/2
+        
+    if init_spiral_angle == np.pi/2 and spiral_angle_velocity <0:
+
+        init_spiral_angle = 3 * np.pi/2
     
     # Обикновени случаи
     if quadrant == 1:
         if spiral_angle_velocity > 0:
             angle_diff = np.pi/2 - init_spiral_angle
-            start_angle =  np.pi/2
+
         elif spiral_angle_velocity < 0:
             angle_diff = np.pi/2 + init_spiral_angle
 
@@ -279,6 +286,7 @@ def get_initial_angle_to_y_axis(quadrant, spiral_angle_velocity, init_spiral_ang
             
     return angle_diff
 
+
 def get_first_y_intersection_point(init_spiral_angle, spiral_angle_velocity, spiral_radius_velocity):
 
         quadrant = get_quadrant(init_spiral_angle)
@@ -287,9 +295,10 @@ def get_first_y_intersection_point(init_spiral_angle, spiral_angle_velocity, spi
         # разлика ще се използва за определяне на времето t, за което спиралният вектор се завърта,
         # за да докосне за първи път ординатната ос.  
         angle_diff = get_initial_angle_to_y_axis(quadrant, spiral_angle_velocity, init_spiral_angle)
+
         t = angle_diff / spiral_angle_velocity
         directional_constant = abs(t)/ t
 
         y = t* spiral_radius_velocity * np.sin(directional_constant * init_spiral_angle + t * spiral_angle_velocity)
         
-        return y
+        return y, angle_diff
