@@ -236,3 +236,42 @@ def get_quadrant(angle):
         return 3
     if 3 *np.pi/2 <= angle < 2 * np.pi:
         return 4
+
+def get_initial_parameters(quadrant, spiral_angle_velocity, init_spiral_angle):
+    start_angle = 0
+    
+    if quadrant == 1:
+        if spiral_angle_velocity > 0:
+            angle_diff = np.pi/2 - init_spiral_angle
+            start_angle =  np.pi/2
+        elif spiral_angle_velocity < 0:
+            angle_diff = np.pi/2 + init_spiral_angle
+            start_angle =  -np.pi/2
+        
+    elif quadrant == 2:
+        if spiral_angle_velocity > 0:
+            angle_diff = np.pi/2 +  (np.pi - init_spiral_angle)
+            start_angle = 3 * np.pi/2
+            
+        elif spiral_angle_velocity < 0:
+            angle_diff = init_spiral_angle - np.pi/2
+            start_angle = - 3 *  np.pi/2
+        
+    elif quadrant == 3:
+        if spiral_angle_velocity > 0:
+            angle_diff = 3 * np.pi/2 - init_spiral_angle
+            start_angle = 3 * np.pi/2
+            
+        elif spiral_angle_velocity < 0:
+            angle_diff = init_spiral_angle - np.pi/2
+            start_angle = - 3 * np.pi/2
+        
+    else:
+        if spiral_angle_velocity > 0:
+            angle_diff = np.pi/2 + 2 * np.pi - init_spiral_angle
+            start_angle = np.pi/2
+        
+        elif spiral_angle_velocity <0:
+            angle_diff = init_spiral_angle - 3*np.pi/2
+            start_angle = - np.pi/2
+    return start_angle, angle_diff
