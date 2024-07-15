@@ -92,102 +92,94 @@ def get_spiral_vec_coords(spiral_vec_magnitude,spiral_vec_velocity, angle_veloci
     return 0, 0, x, y
 
 def get_y_intersection_points(spiral_radius_velocity, spiral_angle_velocity, init_spiral_angle, y_lim):
-    
+
     if init_spiral_angle < 0:
         raise ValueError('Init spiral angle must be non-negative')
         
+    if init_spiral_angle == 2 * (np.pi):
+        init_spiral_angle = 0
+        
     y_intersection_points = []
-
-    if init_spiral_angle >= 2*np.pi:
-        while init_spiral_angle >= 2*np.pi:
-            init_spiral_angle-=2*np.pi
-
     
-    start_angle = 0
+    direction_coeff = 1 if spiral_angle_velocity > 0 else -1
 
-    if np.pi/2 <=  init_spiral_angle < 3*np.pi/2:
+    quadrant = get_quadrant(init_spiral_angle)
 
-        angle_diff = 3*np.pi /2 - init_spiral_angle
-        start_angle = 3*np.pi /2
-    elif init_spiral_angle >= 3*np.pi/2:
-
-        angle_diff = np.pi /2 + (2 * np.pi  - init_spiral_angle)
-        start_angle = np.pi /2
-    elif 0<=init_spiral_angle<np.pi/2:
-
-        angle_diff = np.pi/2 - init_spiral_angle
-        start_angle = np.pi /2
+    start_angle, angle_diff = get_initial_parameters(quadrant, spiral_angle_velocity, init_spiral_angle)
+            
         
     t = angle_diff / spiral_angle_velocity
     spiral_radius_magnitude = t * spiral_radius_velocity
-    y_intersection_points.append([0, spiral_radius_magnitude * np.sin(start_angle)])
+    y_intersection_points.append([0, direction_coeff * spiral_radius_magnitude * np.sin(start_angle)])
 
-    if spiral_radius_magnitude< np.mean([abs(y_lim[0]), abs(y_lim[1])]):
+    if abs(spiral_radius_magnitude)< np.mean([abs(y_lim[0]), abs(y_lim[1])]):
 
-        while spiral_radius_magnitude< np.mean([abs(y_lim[0]), abs(y_lim[1])]):
-       
-            start_angle += np.pi
+        while abs(spiral_radius_magnitude)< np.mean([abs(y_lim[0]), abs(y_lim[1])]):
+            # print('spiral_radius_magnitude: ', spiral_radius_magnitude, spiral_radius_magnitude< np.mean([abs(y_lim[0]), abs(y_lim[1])]))
+            if spiral_angle_velocity >0:
+                start_angle -=  np.pi
+            else:
+                start_angle += np.pi
             t = np.pi / spiral_angle_velocity
             spiral_radius_magnitude += t * spiral_radius_velocity
-            y_intersection_points.append([0, spiral_radius_magnitude * np.sin(start_angle)])
+            y_intersection_points.append([0,direction_coeff * spiral_radius_magnitude * np.sin(start_angle)])
 
       
     return y_intersection_points
 
 
-
-def calc_angles_sequence_limit(b, input_spiral_vector, spiral_radius_velocity, 
-                                    init_spiral_angle, spiral_angle_velocity, min_distance):
+# def calc_angles_sequence_limit(b, input_spiral_vector, spiral_radius_velocity, 
+#                                     init_spiral_angle, spiral_angle_velocity, min_distance):
        
-        init_spiral_x = input_spiral_vector * np.cos(input_spiral_vector/ spiral_radius_velocity* spiral_angle_velocity)
-        init_spiral_y = input_spiral_vector * np.sin(input_spiral_vector/ spiral_radius_velocity * spiral_angle_velocity)
+#         init_spiral_x = input_spiral_vector * np.cos(input_spiral_vector/ spiral_radius_velocity* spiral_angle_velocity)
+#         init_spiral_y = input_spiral_vector * np.sin(input_spiral_vector/ spiral_radius_velocity * spiral_angle_velocity)
 
-        original_const_vector_length = np.copy(input_spiral_vector)
+#         original_const_vector_length = np.copy(input_spiral_vector)
 
 
-        const_vector_angle = init_spiral_angle + (original_const_vector_length / spiral_radius_velocity) * spiral_angle_velocity
+#         const_vector_angle = init_spiral_angle + (original_const_vector_length / spiral_radius_velocity) * spiral_angle_velocity
 
-        while True:
+#         while True:
       
-            last_spiral_vector = np.copy(float(f'{input_spiral_vector:.13f}'))
-            delta_angle = np.arctan(min_distance/input_spiral_vector) if input_spiral_vector != 0 else None
+#             last_spiral_vector = np.copy(float(f'{input_spiral_vector:.13f}'))
+#             delta_angle = np.arctan(min_distance/input_spiral_vector) if input_spiral_vector != 0 else None
             
-            if delta_angle is not None and delta_angle <= np.pi/2:
+#             if delta_angle is not None and delta_angle <= np.pi/2:
                 
-                length_to_add = delta_angle / spiral_angle_velocity * spiral_radius_velocity
+#                 length_to_add = delta_angle / spiral_angle_velocity * spiral_radius_velocity
                 
-                if b > 0:
-                    if init_spiral_y <0:
-                        delta_angle *= -1
-                        length_to_add *= -1
-                elif b <0:
-                    if init_spiral_y > 0:
-                        delta_angle *= -1
-                        length_to_add *= -1
+#                 if b > 0:
+#                     if init_spiral_y <0:
+#                         delta_angle *= -1
+#                         length_to_add *= -1
+#                 elif b <0:
+#                     if init_spiral_y > 0:
+#                         delta_angle *= -1
+#                         length_to_add *= -1
 
 
-                curr_vector_angle = const_vector_angle - delta_angle
+#                 curr_vector_angle = const_vector_angle - delta_angle
 
-                input_spiral_vector = original_const_vector_length - length_to_add
+#                 input_spiral_vector = original_const_vector_length - length_to_add
 
-                rotate_t = (curr_vector_angle/ spiral_angle_velocity)    
+#                 rotate_t = (curr_vector_angle/ spiral_angle_velocity)    
 
-                new_x = input_spiral_vector * np.cos(rotate_t * spiral_angle_velocity)
-                new_y = input_spiral_vector * np.sin(rotate_t * spiral_angle_velocity)
+#                 new_x = input_spiral_vector * np.cos(rotate_t * spiral_angle_velocity)
+#                 new_y = input_spiral_vector * np.sin(rotate_t * spiral_angle_velocity)
 
-                new_spiral_vec_len = get_streched_unit_vector(new_x, new_y)
-
-
-                input_spiral_vector = float(f'{new_spiral_vec_len * np.cos(delta_angle):.13f}')
+#                 new_spiral_vec_len = get_streched_unit_vector(new_x, new_y)
 
 
-                if input_spiral_vector == last_spiral_vector:
-                    
-                    if new_spiral_vec_len >= min_distance:
-                        return new_x, new_y
-                    return 0, 0
-            else:
-                return 0, 0
+#                 input_spiral_vector = float(f'{new_spiral_vec_len * np.cos(delta_angle):.13f}')
+
+
+#                 if input_spiral_vector == last_spiral_vector:
+          
+#                     if new_spiral_vec_len >= min_distance:
+#                         return new_x, new_y
+#                     return 0, 0
+#             else:
+#                 return 0, 0
 
             
 def rotate_y_intersection_points(a, b, y_intersects,angle, init_spiral_angle, spiral_radius_velocity, spiral_angle_velocity, min_distance):
@@ -216,11 +208,11 @@ def rotate_y_intersection_points(a, b, y_intersects,angle, init_spiral_angle, sp
             new_x, new_y = calc_angles_sequence_limit(b, spiral_vec_length, spiral_radius_velocity, 
                                 init_spiral_angle, spiral_angle_velocity, min_distance)
 
-            plt.scatter(new_x, new_y, color= 'purple', s = 20)
+            # plt.scatter(new_x, new_y, color= 'purple', s = 20)
 
             spiral_vec_length = get_streched_unit_vector(new_x, new_y)
    
-            real_intersection_points.append([0, 0])
+            real_intersection_points.append([new_x, new_y])
                 
         return updated_y_intersection_points, real_intersection_points
     
@@ -237,41 +229,52 @@ def get_quadrant(angle):
     if 3 *np.pi/2 <= angle < 2 * np.pi:
         return 4
 
-def get_initial_parameters(quadrant, spiral_angle_velocity, init_spiral_angle):
+def get_initial_angle_to_y_axis(quadrant, spiral_angle_velocity, init_spiral_angle):
     start_angle = 0
     
+    # Специални случаи за началният ъгъл, които изискват допълнителна логика
+    if init_spiral_angle == 2 * np.pi:
+        init_spiral_angle = 0
+    if init_spiral_angle == np.pi/2 and spiral_angle_velocity <0:
+        init_spiral_angle = -np.pi/2
+        
+    if init_spiral_angle == 3 * np.pi/2:
+        init_spiral_angle = 5 * np.pi/2
+    
+    # Обикновени случаи
     if quadrant == 1:
         if spiral_angle_velocity > 0:
             angle_diff = np.pi/2 - init_spiral_angle
             start_angle =  np.pi/2
         elif spiral_angle_velocity < 0:
             angle_diff = np.pi/2 + init_spiral_angle
-            start_angle =  -np.pi/2
+
         
     elif quadrant == 2:
         if spiral_angle_velocity > 0:
             angle_diff = np.pi/2 +  (np.pi - init_spiral_angle)
-            start_angle = 3 * np.pi/2
+
             
         elif spiral_angle_velocity < 0:
             angle_diff = init_spiral_angle - np.pi/2
-            start_angle = - 3 *  np.pi/2
+
         
     elif quadrant == 3:
         if spiral_angle_velocity > 0:
             angle_diff = 3 * np.pi/2 - init_spiral_angle
-            start_angle = 3 * np.pi/2
+
             
         elif spiral_angle_velocity < 0:
             angle_diff = init_spiral_angle - np.pi/2
-            start_angle = - 3 * np.pi/2
+
         
     else:
         if spiral_angle_velocity > 0:
             angle_diff = np.pi/2 + 2 * np.pi - init_spiral_angle
-            start_angle = np.pi/2
+
         
         elif spiral_angle_velocity <0:
             angle_diff = init_spiral_angle - 3*np.pi/2
-            start_angle = - np.pi/2
-    return start_angle, angle_diff
+
+            
+    return angle_diff
