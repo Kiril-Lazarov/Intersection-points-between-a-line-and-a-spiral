@@ -238,7 +238,7 @@ def get_initial_angle_to_y_axis(quadrant, spiral_angle_velocity, init_spiral_ang
     if init_spiral_angle == np.pi/2 and spiral_angle_velocity <0:
         init_spiral_angle = -np.pi/2
         
-    if init_spiral_angle == 3 * np.pi/2:
+    if init_spiral_angle == 3 * np.pi/2 and spiral_angle_velocity <0:
         init_spiral_angle = 5 * np.pi/2
     
     # Обикновени случаи
@@ -278,3 +278,18 @@ def get_initial_angle_to_y_axis(quadrant, spiral_angle_velocity, init_spiral_ang
 
             
     return angle_diff
+
+def get_first_y_intersection_point(init_spiral_angle, spiral_angle_velocity, spiral_radius_velocity):
+
+        quadrant = get_quadrant(init_spiral_angle)
+
+        # Начален ъгъл и ъглова разлика между този начален ъгъл и игрек координатата. Тази начална ъглова
+        # разлика ще се използва за определяне на времето t, за което спиралният вектор се завърта,
+        # за да докосне за първи път ординатната ос.  
+        angle_diff = get_initial_angle_to_y_axis(quadrant, spiral_angle_velocity, init_spiral_angle)
+        t = angle_diff / spiral_angle_velocity
+        directional_constant = abs(t)/ t
+
+        y = t* spiral_radius_velocity * np.sin(directional_constant * init_spiral_angle + t * spiral_angle_velocity)
+        
+        return y
