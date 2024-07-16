@@ -91,45 +91,31 @@ def get_spiral_vec_coords(spiral_vec_magnitude,spiral_vec_velocity, angle_veloci
     # Връща началните координати на вектора - 0,0 - и крайните координати - x,y
     return 0, 0, x, y
 
-def get_y_intersection_points(first_y_intersection_point, spiral_radius_velocity, 
+def get_y_intersection_points_t(first_y_intersection_point, spiral_radius_velocity, 
                               spiral_angle_velocity, angle_diff,
                               y_lim):
     max_points_length = np.sqrt(y_lim[0]**2 + y_lim[1] ** 2)
     
-    
-    if spiral_angle_velocity >0:
-        if first_y_intersection_point >0:
-            start_angle = np.pi/2
-        else:
-            start_angle = 3 * np.pi/2
-    else:
-        if first_y_intersection_point >0:
-            start_angle =  - 3 *np.pi/2
-        else:
-            start_angle = -np.pi/2
-        
-    
-    direction_coeff = 1 if spiral_angle_velocity > 0 else -1
-        
-    y_intersection_points = []
-    
-    y_intersection_points.append([0, first_y_intersection_point])
-    
-    init_t = angle_diff / spiral_angle_velocity
-    spiral_radius_magnitude = init_t * spiral_radius_velocity
+    y_intersection_points_t = []
 
-    if abs(spiral_radius_magnitude)< max_points_length:
-        t = np.pi / spiral_angle_velocity
-        while abs(spiral_radius_magnitude)< max_points_length:
+    first_intsc_point_t = abs(first_y_intersection_point)/spiral_radius_velocity
 
-            start_angle += np.pi
-            spiral_radius_magnitude += t * spiral_radius_velocity
-            y = direction_coeff * spiral_radius_magnitude * np.sin(start_angle)
-            if y != 0:
-                y_intersection_points.append([0,y])
+    
+    additional_t = np.pi/ abs(spiral_angle_velocity)
 
-      
-    return y_intersection_points
+    
+    y_intersection_points_t.append(first_intsc_point_t)
+    
+    is_break = False
+    
+    while not is_break:
+        first_intsc_point_t += additional_t
+
+        if first_intsc_point_t * spiral_radius_velocity > max_points_length:
+            is_break = True
+        y_intersection_points_t.append(first_intsc_point_t)
+
+    return y_intersection_points_t
 
 
 def calc_angles_sequence_limit(b, input_spiral_vector, spiral_radius_velocity, 
