@@ -91,6 +91,11 @@ def get_spiral_vec_coords(spiral_vec_magnitude,spiral_vec_velocity, angle_veloci
     # Връща началните координати на вектора - 0,0 - и крайните координати - x,y
     return 0, 0, x, y
 
+def get_spiral_coords(t, spiral_radius_velocity, spiral_angle_velocity, init_spiral_angle):
+    x = t * spiral_radius_velocity * np.cos(init_spiral_angle + t * spiral_angle_velocity)
+    y = t * spiral_radius_velocity * np.sin(init_spiral_angle + t * spiral_angle_velocity)
+    return x, y
+
 def get_y_intersection_points_t(first_y_intersection_point, spiral_radius_velocity, 
                               spiral_angle_velocity, angle_diff,
                               y_lim):
@@ -172,39 +177,21 @@ def calc_angles_sequence_limit(b, input_spiral_vector, spiral_radius_velocity,
                 return 0, 0
 
             
-def rotate_y_intersection_points(a, b, y_intersects,angle, init_spiral_angle, spiral_radius_velocity, spiral_angle_velocity, min_distance):
+def rotate_y_intersection_points(a, b, y_intersection_points_t,spiral_radius_velocity, spiral_angle_velocity):
         
-        updated_y_intersection_points = []
+        rotated_y_intersection_points = []
         
-        real_intersection_points = []
+        directional_coeff = a / abs(a)
         
-        angle_diff = angle - np.pi/2
-        t = angle_diff / spiral_angle_velocity
-        
-        for point in y_intersects:
-            spiral_radius_magnitude = abs(point[1]) + t * spiral_radius_velocity
-            new_t = spiral_radius_magnitude / spiral_radius_velocity
-            curr_angle = init_spiral_angle + new_t * spiral_angle_velocity
-            
-            x = spiral_radius_magnitude * np.cos(curr_angle)
-            y = spiral_radius_magnitude * np.sin(curr_angle)
-        
-            
-            updated_y_intersection_points.append([x, y])
-        
-            spiral_vec_length = get_streched_unit_vector(x, y)
+        help_angle_to_y_axis =directional_coeff * np.pi/2 - get_angle(a)
+    
+        delta_t = help_angle_to_y_axis/ spiral_angle_velocity
 
-                
-            new_x, new_y = calc_angles_sequence_limit(b, spiral_vec_length, spiral_radius_velocity, 
-                                init_spiral_angle, spiral_angle_velocity, min_distance)
-
-            # plt.scatter(new_x, new_y, color= 'purple', s = 20)
-
-            spiral_vec_length = get_streched_unit_vector(new_x, new_y)
-   
-            real_intersection_points.append([new_x, new_y])
-                
-        return updated_y_intersection_points, real_intersection_points
+        for t in y_intersection_points_t:
+            new_t = t - delta_t
+            rotated_y_intersection_points.append(new_t)
+    
+        return rotated_y_intersection_points
     
 def get_quadrant(angle):
     if angle > 2 * np.pi:
