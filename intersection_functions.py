@@ -122,6 +122,8 @@ def get_y_intersection_points_t(first_y_intersection_point, spiral_radius_veloci
 
     return y_intersection_points_t
 
+def get_delta_coeff(a, b, y):
+    return a / abs(a) * b / abs(b) * y/ abs(y) * -1
 
 def calc_spiral_line_intersection_points(a, b, t, 
                                spiral_radius_velocity, 
