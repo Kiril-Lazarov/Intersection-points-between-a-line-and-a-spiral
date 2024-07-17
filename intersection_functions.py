@@ -276,3 +276,69 @@ def get_first_y_intersection_point(init_spiral_angle, spiral_angle_velocity, spi
         y = t* spiral_radius_velocity * np.sin(directional_constant * init_spiral_angle + t * spiral_angle_velocity)
         
         return y, angle_diff
+    
+def plot_objects(a, b, spiral_radius_velocity, spiral_angle_velocity, init_spiral_angle):
+    if init_spiral_angle < 0:
+        raise ValueError('Init spiral angle must be non-negative value')
+    if spiral_radius_velocity <= 0:
+        raise ValueError('Spiral radius velocity must be positive value')
+        
+    y_lim = (-20, 20)
+    
+    min_distance, angle_to_line = get_little_radius_vec(a, b)
+ 
+    create_field()
+   
+    x_line, y_line = create_line(a, b, (-20, 20))
+  
+    x_help_line, y_help_line = create_line(a, 0, y_lim)
+
+    x_spiral, y_spiral = create_spiral(r_incr_velocity = spiral_radius_velocity, 
+                                       init_angle = init_spiral_angle,
+                                       angle_velocity = spiral_angle_velocity)
+    
+    line_angle = get_angle(a, degrees= False) + np.pi
+   
+    # Plot linear function
+    plt.plot(x_line, y_line, color='blue', linewidth=1, linestyle='-')
+    
+    # Help line
+    plt.plot(x_help_line, y_help_line, color='green', linewidth=1, linestyle='-')
+   
+    if b >0:
+        angle_to_line += np.pi/2
+   
+    elif b <0:
+        angle_to_line -= np.pi/2
+
+    # Plot spiral
+    plt.plot(x_spiral, y_spiral, color = 'red', linewidth = 1, linestyle = '-')
+    
+    
+    
+    first_y_intersection_point, angle_diff =  get_first_y_intersection_point(init_spiral_angle, spiral_angle_velocity, spiral_radius_velocity)
+    
+    y_intersection_points_t = get_y_intersection_points_t(first_y_intersection_point, 
+                                                      spiral_radius_velocity, spiral_angle_velocity, 
+                                                      angle_diff, y_lim)
+
+    rotated_y_intscs_t = rotate_y_intersection_points(a, b, y_intersection_points_t,spiral_radius_velocity, spiral_angle_velocity)
+
+    for t in y_intersection_points_t:
+        plt.scatter(*get_spiral_coords(t, spiral_radius_velocity, spiral_angle_velocity, init_spiral_angle), color='black', s=20)
+        
+    real_intersects = []
+        
+    for t in rotated_y_intscs_t:
+        plt.scatter(*get_spiral_coords(t, spiral_radius_velocity, spiral_angle_velocity, init_spiral_angle), color='green', s=20)
+        curr_spiral_vector_length = t * spiral_radius_velocity
+        x, y = calc_spiral_line_intersection_points(a, b, t, spiral_radius_velocity, 
+                                    init_spiral_angle, spiral_angle_velocity, 
+                                    min_distance, accuracy = 5)
+        if (x, y) != (None, None):
+            real_intersects.append([x, y])
+            
+    for x, y in real_intersects:
+            plt.scatter(x, y, color='purple', s=20)
+
+    plt.show()
