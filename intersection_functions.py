@@ -123,11 +123,18 @@ def get_y_intersection_points_t(first_y_intersection_point, spiral_radius_veloci
     return y_intersection_points_t
 
 
-def calc_angles_sequence_limit(b, input_spiral_vector, spiral_radius_velocity, 
-                                    init_spiral_angle, spiral_angle_velocity, min_distance):
+def calc_spiral_line_intersection_points(a, b, t, 
+                               spiral_radius_velocity, 
+                               init_spiral_angle, spiral_angle_velocity, 
+                               min_distance, accuracy=5):
        
-        init_spiral_x = input_spiral_vector * np.cos(input_spiral_vector/ spiral_radius_velocity* spiral_angle_velocity)
-        init_spiral_y = input_spiral_vector * np.sin(input_spiral_vector/ spiral_radius_velocity * spiral_angle_velocity)
+        
+        input_spiral_vector = t * spiral_radius_velocity
+        
+        init_spiral_x = input_spiral_vector * np.cos(init_spiral_angle + t* spiral_angle_velocity)
+        init_spiral_y = input_spiral_vector * np.sin(init_spiral_angle + t * spiral_angle_velocity)
+        
+        directional_coeff =get_delta_coeff(a, b, init_spiral_y)
 
         original_const_vector_length = np.copy(input_spiral_vector)
 
@@ -136,23 +143,13 @@ def calc_angles_sequence_limit(b, input_spiral_vector, spiral_radius_velocity,
 
         while True:
       
-            last_spiral_vector = np.copy(float(f'{input_spiral_vector:.13f}'))
-            delta_angle = np.arctan(min_distance/input_spiral_vector) if input_spiral_vector != 0 else None
+            last_spiral_vector = np.copy(float(f'{input_spiral_vector:.{accuracy}f}'))
+            delta_angle = np.arctan(min_distance/input_spiral_vector) * directional_coeff if input_spiral_vector != 0 else None
             
             if delta_angle is not None and delta_angle <= np.pi/2:
                 
                 length_to_add = delta_angle / spiral_angle_velocity * spiral_radius_velocity
                 
-                if b > 0:
-                    if init_spiral_y <0:
-                        delta_angle *= -1
-                        length_to_add *= -1
-                elif b <0:
-                    if init_spiral_y > 0:
-                        delta_angle *= -1
-                        length_to_add *= -1
-
-
                 curr_vector_angle = const_vector_angle - delta_angle
 
                 input_spiral_vector = original_const_vector_length - length_to_add
@@ -165,16 +162,16 @@ def calc_angles_sequence_limit(b, input_spiral_vector, spiral_radius_velocity,
                 new_spiral_vec_len = get_streched_unit_vector(new_x, new_y)
 
 
-                input_spiral_vector = float(f'{new_spiral_vec_len * np.cos(delta_angle):.13f}')
+                input_spiral_vector = float(f'{new_spiral_vec_len * np.cos(delta_angle):.{accuracy}f}')
 
 
                 if input_spiral_vector == last_spiral_vector:
           
                     if new_spiral_vec_len >= min_distance:
                         return new_x, new_y
-                    return 0, 0
+                    return None, None
             else:
-                return 0, 0
+                return None, None
 
             
 def rotate_y_intersection_points(a, b, y_intersection_points_t,spiral_radius_velocity, spiral_angle_velocity):
