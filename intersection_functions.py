@@ -277,7 +277,10 @@ def get_first_y_intersection_point(init_spiral_angle, spiral_angle_velocity, spi
         
         return y, angle_diff
     
-def plot_objects(a, b, spiral_radius_velocity, spiral_angle_velocity, init_spiral_angle):
+def plot_objects(a, b, spiral_radius_velocity, 
+                 spiral_angle_velocity, init_spiral_angle, 
+                 x_y_lim=((-20, 20),(-20, 20))):
+                 
     if init_spiral_angle < 0:
         raise ValueError('Init spiral angle must be non-negative value')
     if spiral_radius_velocity <= 0:
@@ -287,7 +290,7 @@ def plot_objects(a, b, spiral_radius_velocity, spiral_angle_velocity, init_spira
     
     min_distance, angle_to_line = get_little_radius_vec(a, b)
  
-    create_field()
+    create_field(x_lim=x_y_lim[0], y_lim=x_y_lim[1])
    
     x_line, y_line = create_line(a, b, (-20, 20))
   
