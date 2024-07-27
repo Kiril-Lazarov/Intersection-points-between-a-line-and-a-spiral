@@ -277,6 +277,27 @@ def get_first_y_intersection_point(init_spiral_angle, spiral_angle_velocity, spi
         
         return y, angle_diff
     
+def get_rad_vec_params(x, y, w, init_angle):
+
+    rad_vec_angle = np.arctan(y/x)
+
+    rad_vec_t = rad_vec_angle/w - init_angle
+    
+    return rad_vec_angle, rad_vec_t
+
+
+
+def draw_par_axis_lines(x, y):
+
+    plt.plot([x, x], [0, y], color='blue', linestyle='-', linewidth=1)  # Вертикална линия
+    plt.plot([0, x], [y, y], color='blue', linestyle='-', linewidth=1)
+
+def draw_intersects(x, y):
+
+    plt.scatter(x,0,c='blue',s=20)
+    plt.scatter(0,y,c='blue',s=30)
+    plt.scatter(x,y,c='blue',s=30)
+    
 def plot_objects(a, b, spiral_radius_velocity, 
                  spiral_angle_velocity, init_spiral_angle, 
                  x_y_lim=((-20, 20),(-20, 20))):
@@ -338,9 +359,10 @@ def plot_objects(a, b, spiral_radius_velocity,
         x, y = calc_spiral_line_intersection_points(a, b, t, spiral_radius_velocity, 
                                     init_spiral_angle, spiral_angle_velocity, 
                                     min_distance, accuracy = 5)
+        print('Index: ', rotated_y_intscs_t.index(t), end=' -> ')
         if (x, y) != (None, None):
             real_intersects.append([x, y])
-            
+        print(x, y)
     for x, y in real_intersects:
             plt.scatter(x, y, color='purple', s=20)
 
