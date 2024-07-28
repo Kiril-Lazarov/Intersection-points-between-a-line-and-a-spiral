@@ -24,11 +24,13 @@ def create_field(figsize = (7,7), x_lim = (-20, 20), y_lim= (-20, 20)):
     plt.xlabel('X')
     plt.ylabel('Y')
     
-    # Преместване на лейбълите на осите отстрани 
+   
     ax.xaxis.set_label_coords(1.05, 0.5)
     ax.yaxis.set_label_coords(0.5, 1.05) 
     
     plt.subplots_adjust(left=0.2, right=0.8, top=0.8, bottom=0.2)
+    
+    return ax
     
 def create_line(a,b, x_lim):
     x = np.linspace(*x_lim,500)
