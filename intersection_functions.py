@@ -287,9 +287,11 @@ def get_rad_vec_params(x, y, w, init_angle):
 
 
 
-def draw_par_axis_lines(x, y):
+def draw_h_line(x, y):
 
-    plt.plot([x, x], [0, y], color='blue', linestyle='-', linewidth=1)  # Вертикална линия
+    plt.plot([x, x], [0, y], color='blue', linestyle='-', linewidth=1)
+    
+def draw_v_line(x,y):
     plt.plot([0, x], [y, y], color='blue', linestyle='-', linewidth=1)
 
 def draw_intersects(x, y):
