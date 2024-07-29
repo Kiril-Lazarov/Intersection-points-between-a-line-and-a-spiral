@@ -303,7 +303,7 @@ def draw_intersects(x, y):
     plt.scatter(x,y,c='blue',s=30)
     
 def plot_objects(a, b, spiral_radius_velocity, 
-                 spiral_angle_velocity, init_spiral_angle, 
+                 spiral_angle_velocity, init_spiral_angle,
                  x_y_lim=((-20, 20),(-20, 20)),
                  only_line=False):
                  
@@ -372,3 +372,71 @@ def plot_objects(a, b, spiral_radius_velocity,
                 plt.scatter(x, y, color='purple', s=20)
 
     plt.show()
+    
+def draw_algorithm(x, y, w, init_angle,ax,
+                        include_axis_lines=True,
+                        include_intersects=True,
+                        draw_rad_vec=True,
+                        steps_count=2):
+    plt.text(-0.6, -0.6, r'$O$', ha='center', va='top', color='black')
+    
+    if steps_count <2:
+        raise ValueError('Steps count must be greater than one')
+    
+    plt.text(x, -1.1, r'$x_0 = {:.2f}$'.format(x), ha='center', va='top', color='black')
+
+    plt.text(-0.5, y, r'$y_0 = {:.2f}$'.format(y), ha='right', va='center', color='black')
+
+    
+    for i in range(steps_count):
+     
+        rad_vec_angle, rad_vec_t = get_rad_vec_params(x, y, w, init_angle)
+
+        if i == 0 and steps_count ==2:
+             
+            arc = Arc((0, 0), 1.5*2, 1.5*2, angle=0, theta1=0, theta2=rad_vec_angle*180/np.pi, edgecolor='black')
+            ax.add_patch(arc)
+            
+            plt.text(1.8, 1.1, r'$\theta$', ha='right', va='center', color='black')
+
+        x_spiral_intersect = v * rad_vec_t * np.cos(rad_vec_angle)
+        y_spiral_intersect = v * rad_vec_t * np.sin(rad_vec_angle)
+        
+        
+            # draw_par_axis_lines(x, y)
+            
+        
+
+#             # draw_par_axis_lines(x, y_spiral_intersect)
+#             # draw_par_axis_lines(x_spiral_intersect, y)
+
+#         # draw_intersects(x, y_spiral_intersect)
+        if include_axis_lines:
+        
+            draw_h_line(x, y)
+            draw_v_line(x, y)
+            
+        if include_intersects:
+            draw_intersects(x, y)
+            if i <4:
+                letter = f'A_{{{i}}}'
+                plt.text(x+0.7, y+0.1, rf'${letter}$', ha='right', va='center', color='black')
+            # plt.text(x, y, r'$\theta$', ha='right', va='center', color='black')
+            
+           
+
+        # draw_h_line(y,x_spiral_intersect)
+        # draw_v_line(x, y)
+    
+        if i < steps_count-1:
+            
+
+            plt.scatter(x_spiral_intersect,y_spiral_intersect,c='black',s=30)
+
+            if draw_rad_vec:
+                plt.quiver(0,0,x_spiral_intersect,y_spiral_intersect,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='green')
+                plt.plot([x_spiral_intersect, x], [y_spiral_intersect, y], color='green', linestyle='dashed', linewidth=1)
+                
+        y = y_spiral_intersect
+    last_angle = rad_vec_angle *180/np.pi
+    plt.text(x+6, y_spiral_intersect, r'$\theta = $'f'{last_angle:.9f}'.format(y), ha='right', va='center', color='black')
