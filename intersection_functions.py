@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib.patches import Arc
 import numpy as np
 import math
 
@@ -373,7 +374,7 @@ def plot_objects(a, b, spiral_radius_velocity,
 
     plt.show()
     
-def draw_algorithm(x, y, w, init_angle,ax,
+def draw_algorithm(x, y, v, w, init_angle,ax,
                         include_axis_lines=True,
                         include_intersects=True,
                         draw_rad_vec=True,
@@ -385,9 +386,6 @@ def draw_algorithm(x, y, w, init_angle,ax,
     
     plt.text(x, -1.1, r'$x_0 = {:.2f}$'.format(x), ha='center', va='top', color='black')
 
-    plt.text(-0.5, y, r'$y_0 = {:.2f}$'.format(y), ha='right', va='center', color='black')
-
-    
     for i in range(steps_count):
      
         rad_vec_angle, rad_vec_t = get_rad_vec_params(x, y, w, init_angle)
@@ -398,19 +396,11 @@ def draw_algorithm(x, y, w, init_angle,ax,
             ax.add_patch(arc)
             
             plt.text(1.8, 1.1, r'$\theta$', ha='right', va='center', color='black')
+            plt.text(1, 3,r'$\vec{{R}}$', ha='right', va='center', color='black')
 
         x_spiral_intersect = v * rad_vec_t * np.cos(rad_vec_angle)
         y_spiral_intersect = v * rad_vec_t * np.sin(rad_vec_angle)
-        
-        
-            # draw_par_axis_lines(x, y)
-            
-        
 
-#             # draw_par_axis_lines(x, y_spiral_intersect)
-#             # draw_par_axis_lines(x_spiral_intersect, y)
-
-#         # draw_intersects(x, y_spiral_intersect)
         if include_axis_lines:
         
             draw_h_line(x, y)
@@ -420,14 +410,11 @@ def draw_algorithm(x, y, w, init_angle,ax,
             draw_intersects(x, y)
             if i <4:
                 letter = f'A_{{{i}}}'
+                y_point = f'y_{{{i}}}'
+                
                 plt.text(x+0.7, y+0.1, rf'${letter}$', ha='right', va='center', color='black')
-            # plt.text(x, y, r'$\theta$', ha='right', va='center', color='black')
-            
-           
+                plt.text(-0.7, y, rf'${y_point}$={y}', ha='right', va='center', color='black')
 
-        # draw_h_line(y,x_spiral_intersect)
-        # draw_v_line(x, y)
-    
         if i < steps_count-1:
             
 
@@ -438,5 +425,13 @@ def draw_algorithm(x, y, w, init_angle,ax,
                 plt.plot([x_spiral_intersect, x], [y_spiral_intersect, y], color='green', linestyle='dashed', linewidth=1)
                 
         y = y_spiral_intersect
+        
     last_angle = rad_vec_angle *180/np.pi
+    rad_vec_mag = rad_vec_t * v
+    
+    
     plt.text(x+6, y_spiral_intersect, r'$\theta = $'f'{last_angle:.9f}'.format(y), ha='right', va='center', color='black')
+    
+    plt.text(x+6, y_spiral_intersect - 0.5, r'$t = $'f'{rad_vec_t:.9f}'.format(y), ha='right', va='center', color='black')
+    
+    plt.text(x+6, y_spiral_intersect-1, r'$\vec{{R}} = $'f'{rad_vec_mag:.9f}'.format(y), ha='right', va='center', color='black')    
