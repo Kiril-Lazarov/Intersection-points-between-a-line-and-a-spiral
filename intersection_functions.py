@@ -434,4 +434,8 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
     
     plt.text(x+6, y_spiral_intersect - 0.5, r'$t = $'f'{rad_vec_t:.9f}'.format(y), ha='right', va='center', color='black')
     
-    plt.text(x+6, y_spiral_intersect-1, r'$\vec{{R}} = $'f'{rad_vec_mag:.9f}'.format(y), ha='right', va='center', color='black')    
+    plt.text(x+6, y_spiral_intersect-1, r'$\vec{{R}} = $'f'{rad_vec_mag:.9f}'.format(y), ha='right', va='center', color='black')
+    
+    plt.text(x+6, y_spiral_intersect - 1.5, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
+    
+    
