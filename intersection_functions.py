@@ -292,13 +292,13 @@ def get_rad_vec_params(x, y, w, init_angle):
 
 
 
-def draw_h_line(x, y):
+def draw_v_line(x, y):
 
     plt.plot([x, x], [0, y], color='blue', linestyle='-', linewidth=1)
     
     
     
-def draw_v_line(x,y):
+def draw_h_line(x,y):
     plt.plot([0, x], [y, y], color='blue', linestyle='-', linewidth=1)
     
     
@@ -386,17 +386,28 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
                         include_axis_lines=True,
                         include_intersects=True,
                         draw_rad_vec=True,
+                        only_result = False,
+                        linspace_count = 2000,
                         steps_count=2):
     plt.text(-0.6, -0.6, r'$O$', ha='center', va='top', color='black')
     
+    init_y = np.copy(y)
+    
     if steps_count <2:
         raise ValueError('Steps count must be greater than one')
-    
+        
+    if only_result == True:
+        include_axis_lines, include_intersects, draw_rad_vec= False, False, False
+                    
     plt.text(x, -1.1, r'$x_0 = {:.2f}$'.format(x), ha='center', va='top', color='black')
 
     for i in range(steps_count):
      
         rad_vec_angle, rad_vec_t = get_rad_vec_params(x, y, w, init_angle)
+        
+        
+        x_spiral_intersect = v * rad_vec_t * np.cos(rad_vec_angle)
+        y_spiral_intersect = v * rad_vec_t * np.sin(rad_vec_angle)
 
         if i == 0 and steps_count ==2:
              
@@ -405,9 +416,9 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
             
             plt.text(1.8, 1.1, r'$\theta$', ha='right', va='center', color='black')
             plt.text(1, 3,r'$\vec{{R}}$', ha='right', va='center', color='black')
+            plt.text(x_spiral_intersect, y_spiral_intersect+0.5,r'$I$', ha='right', va='center', color='black')
+            
 
-        x_spiral_intersect = v * rad_vec_t * np.cos(rad_vec_angle)
-        y_spiral_intersect = v * rad_vec_t * np.sin(rad_vec_angle)
 
         if include_axis_lines:
         
@@ -425,14 +436,31 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
 
         if i < steps_count-1:
             
-
-            plt.scatter(x_spiral_intersect,y_spiral_intersect,c='black',s=30)
+            if not only_result:
+                plt.scatter(x_spiral_intersect,y_spiral_intersect,c='black',s=30)
 
             if draw_rad_vec:
                 plt.quiver(0,0,x_spiral_intersect,y_spiral_intersect,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='green')
                 plt.plot([x_spiral_intersect, x], [y_spiral_intersect, y], color='green', linestyle='dashed', linewidth=1)
                 
         y = y_spiral_intersect
+        
+    if only_result:
+        
+        draw_v_line(x, init_y)
+        draw_h_line(x, init_y)
+        
+        draw_h_line(x, y_spiral_intersect)
+        
+        draw_intersects(x, init_y)
+        draw_intersects(x, y_spiral_intersect)
+        
+        plt.quiver(0,0,x,y_spiral_intersect,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='green')
+        plt.scatter(x,y_spiral_intersect,c='black',s=30)
+        
+        plt.text(-0.7, init_y, rf'$y_0$={init_y}', ha='right', va='center', color='black')
+
+        plt.text(-0.7, y, rf'$y_{{{steps_count}}}$={y_spiral_intersect}', ha='right', va='center', color='black')
         
     last_angle = rad_vec_angle *180/np.pi
     rad_vec_mag = rad_vec_t * v
@@ -445,7 +473,6 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
     plt.text(x+6, y_spiral_intersect-1, r'$\vec{{R}} = $'f'{rad_vec_mag:.9f}'.format(y), ha='right', va='center', color='black')
     
     plt.text(x+6, y_spiral_intersect - 1.5, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
-    
     
 def show_spiral_and_circle():    
     angle_velocity = 1/(2* np.pi)
