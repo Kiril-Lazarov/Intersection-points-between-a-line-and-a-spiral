@@ -128,6 +128,8 @@ def get_y_intersection_points_t(first_y_intersection_point, spiral_radius_veloci
 def get_delta_coeff(a, b, y):
     return a / abs(a) * b / abs(b) * y/ abs(y) * -1
 
+
+
 def calc_spiral_line_intersection_points(a, b, t, 
                                spiral_radius_velocity, 
                                init_spiral_angle, spiral_angle_velocity, 
@@ -294,14 +296,20 @@ def draw_h_line(x, y):
 
     plt.plot([x, x], [0, y], color='blue', linestyle='-', linewidth=1)
     
+    
+    
 def draw_v_line(x,y):
     plt.plot([0, x], [y, y], color='blue', linestyle='-', linewidth=1)
+    
+    
 
 def draw_intersects(x, y):
 
     plt.scatter(x,0,c='blue',s=20)
     plt.scatter(0,y,c='blue',s=30)
     plt.scatter(x,y,c='blue',s=30)
+    
+    
     
 def plot_objects(a, b, spiral_radius_velocity, 
                  spiral_angle_velocity, init_spiral_angle,
@@ -439,3 +447,31 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
     plt.text(x+6, y_spiral_intersect - 1.5, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
     
     
+def show_spiral_and_circle():    
+    angle_velocity = 1/(2* np.pi)
+    spiral_velocity = 2 / (2*np.pi)
+
+    f = 6
+    l = 2
+    create_field(figsize=(f, f), x_lim=(-l, l), y_lim=(-l, l))
+    v = 1 / (2*np.pi)
+    w = 1/(2* np.pi)
+    d_angles = np.linspace(0, 2*np.pi, 360, endpoint=False)
+    t = d_angles / w
+    x_circle = np.cos(t * w)
+    y_circle = np.sin(t * w)
+
+    x_spiral = np.cos(d_angles)+(d_angles*w ) * np.cos(d_angles)
+    y_spiral = np.sin(d_angles)+(d_angles*w ) * np.sin(d_angles)
+
+    plt.plot(x_circle, y_circle,  color = 'blue', linewidth = 1, linestyle = '-')
+    plt.plot(x_spiral, y_spiral,  color = 'red', linewidth = 1, linestyle = '-')
+
+#     const_time = (26.396396396396362 + 90) * np.pi/180 * w
+#     x = (const_time* v) * np.cos(const_time * w)
+#     y = ( const_time * v) * np.sin(const_time * w)
+
+#     plt.scatter(x, y, color= 'black', s= 20)
+
+
+    plt.show()
