@@ -382,6 +382,7 @@ def plot_objects(a, b, spiral_radius_velocity,
 
     plt.show()
     
+    
 def draw_algorithm(x, y, v, w, init_angle,ax,
                         include_axis_lines=True,
                         include_intersects=True,
@@ -389,6 +390,7 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
                         only_result = False,
                         linspace_count = 2000,
                         steps_count=2):
+    
     plt.text(-0.6, -0.6, r'$O$', ha='center', va='top', color='black')
     
     init_y = np.copy(y)
@@ -399,7 +401,7 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
     if only_result == True:
         include_axis_lines, include_intersects, draw_rad_vec= False, False, False
                     
-    plt.text(x, -1.1, r'$x_0 = {:.2f}$'.format(x), ha='center', va='top', color='black')
+    plt.text(x, -init_y*0.1, r'$x_0 = {:.2f}$'.format(x), ha='center', va='top', color='black')
 
     for i in range(steps_count):
      
@@ -458,21 +460,23 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
         plt.quiver(0,0,x,y_spiral_intersect,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='green')
         plt.scatter(x,y_spiral_intersect,c='black',s=30)
         
-        plt.text(-0.7, init_y, rf'$y_0$={init_y}', ha='right', va='center', color='black')
+        plt.text(-init_y*0.2, init_y, rf'$y_0$={init_y}', ha='right', va='center', color='black')
 
-        plt.text(-0.7, y, rf'$y_{{{steps_count}}}$={y_spiral_intersect}', ha='right', va='center', color='black')
+        plt.text(-init_y*0.2, y, rf'$y_{{{steps_count}}}$={y_spiral_intersect}', ha='right', va='center', color='black')
         
     last_angle = rad_vec_angle *180/np.pi
     rad_vec_mag = rad_vec_t * v
     
+    a = 2.5
+    b = init_y /2.1
     
-    plt.text(x+6, y_spiral_intersect, r'$\theta = $'f'{last_angle:.9f}'.format(y), ha='right', va='center', color='black')
+    plt.text(a * x, init_y /2.1, rf'$\theta_{{{steps_count}}} = ${last_angle:.9f}', ha='right', va='center', color='black')
     
-    plt.text(x+6, y_spiral_intersect - 0.5, r'$t = $'f'{rad_vec_t:.9f}'.format(y), ha='right', va='center', color='black')
+    plt.text(a * x, init_y /2.6, rf'$t = ${rad_vec_t:.9f}', ha='right', va='center', color='black')
     
-    plt.text(x+6, y_spiral_intersect-1, r'$\vec{{R}} = $'f'{rad_vec_mag:.9f}'.format(y), ha='right', va='center', color='black')
+    plt.text(a * x, init_y /3.2, rf'$\vec{{R}} = ${rad_vec_mag:.9f}', ha='right', va='center', color='black')
     
-    plt.text(x+6, y_spiral_intersect - 1.5, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
+    plt.text(a * x, init_y /4.2, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
     
 def show_spiral_and_circle():    
     angle_velocity = 1/(2* np.pi)
