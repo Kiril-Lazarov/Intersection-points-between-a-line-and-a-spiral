@@ -391,9 +391,11 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
                         linspace_count = 2000,
                         steps_count=2):
     
-    plt.text(-0.6, -0.6, r'$O$', ha='center', va='top', color='black')
-    
     init_y = np.copy(y)
+    
+    a = 2.5
+    
+    plt.text(-0.6, -0.6, r'$O$', ha='center', va='top', color='black')
     
     if steps_count <2:
         raise ValueError('Steps count must be greater than one')
@@ -401,7 +403,7 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
     if only_result == True:
         include_axis_lines, include_intersects, draw_rad_vec= False, False, False
                     
-    plt.text(x, -init_y*0.1, r'$x_0 = {:.2f}$'.format(x), ha='center', va='top', color='black')
+    plt.text(x, -init_y*0.1, r'$x_i = {:.2f}$'.format(x), ha='center', va='top', color='black')
 
     for i in range(steps_count):
      
@@ -416,10 +418,12 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
             arc = Arc((0, 0), 1.5*2, 1.5*2, angle=0, theta1=0, theta2=rad_vec_angle*180/np.pi, edgecolor='black')
             ax.add_patch(arc)
             
+            theta_deg = rad_vec_angle * 180 / np.pi
+            
             plt.text(1.8, 1.1, r'$\theta$', ha='right', va='center', color='black')
             plt.text(1, 3,r'$\vec{{R}}$', ha='right', va='center', color='black')
             plt.text(x_spiral_intersect, y_spiral_intersect+0.5,r'$I$', ha='right', va='center', color='black')
-            
+            plt.text(a * x, init_y /2.1, rf'$\theta = ${theta_deg:.9f}', ha='right', va='center', color='black')
 
 
         if include_axis_lines:
@@ -433,7 +437,7 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
                 letter = f'A_{{{i}}}'
                 y_point = f'y_{{{i}}}'
                 
-                plt.text(x+0.7, y+0.1, rf'${letter}$', ha='right', va='center', color='black')
+                plt.text(x+0.7, y, rf'${letter}$', ha='right', va='center', color='black')
                 plt.text(-0.7, y, rf'${y_point}$={y}', ha='right', va='center', color='black')
 
         if i < steps_count-1:
@@ -449,6 +453,9 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
         
     if only_result:
         
+        last_angle = rad_vec_angle *180/np.pi
+        rad_vec_mag = rad_vec_t * v
+        
         draw_v_line(x, init_y)
         draw_h_line(x, init_y)
         
@@ -459,24 +466,19 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
         
         plt.quiver(0,0,x,y_spiral_intersect,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='green')
         plt.scatter(x,y_spiral_intersect,c='black',s=30)
-        
+   
         plt.text(-init_y*0.2, init_y, rf'$y_0$={init_y}', ha='right', va='center', color='black')
 
         plt.text(-init_y*0.2, y, rf'$y_{{{steps_count}}}$={y_spiral_intersect}', ha='right', va='center', color='black')
         
-    last_angle = rad_vec_angle *180/np.pi
-    rad_vec_mag = rad_vec_t * v
+        plt.text(a * x, init_y /2.1, rf'$\theta_{{{steps_count}}} = ${last_angle:.9f}', ha='right', va='center', color='black')
     
-    a = 2.5
-    b = init_y /2.1
-    
-    plt.text(a * x, init_y /2.1, rf'$\theta_{{{steps_count}}} = ${last_angle:.9f}', ha='right', va='center', color='black')
-    
-    plt.text(a * x, init_y /2.6, rf'$t = ${rad_vec_t:.9f}', ha='right', va='center', color='black')
-    
-    plt.text(a * x, init_y /3.2, rf'$\vec{{R}} = ${rad_vec_mag:.9f}', ha='right', va='center', color='black')
-    
-    plt.text(a * x, init_y /4.2, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
+        plt.text(a * x, init_y /2.6, rf'$t = ${rad_vec_t:.9f}', ha='right', va='center', color='black')
+
+        plt.text(a * x, init_y /3.2, rf'$\vec{{R}} = ${rad_vec_mag:.9f}', ha='right', va='center', color='black')
+
+        plt.text(a * x, init_y /4.2, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
+        
     
 def show_spiral_and_circle():    
     angle_velocity = 1/(2* np.pi)
