@@ -198,7 +198,7 @@ def rotate_y_intersection_points(a, b, y_intersection_points_t,spiral_radius_vel
         return rotated_y_intersection_points
     
 def get_quadrant(angle):
-    if angle > 2 * np.pi:
+    if angle >= 2 * np.pi:
         raise ValueError('Angle must be between 0 and 2pi')
         
     if 0 <= angle < np.pi/2 or angle == 2 * np.pi:
@@ -389,7 +389,9 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
                         draw_rad_vec=True,
                         only_result = False,
                         linspace_count = 2000,
-                        steps_count=2):
+                        steps_count=2,
+                        x_text_coef = 2.5,
+                        show_text = True):
     
     init_y = np.copy(y)
     
@@ -423,7 +425,7 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
             plt.text(1.8, 1.1, r'$\theta$', ha='right', va='center', color='black')
             plt.text(1, 3,r'$\vec{{R}}$', ha='right', va='center', color='black')
             plt.text(x_spiral_intersect, y_spiral_intersect+0.5,r'$I$', ha='right', va='center', color='black')
-            plt.text(a * x, init_y /2.1, rf'$\theta = ${theta_deg:.9f}', ha='right', va='center', color='black')
+            plt.text(x_text_coef * x, init_y /2.1, rf'$\theta = ${theta_deg:.9f}', ha='right', va='center', color='black')
 
 
         if include_axis_lines:
@@ -466,18 +468,20 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
         
         plt.quiver(0,0,x,y_spiral_intersect,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='green')
         plt.scatter(x,y_spiral_intersect,c='black',s=30)
-   
-        plt.text(-init_y*0.2, init_y, rf'$y_0$={init_y}', ha='right', va='center', color='black')
-
-        plt.text(-init_y*0.2, y, rf'$y_{{{steps_count}}}$={y_spiral_intersect}', ha='right', va='center', color='black')
         
-        plt.text(a * x, init_y /2.1, rf'$\theta_{{{steps_count}}} = ${last_angle:.9f}', ha='right', va='center', color='black')
-    
-        plt.text(a * x, init_y /2.6, rf'$t = ${rad_vec_t:.9f}', ha='right', va='center', color='black')
+        if show_text:
+   
+            plt.text(-init_y*0.2, init_y, rf'$y_0$={init_y}', ha='right', va='center', color='black')
 
-        plt.text(a * x, init_y /3.2, rf'$\vec{{R}} = ${rad_vec_mag:.9f}', ha='right', va='center', color='black')
+            plt.text(-init_y*0.2, y, rf'$y_{{{steps_count}}}$={y_spiral_intersect}', ha='right', va='center', color='black')
 
-        plt.text(a * x, init_y /4.2, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
+            plt.text(x_text_coef * x, init_y /2.1, rf'$\theta_{{{steps_count}}} = ${last_angle:.9f}', ha='right', va='center', color='black')
+
+            plt.text(x_text_coef * x, init_y /2.6, rf'$t = ${rad_vec_t:.9f}', ha='right', va='center', color='black')
+
+            plt.text(x_text_coef * x, init_y /3.2, rf'$\vec{{R}} = ${rad_vec_mag:.9f}', ha='right', va='center', color='black')
+
+            plt.text(x_text_coef * x, init_y /4.2, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
         
     
 def show_spiral_and_circle():    
