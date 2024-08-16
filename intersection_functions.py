@@ -512,3 +512,186 @@ def show_spiral_and_circle():
 
 
     plt.show()
+    
+def calc_angle_and_t(x_line_const, x, y, w, v, init_angle):
+
+    sign_coeff = x_line_const / abs(x_line_const)* (y/abs(y))*-1
+
+    hipot = np.sqrt(x_line_const**2 + y**2)
+
+    
+    init_r_vec_magnitude = np.sqrt(x**2 + y**2)
+    
+    diff_x_const_x = abs(x_line_const) - abs(x)
+
+    #Use cosine theorem
+    cos_calc =  (init_r_vec_magnitude ** 2 + hipot ** 2 - diff_x_const_x ** 2)/(2*init_r_vec_magnitude*hipot)
+    if cos_calc > 1:
+        cos_calc = 1
+    angle_diff = np.arccos(cos_calc)
+
+    angle_diff_t = angle_diff/ w
+    
+    # x_1 = hipot * np.cos(angle_diff)
+    # y_1 = hipot * np.sin(angle_diff)
+    # plt.scatter(x_line_const,y, color='red', s=20)
+
+    # draw_h_line(x_line_const,y)
+    
+    init_r_vec_t = init_r_vec_magnitude / v
+
+    new_rad_vec_t = init_r_vec_t + sign_coeff * angle_diff_t
+
+    init_r_vec_angle = init_r_vec_t * w + sign_coeff * (2 * np.pi - init_angle)
+
+    if new_rad_vec_t <=0:
+        return None, None
+    rad_vec_angle = new_rad_vec_t * w +init_angle
+    
+    rad_vec_angle = new_rad_vec_t * w + init_angle
+    x_2 = new_rad_vec_t* v * np.cos(rad_vec_angle)
+    y_2 = new_rad_vec_t* v * np.sin(rad_vec_angle)
+    plt.quiver(0, 0, x_2, y_2,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='black' )
+    plt.scatter(x_2,y_2, color='purple', s=20)
+ 
+    return rad_vec_angle, new_rad_vec_t
+
+def calc_angle_and_t(x_line_const, x, y, w, v, init_angle,show_on_screen=False):
+
+    sign_coeff = x_line_const / abs(x_line_const)* (y/abs(y))*-1
+
+    hipot = np.sqrt(x_line_const**2 + y**2)
+
+    
+    init_r_vec_magnitude = np.sqrt(x**2 + y**2)
+    
+    diff_x_const_x = abs(x_line_const) - abs(x)
+
+    #Use cosine theorem
+    cos_calc =  (init_r_vec_magnitude ** 2 + hipot ** 2 - diff_x_const_x ** 2)/(2*init_r_vec_magnitude*hipot)
+    if cos_calc > 1:
+        cos_calc = 1
+    angle_diff = np.arccos(cos_calc)
+
+    angle_diff_t = angle_diff/ w
+    
+    # x_1 = hipot * np.cos(angle_diff)
+    # y_1 = hipot * np.sin(angle_diff)
+    # plt.scatter(x_line_const,y, color='red', s=20)
+
+    # draw_h_line(x_line_const,y)
+    
+    init_r_vec_t = init_r_vec_magnitude / v
+
+    new_rad_vec_t = init_r_vec_t + sign_coeff * angle_diff_t
+
+    init_r_vec_angle = init_r_vec_t * w + sign_coeff * (2 * np.pi - init_angle)
+
+    if new_rad_vec_t <=0:
+        return None, None
+    rad_vec_angle = new_rad_vec_t * w +init_angle
+    
+    rad_vec_angle = new_rad_vec_t * w + init_angle
+    if show_on_screen:
+        x_2 = new_rad_vec_t* v * np.cos(rad_vec_angle)
+        y_2 = new_rad_vec_t* v * np.sin(rad_vec_angle)
+        plt.quiver(0, 0, x_2, y_2,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='black' )
+        plt.scatter(x_2,y_2, color='purple', s=20)
+
+    return rad_vec_angle, new_rad_vec_t
+
+def show_all_intersects(v,w, theta_0, v_line_x, 
+                        nth_intersect=None, 
+                        accuracy=5, 
+                        num=2000, 
+                        correction_mech=True,
+                        itterations_count=None,
+                        show_on_screen=False):
+
+    y_points = [(-1)**(i-1) * 2 * np.pi * i for i in range(7) if i != 0]
+
+    first_y, angle_diff = get_first_y_intersection_point(theta_0, w, v)
+
+    spiral_times = np.linspace(0, max(y_points) + np.pi/2+theta_0, num)
+    angles = spiral_times * w + theta_0
+
+
+    y_axis_limit= 1.1 * (max(y_points))
+
+    y_first_points_t = get_y_intersection_points_t(first_y, v, w,angle_diff, (y_axis_limit, y_axis_limit))
+    
+    if nth_intersect is not None:
+        y_first_points_t = y_first_points_t[:nth_intersect]
+
+    ax = create_field(figsize=(10, 10), x_lim=(-y_axis_limit, y_axis_limit), y_lim=(-y_axis_limit, y_axis_limit))
+
+    x_spiral = spiral_times * v * np.cos(angles)
+    y_spiral = spiral_times * v * np.sin(angles)
+
+    # x_spiral, y_spiral = create_spiral(v, w, theta_0)
+    plt.plot(x_spiral, y_spiral,color='red')
+
+    for index, t in enumerate(y_first_points_t):
+
+
+        angle = t * w + (2 * np.pi + theta_0)
+
+        x = t * v * np.cos(angle)
+        y = t * v * np.sin(angle)
+
+        plt.scatter(x, y, color='black', s= 20)
+
+        input_spiral_vector = t * v
+
+        last_spiral_vector = np.copy(float(f'{input_spiral_vector:.{accuracy}f}'))
+        # print('init x: ',x, 'init y: ', y)
+
+        is_find = False
+
+        
+        x_copy, y_copy  = np.copy(x), np.copy(y)
+        n = 0
+        # plt.quiver(0, 0, x, y,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='blue' )
+        while not is_find:
+
+            new_rad_vec_angle, rad_vec_t = calc_angle_and_t(v_line_x, x_copy, y_copy, w, v, theta_0,show_on_screen=show_on_screen)
+            if rad_vec_t is None:
+                x, y = 0,0
+
+                break
+            # print('index',index,'n', n,'new_rad_vec_angle, rad_vec_t', new_rad_vec_angle*180/np.pi, rad_vec_t)
+            x_copy = rad_vec_t * v * np.cos(new_rad_vec_angle)
+            y_copy = rad_vec_t * v * np.sin(new_rad_vec_angle)
+
+            if correction_mech:
+                if abs(x_copy) >= abs(v_line_x):
+                    x_copy = np.copy(v_line_x)
+
+            if itterations_count is not None:
+                if n ==itterations_count:
+                    break
+
+
+            curr_spiral_vec = rad_vec_t * v
+            # curr_spiral_vec = float(f'{rad_vec_t * v:.{accuracy}f}')
+
+            if float(f'{curr_spiral_vec:.{accuracy}f}') == last_spiral_vector or abs(new_rad_vec_angle) < 0.001:
+
+                is_find = True
+            else:
+
+                last_spiral_vector = np.copy(float(f'{curr_spiral_vec:.{accuracy}f}'))
+            n+=1
+        plt.scatter(x_copy, y_copy, color='blue', s= 20)
+
+    draw_v_line(v_line_x, y_axis_limit)
+    draw_v_line(v_line_x, -y_axis_limit)
+
+
+    plt.show()
+    
+v_line_x = -5
+v = 5
+w = 1
+theta_0 = 0.2*np.pi/2
+show_all_intersects(v,w, theta_0, v_line_x,itterations_count=3,nth_intersect=1,correction_mech=False) 
