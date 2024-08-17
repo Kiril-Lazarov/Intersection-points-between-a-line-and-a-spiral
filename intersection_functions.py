@@ -593,6 +593,7 @@ def calc_angle_and_t(x_line_const, x, y, w, v, init_angle,show_on_screen=False):
     
     rad_vec_angle = new_rad_vec_t * w + init_angle
     if show_on_screen:
+        draw_h_line(x_line_const,y)
         x_2 = new_rad_vec_t* v * np.cos(rad_vec_angle)
         y_2 = new_rad_vec_t* v * np.sin(rad_vec_angle)
         plt.quiver(0, 0, x_2, y_2,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='black' )
@@ -605,8 +606,10 @@ def show_all_intersects(v,w, theta_0, v_line_x,
                         accuracy=5, 
                         num=2000, 
                         correction_mech=True,
-                        itterations_count=None,
-                        show_on_screen=False):
+                        iterations_count=None,
+                        show_on_screen=False,
+                        show_line_and_itrscts=True,
+                        show_labels=False):
 
     y_points = [(-1)**(i-1) * 2 * np.pi * i for i in range(7) if i != 0]
 
@@ -640,58 +643,59 @@ def show_all_intersects(v,w, theta_0, v_line_x,
         y = t * v * np.sin(angle)
 
         plt.scatter(x, y, color='black', s= 20)
-
-        input_spiral_vector = t * v
-
-        last_spiral_vector = np.copy(float(f'{input_spiral_vector:.{accuracy}f}'))
-        # print('init x: ',x, 'init y: ', y)
-
-        is_find = False
-
+        if show_labels:
+            if abs(y) <= y_axis_limit:
+                plt.text(3, y+2, f'{index+1}', ha='right', va='center', color='blue')
         
-        x_copy, y_copy  = np.copy(x), np.copy(y)
-        n = 0
-        # plt.quiver(0, 0, x, y,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='blue' )
-        while not is_find:
+        if show_line_and_itrscts:
+        
+            input_spiral_vector = t * v
 
-            new_rad_vec_angle, rad_vec_t = calc_angle_and_t(v_line_x, x_copy, y_copy, w, v, theta_0,show_on_screen=show_on_screen)
-            if rad_vec_t is None:
-                x, y = 0,0
+            last_spiral_vector = np.copy(float(f'{input_spiral_vector:.{accuracy}f}'))
 
-                break
-            # print('index',index,'n', n,'new_rad_vec_angle, rad_vec_t', new_rad_vec_angle*180/np.pi, rad_vec_t)
-            x_copy = rad_vec_t * v * np.cos(new_rad_vec_angle)
-            y_copy = rad_vec_t * v * np.sin(new_rad_vec_angle)
 
-            if correction_mech:
-                if abs(x_copy) >= abs(v_line_x):
-                    x_copy = np.copy(v_line_x)
+            is_find = False
 
-            if itterations_count is not None:
-                if n ==itterations_count:
+
+            x_copy, y_copy  = np.copy(x), np.copy(y)
+            n = 0
+            # plt.quiver(0, 0, x, y,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='blue' )
+            while not is_find:
+
+                new_rad_vec_angle, rad_vec_t = calc_angle_and_t(v_line_x, x_copy, y_copy, w, v, theta_0,show_on_screen=show_on_screen)
+                if rad_vec_t is None:
+                    x, y = 0,0
+
                     break
+                # print('index',index,'n', n,'new_rad_vec_angle, rad_vec_t', new_rad_vec_angle*180/np.pi, rad_vec_t)
+                x_copy = rad_vec_t * v * np.cos(new_rad_vec_angle)
+                y_copy = rad_vec_t * v * np.sin(new_rad_vec_angle)
+
+                if correction_mech:
+                    if abs(x_copy) >= abs(v_line_x):
+                        x_copy = np.copy(v_line_x)
+
+                if iterations_count is not None:
+                    if n ==iterations_count:
+                        break
 
 
-            curr_spiral_vec = rad_vec_t * v
-            # curr_spiral_vec = float(f'{rad_vec_t * v:.{accuracy}f}')
+                curr_spiral_vec = rad_vec_t * v
+                # curr_spiral_vec = float(f'{rad_vec_t * v:.{accuracy}f}')
 
-            if float(f'{curr_spiral_vec:.{accuracy}f}') == last_spiral_vector or abs(new_rad_vec_angle) < 0.001:
+                if float(f'{curr_spiral_vec:.{accuracy}f}') == last_spiral_vector or abs(new_rad_vec_angle) < 0.001:
 
-                is_find = True
-            else:
+                    is_find = True
+                else:
 
-                last_spiral_vector = np.copy(float(f'{curr_spiral_vec:.{accuracy}f}'))
-            n+=1
-        plt.scatter(x_copy, y_copy, color='blue', s= 20)
+                    last_spiral_vector = np.copy(float(f'{curr_spiral_vec:.{accuracy}f}'))
+                n+=1
 
-    draw_v_line(v_line_x, y_axis_limit)
-    draw_v_line(v_line_x, -y_axis_limit)
+            plt.scatter(x_copy, y_copy, color='blue', s= 20)
+
+            draw_v_line(v_line_x, y_axis_limit)
+            draw_v_line(v_line_x, -y_axis_limit)
 
 
     plt.show()
-    
-v_line_x = -5
-v = 5
-w = 1
-theta_0 = 0.2*np.pi/2
-show_all_intersects(v,w, theta_0, v_line_x,itterations_count=3,nth_intersect=1,correction_mech=False) 
+
