@@ -549,10 +549,10 @@ def calc_angle_and_t(x_line_const, x, y, w, v, init_angle):
     rad_vec_angle = new_rad_vec_t * w +init_angle
     
     rad_vec_angle = new_rad_vec_t * w + init_angle
-    x_2 = new_rad_vec_t* v * np.cos(rad_vec_angle)
-    y_2 = new_rad_vec_t* v * np.sin(rad_vec_angle)
-    plt.quiver(0, 0, x_2, y_2,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='black' )
-    plt.scatter(x_2,y_2, color='purple', s=20)
+    # x_2 = new_rad_vec_t* v * np.cos(rad_vec_angle)
+    # y_2 = new_rad_vec_t* v * np.sin(rad_vec_angle)
+    # plt.quiver(0, 0, x_2, y_2,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.01,color='black' )
+    # plt.scatter(x_2,y_2, color='purple', s=20)
  
     return rad_vec_angle, new_rad_vec_t
 
@@ -698,4 +698,44 @@ def show_all_intersects(v,w, theta_0, v_line_x,
 
 
     plt.show()
+    
+def calc_d_minus(D_plus, sum_coeff):
+    
+    angle_term = sum_coeff * np.pi
+    if sum_coeff == 0:
+        return D_plus
+    return angle_term - D_plus
+
+def sum_coeffs(k):
+    coeff_plus = (1 + ((-1) **np.floor(k+1)))/2
+    coeff_minus = (1 - ((-1) **np.floor(k+1)))/2
+    sum_coeffs = 0
+    if coeff_plus == 0:
+        sum_coeffs = coeff_plus + coeff_minus
+    elif coeff_plus == 1:
+        sum_coeffs = coeff_plus - coeff_minus
+        
+    return coeff_plus, coeff_minus, sum_coeffs
+
+def show_init_theta_dependencies(show_expr = False):
+    k = 0.0
+    arr = iter([90, 135, 180, 45, 90, 135, 180, 45])
+    c = 0
+    sign = ''
+    for i in range(8):
+        D_plus, D_minus, _ = sum_coeffs(float(k))
+        diff_plus = ((np.floor(k)+1 ) -k) * np.pi/2 + D_plus * np.pi/2
+        if show_expr:
+            if i % 2 == 0:
+                c = 0
+                sign = '+'
+            else:
+                c = 1
+                sign = '-'
+            expr = f' ->   \u0394\u03B8- = {c}\u03c0 {sign} \u0394\u03B8+'
+        else:
+            expr = ''
+        print('k: ',k ,f'    \u0394\u03B8+: ', int(diff_plus*180/np.pi), '    \u0394\u03B8-: ',next(arr),expr)
+
+        k+=0.5
 
