@@ -764,3 +764,51 @@ def B_binary(k):
 
 def D_binary(k):
     return (1 + (-1)**(np.floor(k+1)))/2
+
+def show_first_y_intersect_axis(k, w):
+    f = 5
+    l = 1.5
+    angles = np.linspace(0, 2 * np.pi)
+    ax = create_field(figsize=(f, f), x_lim=(-l, l), y_lim=(-l, l))
+
+    x = np.cos(angles)
+    y = np.sin(angles)
+    
+    w_coeff = W_binary(w)
+    b_coeff = B_binary(k)
+    d_coeff = D_binary(k)
+        
+    delta_theta_plus = np.pi/2 * (np.floor(k+1) - k + d_coeff)
+
+    delta_theta_init = w_coeff * b_coeff * (np.pi - 2 * delta_theta_plus) + delta_theta_plus
+
+    
+    theta = k * np.pi/2
+
+
+    point = (np.cos(theta), np.sin(theta))
+
+    next_axis_x = np.cos(theta + w/abs(w)*delta_theta_init)
+    next_axis_y = np.sin(theta + w/abs(w)*delta_theta_init)
+    
+    start_theta = theta*180/np.pi
+    end_theta = (theta + w/abs(w)*delta_theta_init)*180/np.pi
+    
+    if w_coeff == 1:
+        start_theta, end_theta = end_theta, start_theta
+    
+    arc = Arc((0, 0), 0.7, 0.7, angle=0, theta1=start_theta, theta2=end_theta, edgecolor='black')
+    ax.add_patch(arc)
+
+    plt.plot(x, y, color='red')
+    plt.scatter(*point, color='black', s=30)
+    plt.quiver(0, 0,*point,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.1,color='black')
+
+    plt.plot([0, next_axis_x], [0, next_axis_y], color='blue', linestyle='-', linewidth=2)
+    plt.scatter(next_axis_x,next_axis_y, color='blue', s=30)
+    
+    plt.text(1.8, 1, rf'$\theta_0$ = {theta*180/np.pi:.2f}', ha='right', va='center', color='black')
+    plt.text(1.8, 1.2, rf'$k$ = {k}', ha='right', va='center', color='black')
+    plt.text(1.8, 0.8, rf'$\Delta \theta_k$ = {delta_theta_init*180/np.pi:.2f}', ha='right', va='center', color='black')
+    
+    plt.show()
