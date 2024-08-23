@@ -717,7 +717,7 @@ def sum_coeffs(k):
         
     return coeff_plus, coeff_minus, sum_coeffs
 
-def show_init_theta_dependencies(show_expr = False):
+def show_init_theta_dependencies(show_expr = False, include_b=False):
     k = 0.0
     arr = iter([90, 135, 180, 45, 90, 135, 180, 45])
     c = 0
@@ -732,10 +732,35 @@ def show_init_theta_dependencies(show_expr = False):
             else:
                 c = 1
                 sign = '-'
-            expr = f' ->   \u0394\u03B8- = {c}\u03c0 {sign} \u0394\u03B8+'
+            if not include_b:
+                expr = f' ->   \u0394\u03B8- = {c}\u03c0 {sign} \u0394\u03B8+'
+            else:
+                expr = f' ->   \u0394\u03B8- = B\u03c0 + (1 -2B)\u0394\u03B8+'
         else:
             expr = ''
         print('k: ',k ,f'    \u0394\u03B8+: ', int(diff_plus*180/np.pi), '    \u0394\u03B8-: ',next(arr),expr)
 
         k+=0.5
 
+def show_d_coeffs():
+    
+    from IPython.display import display, Markdown
+
+    k = 0.0
+
+    for _ in range(8):
+        D_plus, _, _ = sum_coeffs(float(k))
+        diff_plus = ((np.floor(k) + 1) - k) * np.pi / 2 + D_plus * np.pi / 2
+        
+        display(Markdown(f'k: {k} $D^{[0,1]}_{(k)} = {int(D_plus)}$'))
+        k += 0.5
+        
+def W_binary(w):
+    return (1 - w/abs(w))/2
+
+
+def B_binary(k):
+    return np.ceil(k) - np.floor(k)
+
+def D_binary(k):
+    return (1 + (-1)**(np.floor(k+1)))/2
