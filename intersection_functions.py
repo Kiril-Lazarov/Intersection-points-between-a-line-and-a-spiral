@@ -769,7 +769,7 @@ def show_first_intersect_axis(k, D_coeffs=False, direction_coeff=1):
     f = 5
     l = 1.5
     angles = np.linspace(0, 2 * np.pi)
-    create_field(figsize=(f, f), x_lim=(-l, l), y_lim=(-l, l))
+    ax = create_field(figsize=(f, f), x_lim=(-l, l), y_lim=(-l, l))
 
     x = np.cos(angles)
     y = np.sin(angles)
@@ -785,9 +785,19 @@ def show_first_intersect_axis(k, D_coeffs=False, direction_coeff=1):
             
     elif direction_coeff == -1:
         diff = (np.floor(k-1) -k) * np.pi/2  + D_minus * np.pi/2 
+        
     point = (np.cos(theta), np.sin(theta))
 
     next_axis_angle = theta + direction_coeff * diff
+    
+    start_theta = theta*180/np.pi
+    end_theta = (next_axis_angle)*180/np.pi
+    
+    # if w_coeff == 1:
+    #     start_theta, end_theta = end_theta, start_theta
+    
+    arc = Arc((0, 0), 0.7, 0.7, angle=0, theta1=start_theta, theta2=end_theta, edgecolor='black')
+    ax.add_patch(arc)
 
     next_axis_x = np.cos(next_axis_angle)
     next_axis_y = np.sin(next_axis_angle)
@@ -801,7 +811,6 @@ def show_first_intersect_axis(k, D_coeffs=False, direction_coeff=1):
     
     plt.text(1.8, 1, rf'$\theta_0$ = {theta*180/np.pi:.2f}', ha='right', va='center', color='black')
     plt.text(1.8, 1.2, rf'$k$ = {k}', ha='right', va='center', color='black')
-    plt.text(1.8, 0.8, rf'$\Delta \theta_k$ = {next_axis_angle*180/np.pi:.2f}', ha='right', va='center', color='black')
     
     plt.show()
     
