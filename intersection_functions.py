@@ -765,6 +765,48 @@ def B_binary(k):
 def D_binary(k):
     return (1 + (-1)**(np.floor(k+1)))/2
 
+def show_first_intersect_axis(k, D_coeffs=False, direction_coeff=1):
+    f = 5
+    l = 1.5
+    angles = np.linspace(0, 2 * np.pi)
+    create_field(figsize=(f, f), x_lim=(-l, l), y_lim=(-l, l))
+
+    x = np.cos(angles)
+    y = np.sin(angles)
+
+    theta = k * np.pi/2
+    if D_coeffs:
+        D_plus, D_minus, D_sum = sum_coeffs(float(k))
+    else:
+        D_plus, D_minus = 0,0
+        
+    if direction_coeff == 1:
+         diff = ((np.floor(k)+1 ) -k) * np.pi/2 + D_plus * np.pi/2
+            
+    elif direction_coeff == -1:
+        diff = (np.floor(k-1) -k) * np.pi/2  + D_minus * np.pi/2 
+    point = (np.cos(theta), np.sin(theta))
+
+    next_axis_angle = theta + direction_coeff * diff
+
+    next_axis_x = np.cos(next_axis_angle)
+    next_axis_y = np.sin(next_axis_angle)
+
+    plt.plot(x, y, color='red')
+    plt.scatter(*point, color='black', s=30)
+    plt.quiver(0, 0,*point,angles = "xy", scale_units = "xy", scale = 1, linewidth = 0.1,color='black')
+
+    plt.plot([0, next_axis_x], [0, next_axis_y], color='blue', linestyle='-', linewidth=2)
+    plt.scatter(next_axis_x,next_axis_y, color='blue', s=30)
+    
+    plt.text(1.8, 1, rf'$\theta_0$ = {theta*180/np.pi:.2f}', ha='right', va='center', color='black')
+    plt.text(1.8, 1.2, rf'$k$ = {k}', ha='right', va='center', color='black')
+    plt.text(1.8, 0.8, rf'$\Delta \theta_k$ = {next_axis_angle*180/np.pi:.2f}', ha='right', va='center', color='black')
+    
+    plt.show()
+    
+
+
 def show_first_y_intersect_axis(k, w):
     f = 5
     l = 1.5
