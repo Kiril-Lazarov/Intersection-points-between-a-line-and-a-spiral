@@ -863,3 +863,53 @@ def show_first_y_intersect_axis(k, w):
     plt.text(1.8, 0.8, rf'$\Delta \theta_k$ = {delta_theta_init*180/np.pi:.2f}', ha='right', va='center', color='black')
     
     plt.show()
+    
+
+def show_2d_sequence_table():
+    from IPython.display import display, HTML
+
+    # Създаване на HTML таблица
+    html_table = """
+    <table border="1" style="border-collapse: collapse; width: 50%;">
+        <tr>
+            <th>$T_1$</th>
+            <th>$T_2$</th>
+            <th>$T_3$</th>
+            <th>$T_4$</th>
+            <th>$...$</th>
+            <th>$Т_n$</th>
+            
+        </tr>
+        <tr>
+            <th>$t_{11}$</th> 
+            <td>$t_{21}$</td>
+            <td>$t_{31}$</td>
+            <td>$t_{41}$</td>
+            <th>$...$</th>
+            <th>$t_{nm}$</th>
+            
+        </tr>
+        <tr>
+            <th>$t_{12}$</th> 
+            <td>$t_{22}$</td>
+            <td>$t_{32}$</td>
+            <td>$t_{42}$</td>
+            <th>$...$</th>
+            <th>$t_{nm}$</th>
+            
+        </tr>
+        <tr>
+            <th>$t_{13}$</th> 
+            <td>$t_{23}$</td>
+            <td>$t_{33}$</td>
+            <td>$t_{43}$</td>
+            <th>$...$</th>
+            <th>$t_{nm}$</th>
+            
+        </tr>
+
+    </table>
+    """
+    display(HTML(html_table))
+show_2d_sequence_table()
+
