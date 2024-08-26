@@ -391,7 +391,8 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
                         linspace_count = 2000,
                         steps_count=2,
                         x_text_coef = 2.5,
-                        show_text = True):
+                        show_text = True,
+                        show_cos_delta_theta=False):
     
     init_y = np.copy(y)
     
@@ -416,13 +417,24 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
         y_spiral_intersect = v * rad_vec_t * np.sin(rad_vec_angle)
 
         if i == 0 and steps_count ==2:
-             
+       
             arc = Arc((0, 0), 1.5*2, 1.5*2, angle=0, theta1=0, theta2=rad_vec_angle*180/np.pi, edgecolor='black')
             ax.add_patch(arc)
+            plt.text(1.8, 1.1, r'$\theta$', ha='right', va='center', color='black')
+
+                
+            if show_cos_delta_theta:
+          
+                arc = Arc((0, 0), 1.5*2, 1.5*2, angle=0, theta1=rad_vec_angle*180/np.pi, theta2=90, edgecolor='black')
+                ax.add_patch(arc)
+                
             
+           
+                plt.text(0.8, 2, r'$\Delta \phi$', ha='right', va='center', color='black')
+                
             theta_deg = rad_vec_angle * 180 / np.pi
             
-            plt.text(1.8, 1.1, r'$\theta$', ha='right', va='center', color='black')
+            
             plt.text(1, 3,r'$\vec{{R}}$', ha='right', va='center', color='black')
             plt.text(x_spiral_intersect, y_spiral_intersect+0.5,r'$I$', ha='right', va='center', color='black')
             plt.text(x_text_coef * x, init_y /2.1, rf'$\theta = ${theta_deg:.9f}', ha='right', va='center', color='black')
@@ -482,7 +494,6 @@ def draw_algorithm(x, y, v, w, init_angle,ax,
             plt.text(x_text_coef * x, init_y /3.2, rf'$\vec{{R}} = ${rad_vec_mag:.9f}', ha='right', va='center', color='black')
 
             plt.text(x_text_coef * x, init_y /4.2, rf'$y_{{{steps_count}}} = {y_spiral_intersect:.9f}$', ha='right', va='center', color='black')
-        
     
 def show_spiral_and_circle():    
     angle_velocity = 1/(2* np.pi)
@@ -911,5 +922,5 @@ def show_2d_sequence_table():
     </table>
     """
     display(HTML(html_table))
-show_2d_sequence_table()
+
 
