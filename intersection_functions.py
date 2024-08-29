@@ -620,7 +620,8 @@ def show_all_intersects(v,w, theta_0, v_line_x,
                         iterations_count=None,
                         show_on_screen=False,
                         show_line_and_itrscts=True,
-                        show_labels=False):
+                        show_labels=False,
+                        show_nm_labels=False):
 
     y_points = [(-1)**(i-1) * 2 * np.pi * i for i in range(7) if i != 0]
 
@@ -629,7 +630,8 @@ def show_all_intersects(v,w, theta_0, v_line_x,
     spiral_times = np.linspace(0, max(y_points) + np.pi/2+theta_0, num)
     angles = spiral_times * w + theta_0
 
-
+    text_side_sign = - v_line_x/abs(v_line_x)
+    
     y_axis_limit= 1.1 * (max(y_points))
 
     y_first_points_t = get_y_intersection_points_t(first_y, v, w,angle_diff, (y_axis_limit, y_axis_limit))
@@ -656,7 +658,7 @@ def show_all_intersects(v,w, theta_0, v_line_x,
         plt.scatter(x, y, color='black', s= 20)
         if show_labels:
             if abs(y) <= y_axis_limit:
-                plt.text(3, y+2, f'{index+1}', ha='right', va='center', color='blue')
+                plt.text(3*text_side_sign, y+2, f'{index+1}', ha='right', va='center', color='blue')
         
         if show_line_and_itrscts:
         
@@ -701,6 +703,14 @@ def show_all_intersects(v,w, theta_0, v_line_x,
 
                     last_spiral_vector = np.copy(float(f'{curr_spiral_vec:.{accuracy}f}'))
                 n+=1
+                
+            if show_nm_labels:
+               
+                
+            
+                if abs(y) <= y_axis_limit:
+                    
+                    plt.text(x_copy - 2*text_side_sign, y_copy+2, f'({index+1}:{n})', ha='right', va='center', color='blue')
 
             plt.scatter(x_copy, y_copy, color='blue', s= 20)
 
