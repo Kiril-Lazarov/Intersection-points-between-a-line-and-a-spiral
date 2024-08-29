@@ -631,6 +631,7 @@ def show_all_intersects(v,w, theta_0, v_line_x,
     angles = spiral_times * w + theta_0
 
     text_side_sign = - v_line_x/abs(v_line_x)
+    text_x_displacement = 1 if text_side_sign >0 else 6
     
     y_axis_limit= 1.1 * (max(y_points))
 
@@ -710,7 +711,7 @@ def show_all_intersects(v,w, theta_0, v_line_x,
             
                 if abs(y) <= y_axis_limit:
                     
-                    plt.text(x_copy - 2*text_side_sign, y_copy+2, f'({index+1}:{n})', ha='right', va='center', color='blue')
+                    plt.text(x_copy - text_x_displacement*text_side_sign, y_copy+2, f'({index+1}:{n})', ha='right', va='center', color='blue')
 
             plt.scatter(x_copy, y_copy, color='blue', s= 20)
 
