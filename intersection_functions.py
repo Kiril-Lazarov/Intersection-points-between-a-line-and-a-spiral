@@ -774,7 +774,8 @@ def show_d_coeffs():
         D_plus, _, _ = sum_coeffs(float(k))
         diff_plus = ((np.floor(k) + 1) - k) * np.pi / 2 + D_plus * np.pi / 2
         
-        display(Markdown(f'k: {k} $D^{[0,1]}_{(k)} = {int(D_plus)}$'))
+        display(Markdown(f'k: {k} $\quad D^{{[0,1]}}_{{(k)}} = {int(D_plus)}$'))
+  
         k += 0.5
         
 def W_binary(w):
