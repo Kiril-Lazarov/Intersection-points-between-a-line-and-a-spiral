@@ -66,36 +66,45 @@ def get_mth_aproximation(t_nth, x_line, v, w, k, i=200, accuracy=5):
     init_theta_angle = k * np.pi/2
     
     init_y = get_y_coord(v, w, k, t_0)
-    
+
     a_coeff = A_coeff(x_line, w, v, k, init_y)
-
     
-    x_coeff = X_bin(x_line)
-
+    diffs_massive = [np.copy(t_nth)]
     
     last_t = np.copy(t_0)
-    
-
-    
-    for m in range(1, i+1):
-
+        
+    for m in range(1, i):
+        # print('m : ', m)
         curr_x = get_x_coord(v, w, k, t_0)
         curr_y = get_y_coord(v, w, k, t_0)
-
         
+        if abs(curr_x) > abs(x_line):
+            curr_x = x_line
+
         c = abs(curr_x - x_line)
         
         a = np.sqrt(x_line**2 + curr_y**2)
         
-        b = v*t_0
+        b = v*t_0 # Current radius vector
         
         cos_delta_phi = (a ** 2 + b**2 - c ** 2)/(2 * a * b)
-        
-        delta_phi = np.arccos(cos_delta_phi)
    
-        t_0 += (a_coeff * delta_phi)/ abs(w)
-    
+        if abs(cos_delta_phi) > 1:
+            cos_delta_phi = 1
+ 
+        delta_phi = np.arccos(cos_delta_phi)
+
+        curr_t = (a_coeff * delta_phi)/ abs(w)
+  
+            
+        t_0 += curr_t
+        
         if f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}':
-       
-            return t_0
+
+            return float(f'{sum(diffs_massive):.{accuracy}f}')
+
         last_t = np.copy(t_0)
+        
+        diffs_massive.append(curr_t)
+        
+    return float(f'{sum(diffs_massive):.{accuracy}f}')
