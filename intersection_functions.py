@@ -3,6 +3,8 @@ from matplotlib.patches import Arc
 import numpy as np
 import math
 
+from formula_functions import *
+
 def distance(point1, point2):
     return math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
 
@@ -942,3 +944,40 @@ def show_2d_sequence_table():
     display(HTML(html_table))
 
 
+def compare_ordinates(x_line=1, k=2.9,w=4, v=1, points_count=5):
+    ordinate_intrsct_points = []
+    
+    theta_0 = k*np.pi/2
+
+    for n in range(1,points_count):
+        curr_ord_intrsct = get_nth_intersect(n, k, w)
+        ordinate_intrsct_points.append(curr_ord_intrsct)
+
+    for n_th in ordinate_intrsct_points:
+
+        x_nth_point = v*n_th * np.cos(theta_0 + w * n_th)
+        y_nth_point = v*n_th * np.sin(theta_0 + w * n_th)
+
+    line_intrsct_points = []
+    
+    for t in ordinate_intrsct_points:
+        mth_itrsct = get_mth_aproximation(t, x_line, v, w, k, i=300, accuracy=5)
+        line_intrsct_points.append(mth_itrsct)
+        
+    ordinate_intrsct_points = np.array(ordinate_intrsct_points)
+    line_intrsct_points = np.array(line_intrsct_points)
+    
+    y_ordinates = abs(v*ordinate_intrsct_points * np.sin(theta_0+ w* ordinate_intrsct_points))
+    y_line = abs(v*line_intrsct_points * np.sin(theta_0+ w* line_intrsct_points))
+
+    plt.scatter(range(len(y_ordinates)), y_ordinates, c='blue', s=10, label='Ordinate axis intersects')
+    
+    plt.scatter(range(len(y_line)), y_line, c='red', s=10, label='Line intersects')
+    
+    plt.title('Comparing ordinate and line intersects')
+                
+    plt.legend(loc='upper left')
+    
+    plt.xlabel('Points count')
+    plt.ylabel('Y-axis length')
+    plt.show()
