@@ -614,7 +614,8 @@ def calc_angle_and_t(x_line_const, x, y, w, v, init_angle,show_on_screen=False):
 
     return rad_vec_angle, new_rad_vec_t
 
-def show_all_intersects(v,w, theta_0, v_line_x, 
+def show_all_intersects(v,w, theta_0, v_line_x,
+                        figsize=(10, 10),
                         nth_intersect=None, 
                         accuracy=5, 
                         num=2000, 
@@ -643,7 +644,7 @@ def show_all_intersects(v,w, theta_0, v_line_x,
     if nth_intersect is not None:
         y_first_points_t = y_first_points_t[:nth_intersect]
 
-    ax = create_field(figsize=(10, 10), x_lim=(-y_axis_limit, y_axis_limit), y_lim=(-y_axis_limit, y_axis_limit))
+    ax = create_field(figsize=figsize, x_lim=(-y_axis_limit, y_axis_limit), y_lim=(-y_axis_limit, y_axis_limit))
 
     x_spiral = spiral_times * v * np.cos(angles)
     y_spiral = spiral_times * v * np.sin(angles)
@@ -944,7 +945,7 @@ def show_2d_sequence_table():
     display(HTML(html_table))
 
 
-def compare_ordinates(x_line=1, k=2.9,w=4, v=1, points_count=5):
+def compare_ordinates(x_line=1, k=2.9,w=4, v=1, points_count=5,figsize=(7,7)):
     ordinate_intrsct_points = []
     
     theta_0 = k*np.pi/2
@@ -969,10 +970,12 @@ def compare_ordinates(x_line=1, k=2.9,w=4, v=1, points_count=5):
     
     y_ordinates = abs(v*ordinate_intrsct_points * np.sin(theta_0+ w* ordinate_intrsct_points))
     y_line = abs(v*line_intrsct_points * np.sin(theta_0+ w* line_intrsct_points))
-
-    plt.scatter(range(len(y_ordinates)), y_ordinates, c='blue', s=10, label='Ordinate axis intersects')
     
-    plt.scatter(range(len(y_line)), y_line, c='red', s=10, label='Line intersects')
+    plt.figure(figsize = figsize)
+
+    plt.scatter(range(len(y_ordinates)), y_ordinates, c='black', s=10, label='Ordinate axis intersects')
+    
+    plt.scatter(range(len(y_line)), y_line, c='blue', s=10, label='Line intersects')
     
     plt.title('Comparing ordinate and line intersects')
                 
