@@ -2,10 +2,8 @@ import pygame
 import numpy as np
 
 
-def create_background(screen_width, screen_height, bg_color, font_small, after_stop = False):
-    
-    units =50
-    length = (screen_width/ units)
+def create_background(screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
+
     line_color = (200,200,200)
     center_point = (screen_width/2, screen_height/2)
     # Create background object
@@ -39,11 +37,9 @@ def create_background(screen_width, screen_height, bg_color, font_small, after_s
     
     pygame.draw.line(background_surface, color=line_color, start_pos=(x_line, y_line_start),
                          end_pos = (x_line, y_line_end), width=2)
-    
-    # pygame.draw.line(background_surface, color=line_color, start_pos=(x_line_start, y_line),
-    #                      end_pos = (x_line_end, y_line), width=2)
-        
+
     pygame.draw.circle(background_surface, color='darkgrey', center=center_point, radius=4)
+    
     # Upper and lower bounds of the vertical divisions of the x-axis
     vertical_line_start = y_line - 5
     vertical_line_end = y_line + 5
@@ -84,6 +80,8 @@ def create_background(screen_width, screen_height, bg_color, font_small, after_s
                 horizontal_line_end, line_color,font_small, half_units,number_x,pos_number, neg_number)
 
     return background_surface, markers, screen_objects
+
+
 
 def draw_x_axis_values(background_surface, screen_width, screen_height,
                 i, length, x_line_start,vertical_line_start,
@@ -142,3 +140,20 @@ def draw_y_axis_values(background_surface, screen_width, screen_height,
             #Draw positive numbers
             neg_number_text = font_small.render(f'{pos_number}', True, line_color)
             background_surface.blit(neg_number_text, (number_x-57,horizontal_line_y_pos))
+            
+def x_transform(x, screen_width,length):
+    return x* length + screen_width/2
+
+def y_transform(y, screen_height,length):
+    return -y * length + screen_height /2
+
+
+def draw_vertical_line(background_surface, screen_width, screen_height, length, units,x_axis_value=1):
+    half_units = units/2
+    x_up, y_up  = x_transform(x_axis_value, screen_width, length),x_transform(half_units, screen_width, length)
+    x_down, y_down = x_transform(x_axis_value, screen_width, length),x_transform(-half_units, screen_width, length)
+    
+    pygame.draw.aalines(background_surface, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
+    
+
+    
