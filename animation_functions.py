@@ -2,14 +2,11 @@ import pygame
 import numpy as np
 
 
-def create_background(screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
+def create_background(background_surface,screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
 
     line_color = (200,200,200)
     center_point = (screen_width/2, screen_height/2)
-    # Create background object
-    background_surface = pygame.Surface((screen_width, screen_height))
-    background_surface.fill(bg_color)
-    
+
     markers = []   
     
     
@@ -148,12 +145,72 @@ def y_transform(y, screen_height,length):
     return -y * length + screen_height /2
 
 
-def draw_vertical_line(background_surface, screen_width, screen_height, length, units,x_axis_value=1):
+def draw_vertical_line(line_layer, screen_width, screen_height, length, units,x_axis_value=1):
     half_units = units/2
     x_up, y_up  = x_transform(x_axis_value, screen_width, length),x_transform(half_units, screen_width, length)
     x_down, y_down = x_transform(x_axis_value, screen_width, length),x_transform(-half_units, screen_width, length)
     
-    pygame.draw.aalines(background_surface, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
+    pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
     
+    
+       
+def calc_spiral_coord(screen_width, screen_height, length, units, v=1, w=1, k=0):
+    
+    theta_0 = k * np.pi/2
+    
+    half_units = units /2
+    
+    # N = half_units/(v*2*np.pi)
+    
+    # Needed time t for one rotation
+    rotation_t = 2 * np.pi/(abs(w))
+    
+    
+    
+    one_rotation_rad_vec_len = v * rotation_t
+    
+    N = half_units / one_rotation_rad_vec_len
+    
+    max_spiral_vector_length = np.sqrt(screen_width ** 2 + screen_height ** 2)/length
+    
+#     print('max_spiral_vector_length: ', max_spiral_vector_length)
+#     print('max_spiral_vector_t: ', max_spiral_vector_length,max_spiral_vector_length/v )
+    
+#     print('rotation_t: ', rotation_t)
+#     print('one_rotation_rad_vec_len: ', one_rotation_rad_vec_len)
+    max_t = max_spiral_vector_length/N
+    # print('Max t: ', max_t)
+    lin_space = (0, max_t)
+    
+    num = int(max_t*100)
+    
+    # print('num: ', num)
+    # print('N: ', N)
+    T = np.linspace(*lin_space, num)
+    # print('Len T before: ', len(T))
+    T = np.array([t for t in T if t * v < max_spiral_vector_length])
+    # print('Len T after: ', len(T))
+    # print('lin_space: ', lin_space)
+    # print('Len lin_space: ', len(lin_space))
+    # print('len T: ', len(T))
+    # print(T)
+    
+    angles = np.array([theta_0 + t * w for t in T])
+    radiuses = np.array([v * t for t in T])
+    
+    x = radiuses * np.cos(angles)
+    y = radiuses * np.sin(angles)
+    
+    return x, y
 
+def draw_spiral(spiral_layer, screen_width, screen_height,length,units, v=1,w=1,k=0):
     
+    x_spiral, y_spiral = calc_spiral_coord(screen_width, screen_height,length,units, v=v,w=w,k=k)
+    
+    x_spiral = [x_transform(x, screen_width, length) for x in x_spiral]
+    y_spiral = [y_transform(y, screen_height, length) for y in y_spiral]
+    
+    for i in range(len(x_spiral) -1):
+        curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
+        next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
+        pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), (next_sp_point_x, next_sp_point_y)])
