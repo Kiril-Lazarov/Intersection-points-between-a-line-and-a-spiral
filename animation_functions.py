@@ -214,3 +214,8 @@ def draw_spiral(spiral_layer, screen_width, screen_height,length,units, v=1,w=1,
         curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
         next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
         pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), (next_sp_point_x, next_sp_point_y)])
+        
+def blit_layers(win, layers_list, bg_color):
+    win.fill(bg_color)
+    for layer in layers_list:
+        win.blit(layer, (0, 0))
