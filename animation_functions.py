@@ -112,11 +112,11 @@ def draw_y_axis_values(background_surface, screen_width, screen_height,
        
         #Draw negative numbers
         neg_number_text = font_small.render(f'-{pos_number}', True, line_color)
-        background_surface.blit(neg_number_text, (number_x-50,horizontal_line_y_neg-5)) 
+        background_surface.blit(neg_number_text, (number_x-46,horizontal_line_y_neg-4)) 
 
         #Draw positive numbers
         neg_number_text = font_small.render(f'{pos_number}', True, line_color)
-        background_surface.blit(neg_number_text, (number_x-50,horizontal_line_y_pos-5))
+        background_surface.blit(neg_number_text, (number_x-46,horizontal_line_y_pos-4))
         
         
             
@@ -129,11 +129,9 @@ def y_transform(y, screen_height,length):
     return -y * length + screen_height /2
 
 
-def draw_vertical_line(line_layer, screen_width, screen_height, length, units,x_axis_value=1):
+def draw_vertical_line(line_layer, screen_width, screen_height, length, half_units,x_axis_value=1):
     
     line_layer.fill((0, 0, 0, 0))
-    
-    half_units = units/2
     
     x_up, y_up  = x_transform(x_axis_value, screen_width, length),x_transform(half_units, screen_width, length)
     x_down, y_down = x_transform(x_axis_value, screen_width, length),x_transform(-half_units, screen_width, length)
@@ -142,26 +140,15 @@ def draw_vertical_line(line_layer, screen_width, screen_height, length, units,x_
     
     
        
-def calc_spiral_coord(max_spiral_vector_length, units, v=1, w=1, k=0):
+def calc_spiral_coord(max_spiral_vector_length, turns_count, v=1, w=1, k=0):
     
     theta_0 = k * np.pi/2
-    
-    half_units = units /2
 
-    # Needed time t for one rotation
-    rotation_t = 2 * np.pi/(abs(w))
-    
-    
-    
-    one_rotation_rad_vec_len = v * rotation_t
-    
-    N = half_units / one_rotation_rad_vec_len
-
-    max_t = max_spiral_vector_length/N
+    max_t = max_spiral_vector_length/turns_count
 
     lin_space = (0, max_t)
     
-    num = 2000
+    num = 3000
 
     T = np.linspace(*lin_space, num)
     
@@ -173,18 +160,21 @@ def calc_spiral_coord(max_spiral_vector_length, units, v=1, w=1, k=0):
     
     return x, y, 
 
-def draw_spiral(spiral_layer, screen_width, screen_height,length,max_spiral_vector_length, units, v=1,w=1,k=0):
+def draw_spiral(spiral_layer, screen_width, screen_height,length,max_spiral_vector_length, turns_count, v=1,w=1,k=0):
     
     spiral_layer.fill((0, 0, 0, 0))
-    x_spiral, y_spiral = calc_spiral_coord(max_spiral_vector_length,units, v=v,w=w,k=k)
     
-    x_spiral = [x_transform(x, screen_width, length) for x in x_spiral]
-    y_spiral = [y_transform(y, screen_height, length) for y in y_spiral]
+    if w != 0:
+        x_spiral, y_spiral = calc_spiral_coord(max_spiral_vector_length,turns_count, v=v, w=w, k=k)
+
+        x_spiral = [x_transform(x, screen_width, length) for x in x_spiral]
+        y_spiral = [y_transform(y, screen_height, length) for y in y_spiral]
+
+        for i in range(len(x_spiral) -1):
+            curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
+            next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
+            pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), (next_sp_point_x, next_sp_point_y)])
     
-    for i in range(len(x_spiral) -1):
-        curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
-        next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
-        pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), (next_sp_point_x, next_sp_point_y)])
         
 def blit_layers(win, layers_list, bg_color):
     win.fill(bg_color)
