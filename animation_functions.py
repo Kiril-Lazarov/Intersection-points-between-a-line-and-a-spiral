@@ -1,6 +1,8 @@
 import pygame 
 import numpy as np
 
+from formula_functions import *
+
 
 def create_background(background_surface,screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
     
@@ -120,33 +122,31 @@ def draw_y_axis_values(background_surface, screen_width, screen_height,
         
         
             
-def x_transform(x, screen_width,length):
+def x_transform(x, half_screen_width,length):
     
-    return x* length + screen_width/2
+    return x* length + half_screen_width
 
-def y_transform(y, screen_height,length):
+def y_transform(y, half_screen_height,length):
     
-    return -y * length + screen_height /2
+    return -y * length + half_screen_height
 
 
-def draw_vertical_line(line_layer, screen_width, screen_height, length, half_units,x_axis_value=1):
+def draw_vertical_line(line_layer, half_screen_width, half_screen_height, length, half_units,x_axis_value=1):
     
     line_layer.fill((0, 0, 0, 0))
     
-    x_up, y_up  = x_transform(x_axis_value, screen_width, length),x_transform(half_units, screen_width, length)
-    x_down, y_down = x_transform(x_axis_value, screen_width, length),x_transform(-half_units, screen_width, length)
+    x_up, y_up  = x_transform(x_axis_value, half_screen_width, length),x_transform(half_units, half_screen_width, length)
+    x_down, y_down = x_transform(x_axis_value, half_screen_width, length),x_transform(-half_units, half_screen_width, length)
     
     pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
     
     
        
-def calc_spiral_coord(max_spiral_vector_length, turns_count, v=1, w=1, k=0):
+def calc_spiral_coord(t=1 ,v=1, w=1, k=0):
     
     theta_0 = k * np.pi/2
 
-    max_t = max_spiral_vector_length/turns_count
-
-    lin_space = (0, max_t)
+    lin_space = (0, t)
     
     num = 3000
 
@@ -158,22 +158,70 @@ def calc_spiral_coord(max_spiral_vector_length, turns_count, v=1, w=1, k=0):
     x = radiuses * np.cos(angles)
     y = radiuses * np.sin(angles)
     
-    return x, y, 
+    
+    
+    return x, y 
 
-def draw_spiral(spiral_layer, screen_width, screen_height,length,max_spiral_vector_length, turns_count, v=1,w=1,k=0):
+def calc_y_intersects_t(t, w, k) -> list:
+    
+    is_bigger = False
+    t_list = []
+    
+    
+    if abs(w) == 0:
+        is_bigger = True
+  
+    n = 1
+    
+    while not is_bigger:
+        curr_t = get_nth_intersect(n, k, w)
+        
+        if curr_t <= t:
+            t_list.append(curr_t)
+            n += 1
+        else:
+            is_bigger = True
+            
+    return t_list
+
+def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, v=1,w=1,k=0):
     
     spiral_layer.fill((0, 0, 0, 0))
     
     if w != 0:
-        x_spiral, y_spiral = calc_spiral_coord(max_spiral_vector_length,turns_count, v=v, w=w, k=k)
+        x_spiral, y_spiral = calc_spiral_coord(t=t ,v=v, w=w, k=k)
 
-        x_spiral = [x_transform(x, screen_width, length) for x in x_spiral]
-        y_spiral = [y_transform(y, screen_height, length) for y in y_spiral]
+        x_spiral = [x_transform(x, half_screen_width, length) for x in x_spiral]
+        y_spiral = [y_transform(y, half_screen_height, length) for y in y_spiral]
 
         for i in range(len(x_spiral) -1):
             curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
-            next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
-            pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), (next_sp_point_x, next_sp_point_y)])
+            
+            if (0 <=abs(curr_sp_point_x)<=half_screen_width * 2) and \
+               (0 <=abs(curr_sp_point_y)<=half_screen_height * 2): 
+                
+                next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
+                pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), (next_sp_point_x, next_sp_point_y)])
+                
+                
+                
+def draw_dots(y_axis_intersects_layer, half_screen_width, half_screen_height, length, t_list, v, w, k):
+    
+    y_axis_intersects_layer.fill((0, 0, 0, 0))
+    if t_list:
+        theta_0 = k * np.pi/2
+
+        for t in t_list:
+            angle = theta_0 + w * t
+            radius_vec = v * t
+            
+            x = radius_vec * np.cos(angle)
+            y = radius_vec * np.sin(angle)
+            
+            x = x_transform(x, half_screen_width, length)
+            y = y_transform(y, half_screen_height, length)
+            
+            pygame.draw.circle(y_axis_intersects_layer, color='black', center=(x, y), radius=4)
     
         
 def blit_layers(win, layers_list, bg_color):
