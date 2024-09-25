@@ -1,7 +1,7 @@
 import numpy as np 
 import pygame
 from animation_functions import *
-from show_parameters_functions import *
+
 
 def handle_key_commands(layers_list, 
                         const_params_dict, var_params_dict, steps_dict_constants,
@@ -76,13 +76,13 @@ def handle_key_commands(layers_list,
             update_screen, update_spiral = True, True
 
     # Return to the initial parameters
-    elif (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]) and keys[pygame.K_r]:
+#     elif (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]) and keys[pygame.K_r]:
 
-        var_params_dict['t'], var_params_dict['v'], var_params_dict['w'], var_params_dict['x'], var_params_dict['k'] = 0, 0, 0, 0, 0
+#         var_params_dict['t'], var_params_dict['v'], var_params_dict['w'], var_params_dict['x'], var_params_dict['k'] = 0, 0, 0, 0, 0
 
-        const_params_dict['w'] = 1
+#         const_params_dict['w'] = 1
 
-        update_screen, update_spiral, update_line = True, True, True
+#         update_screen, update_spiral, update_line = True, True, True
 
 
     # Increase time `t`
@@ -101,3 +101,23 @@ def handle_key_commands(layers_list,
    
             
     return update_screen, update_spiral, update_line, var_params_dict, const_params_dict
+
+
+def handle_shift_key_controls(event, update_screen, update_spiral, const_params_dict, var_params_dict):
+    
+    if event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_w:
+        const_params_dict['w'] *= -1
+
+        var_params_dict['w'] *= -1
+        
+        update_screen, update_spiral = True, True
+        
+    if event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_r:
+        
+        var_params_dict['t'], var_params_dict['v'], var_params_dict['w'], var_params_dict['x'], var_params_dict['k'] = 0, 0, 0, 0, 0
+
+        const_params_dict['w'] = 1
+        
+        update_screen, update_spiral = True, True
+        
+    return update_screen, update_spiral, const_params_dict, var_params_dict
