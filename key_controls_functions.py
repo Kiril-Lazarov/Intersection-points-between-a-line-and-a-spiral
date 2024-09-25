@@ -75,15 +75,6 @@ def handle_key_commands(layers_list,
 
             update_screen, update_spiral = True, True
 
-    # Return to the initial parameters
-#     elif (keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]) and keys[pygame.K_r]:
-
-#         var_params_dict['t'], var_params_dict['v'], var_params_dict['w'], var_params_dict['x'], var_params_dict['k'] = 0, 0, 0, 0, 0
-
-#         const_params_dict['w'] = 1
-
-#         update_screen, update_spiral, update_line = True, True, True
-
 
     # Increase time `t`
     elif keys[pygame.K_t] and keys[pygame.K_UP]:
@@ -103,15 +94,17 @@ def handle_key_commands(layers_list,
     return update_screen, update_spiral, update_line, var_params_dict, const_params_dict
 
 
-def handle_shift_key_controls(event, update_screen, update_spiral, const_params_dict, var_params_dict):
+def handle_shift_key_commands(event, update_screen, update_spiral, const_params_dict, var_params_dict):
     
+    # Turn the direction of the spiral
     if event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_w:
         const_params_dict['w'] *= -1
 
         var_params_dict['w'] *= -1
         
         update_screen, update_spiral = True, True
-        
+      
+    # Reset variables to their initial values
     if event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_r:
         
         var_params_dict['t'], var_params_dict['v'], var_params_dict['w'], var_params_dict['x'], var_params_dict['k'] = 0, 0, 0, 0, 0
@@ -119,5 +112,17 @@ def handle_shift_key_controls(event, update_screen, update_spiral, const_params_
         const_params_dict['w'] = 1
         
         update_screen, update_spiral = True, True
-        
+   
     return update_screen, update_spiral, const_params_dict, var_params_dict
+
+
+def handle_ctrl_commands(event, update_screen,  mode_statuses_dict):
+           
+    if event.type == pygame.KEYDOWN:
+        mods = pygame.key.get_mods()
+        if (mods & pygame.KMOD_CTRL) and not (mods & pygame.KMOD_SHIFT) and event.key == pygame.K_a:
+            
+            mode_statuses_dict['Algorithm mode'] = False if mode_statuses_dict['Algorithm mode']== True else True
+            update_screen = True
+
+    return update_screen, mode_statuses_dict 
