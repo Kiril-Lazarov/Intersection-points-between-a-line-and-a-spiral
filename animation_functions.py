@@ -6,7 +6,7 @@ from formula_functions import *
 
 def create_background(background_surface,screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
     
-
+    background_surface.fill(bg_color)
 
     line_color = (200,200,200)
     center_point = (screen_width/2, screen_height/2)
@@ -184,6 +184,17 @@ def calc_y_intersects_t(t, w, k) -> list:
             
     return t_list
 
+
+def calc_line_intersections_t(t_nth_list, x, v, w, k, correction_mech=False, f_binary=False, accuracy=5, i=200):
+    
+    t_mth_list = []
+    for t in t_nth_list:
+        curr_t_mth = get_mth_aproximation(t, x, v, w, k, correction_mech=correction_mech, i=i, f_binary=f_binary,accuracy=accuracy)
+        t_mth_list.append(curr_t_mth)
+        
+    return t_mth_list
+
+
 def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, v=1,w=1,k=0):
     
     spiral_layer.fill((0, 0, 0, 0))
@@ -205,9 +216,9 @@ def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, 
                 
                 
                 
-def draw_dots(y_axis_intersects_layer, half_screen_width, half_screen_height, length, t_list, v, w, k):
+def draw_dots(layer, half_screen_width, half_screen_height, length, t_list, v, w, k, color):
     
-    y_axis_intersects_layer.fill((0, 0, 0, 0))
+    layer.fill((0, 0, 0, 0))
     if t_list:
         theta_0 = k * np.pi/2
 
@@ -221,7 +232,7 @@ def draw_dots(y_axis_intersects_layer, half_screen_width, half_screen_height, le
             x = x_transform(x, half_screen_width, length)
             y = y_transform(y, half_screen_height, length)
             
-            pygame.draw.circle(y_axis_intersects_layer, color='black', center=(x, y), radius=4)
+            pygame.draw.circle(layer, color=color, center=(x, y), radius=4)
     
         
 def blit_layers(win, layers_list, bg_color):
