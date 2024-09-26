@@ -140,9 +140,8 @@ def draw_vertical_line(line_layer, half_screen_width, half_screen_height, length
     
     pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
     
-    
        
-def calc_spiral_coord(t=1 ,v=1, w=1, k=0):
+def calc_spiral_coord(t=1 ,v=1, w=1, k=0) -> tuple:
     
     theta_0 = k * np.pi/2
 
@@ -185,7 +184,7 @@ def calc_y_intersects_t(t, w, k) -> list:
     return t_list
 
 
-def calc_line_intersections_t(t_nth_list, x, v, w, k, correction_mech=False, f_binary=False, accuracy=5, i=200):
+def calc_line_intersections_t(t_nth_list, x, v, w, k, correction_mech=False, f_binary=False, accuracy=5, i=200) -> list:
     
     t_mth_list = []
     for t in t_nth_list:
@@ -193,6 +192,16 @@ def calc_line_intersections_t(t_nth_list, x, v, w, k, correction_mech=False, f_b
         t_mth_list.append(curr_t_mth)
         
     return t_mth_list
+
+
+def calc_single_t_aproxim(v, w, k, t, half_screen_width, half_screen_height, length):
+    x = get_x_coord(v, w, k, t)
+    y = get_y_coord(v, w, k, t)
+
+    x = x_transform(x, half_screen_width, length)
+    y = y_transform(y, half_screen_height, length)
+
+    return x, y
 
 
 def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, v=1,w=1,k=0):
@@ -239,3 +248,64 @@ def blit_layers(win, layers_list, bg_color):
     win.fill(bg_color)
     for layer in layers_list:
         win.blit(layer, (0, 0))
+        
+        
+def draw_alorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_list, 
+                        half_screen_width, half_screen_height, length,accuracy=5, n=1, m=0):
+    
+    algorithm_layer.fill((0, 0, 0, 0))
+
+    if t_nth_list:
+        y_intersect_t = t_nth_list[n-1]
+        
+        # Create list with interesection point aproximations and store it.
+        if not t_mth_aproxim_list:
+            # print(t_nth_list)
+            # print(y_intersect_t)
+            zero_intersect_t = get_mth_aproximation(y_intersect_t, x, v, w, k, i=1, accuracy=accuracy, correction_mech=False, f_binary=False)
+            t_mth_aproxim_list.append(zero_intersect_t)
+            
+        if not 0 < m-1 <= len(t_mth_aproxim_list):
+            
+            last_t = t_mth_aproxim_list[-1]
+            next_t = get_mth_aproximation(last_t, x, v, w, k, i=1, correction_mech=False, f_binary=False)
+            t_mth_aproxim_list.append(next_t)
+        
+        curr_t = t_mth_aproxim_list[m]
+        # print('curr_t: ', curr_t)
+
+        x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
+
+        start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
+
+        draw_vector(algorithm_layer, start_pos, end_pos, color='green', width=2)
+
+        # Draw previous radius vector
+        if m > 0:
+            curr_t = t_mth_aproxim_list[m-1]
+          
+            x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
+
+            start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
+
+            draw_vector(algorithm_layer, start_pos, end_pos, color='lightgreen', width=2)
+            
+    return t_mth_aproxim_list
+
+def draw_vector(layer, start_pos, end_pos, color=(255, 255, 255), width=2):
+  
+    pygame.draw.line(layer, color, start_pos, end_pos, width)
+
+    angle = np.arctan2(end_pos[1] - start_pos[1], end_pos[0] - start_pos[0])
+
+    arrow_length = 10
+    arrow_angle = np.pi / 6  # 30 градуса
+
+    arrow1 = (end_pos[0] - arrow_length * np.cos(angle - arrow_angle),
+              end_pos[1] - arrow_length * np.sin(angle - arrow_angle))
+    arrow2 = (end_pos[0] - arrow_length * np.cos(angle + arrow_angle),
+              end_pos[1] - arrow_length * np.sin(angle + arrow_angle))
+
+    pygame.draw.line(layer, color, end_pos, arrow1, width)
+    pygame.draw.line(layer, color, end_pos, arrow2, width)
+    
