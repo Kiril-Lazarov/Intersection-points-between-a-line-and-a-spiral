@@ -250,7 +250,7 @@ def blit_layers(win, layers_list, bg_color):
         win.blit(layer, (0, 0))
         
         
-def draw_alorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_list, 
+def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_list, algorithm_variables_dict, 
                         half_screen_width, half_screen_height, length,accuracy=5, n=1, m=0):
     
     algorithm_layer.fill((0, 0, 0, 0))
@@ -272,7 +272,7 @@ def draw_alorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_l
             t_mth_aproxim_list.append(next_t)
         
         curr_t = t_mth_aproxim_list[m]
-        # print('curr_t: ', curr_t)
+ 
 
         x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
 
@@ -294,18 +294,23 @@ def draw_alorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_l
 
 def draw_vector(layer, start_pos, end_pos, color=(255, 255, 255), width=2):
   
-    pygame.draw.line(layer, color, start_pos, end_pos, width)
+    # Рисува главната линия с antialiasing
+    pygame.draw.aaline(layer, color, start_pos, end_pos, width)
 
+    # Изчислява ъгъла на вектора
     angle = np.arctan2(end_pos[1] - start_pos[1], end_pos[0] - start_pos[0])
 
     arrow_length = 10
     arrow_angle = np.pi / 6  # 30 градуса
 
+    # Изчислява позициите на стрелките
     arrow1 = (end_pos[0] - arrow_length * np.cos(angle - arrow_angle),
               end_pos[1] - arrow_length * np.sin(angle - arrow_angle))
     arrow2 = (end_pos[0] - arrow_length * np.cos(angle + arrow_angle),
               end_pos[1] - arrow_length * np.sin(angle + arrow_angle))
 
-    pygame.draw.line(layer, color, end_pos, arrow1, width)
-    pygame.draw.line(layer, color, end_pos, arrow2, width)
+    # Рисува стрелките с antialiasing
+    pygame.draw.aaline(layer, color, end_pos, arrow1, width)
+    pygame.draw.aaline(layer, color, end_pos, arrow2, width)
+
     
