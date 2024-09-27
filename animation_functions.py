@@ -251,66 +251,112 @@ def blit_layers(win, layers_list, bg_color):
         
         
 def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_list, algorithm_variables_dict, 
-                        half_screen_width, half_screen_height, length,accuracy=5, n=1, m=0):
-    
+                        half_screen_width, half_screen_height, length,
+                         accuracy=5, curr_rad_vec_color = 'black', previous_rad_vec_color = 'lightgreen'):
+
     algorithm_layer.fill((0, 0, 0, 0))
+    
+    algorithm_variables_dict['total_n'] = len(t_nth_list) # Stores now many are the y-intersection points
+    
+    # n = algorithm_variables_dict['n']
+    m = np.copy(algorithm_variables_dict['m'])
 
     if t_nth_list:
-        y_intersect_t = t_nth_list[n-1]
+        
+        if algorithm_variables_dict['n']  == 0:
+            y_intersect_t = t_nth_list[0]
+            algorithm_variables_dict['n']+=1
+        else: 
+            y_intersect_t = t_nth_list[algorithm_variables_dict['n'] -1]
         
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
-            # print(t_nth_list)
-            # print(y_intersect_t)
+     
             zero_intersect_t = get_mth_aproximation(y_intersect_t, x, v, w, k, i=1, accuracy=accuracy, correction_mech=False, f_binary=False)
             t_mth_aproxim_list.append(zero_intersect_t)
             
-        if not 0 < m-1 <= len(t_mth_aproxim_list):
-            
-            last_t = t_mth_aproxim_list[-1]
-            next_t = get_mth_aproximation(last_t, x, v, w, k, i=1, correction_mech=False, f_binary=False)
-            t_mth_aproxim_list.append(next_t)
-        
-        curr_t = t_mth_aproxim_list[m]
- 
+            # Calc current radius-vector
+            curr_t = t_mth_aproxim_list[m]
 
-        x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
 
-        start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
-
-        draw_vector(algorithm_layer, start_pos, end_pos, color='green', width=2)
-
-        # Draw previous radius vector
-        if m > 0:
-            curr_t = t_mth_aproxim_list[m-1]
-          
             x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
 
             start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
 
-            draw_vector(algorithm_layer, start_pos, end_pos, color='lightgreen', width=2)
+            draw_vector(algorithm_layer, start_pos, end_pos, color=curr_rad_vec_color)
+        
+        else:
+            if m +1 > len(t_mth_aproxim_list):
+                
+                
+                next_t = get_mth_aproximation(y_intersect_t, x, v, w, k, i=m+1, correction_mech=False, f_binary=False)
+                t_mth_aproxim_list.append(next_t)
+                
+                # Calc previous radius vector if it exists
+                if m -1> 0:
+                    curr_t = t_mth_aproxim_list[algorithm_variables_dict['m']-1]
+
+                    x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
+
+                    start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
+
+                    draw_vector(algorithm_layer, start_pos, end_pos, color=previous_rad_vec_color)
+                
+ 
+                # Calc current radius-vector
+                curr_t = t_mth_aproxim_list[m]
+
+                x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
+
+                start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
+
+                draw_vector(algorithm_layer, start_pos, end_pos, color=curr_rad_vec_color)
+
+                
+            else:
+              
+                # Calc previous radius vector if it exists
+                if m -1>= 0:
+                    curr_t = t_mth_aproxim_list[m-1]
+
+                    x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
+
+                    start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
+
+                    draw_vector(algorithm_layer, start_pos, end_pos, color=previous_rad_vec_color)
+                    
+                # Calc current radius-vector
+                curr_t = t_mth_aproxim_list[m]
+
+
+                x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
+
+                start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
+
+                draw_vector(algorithm_layer, start_pos, end_pos, color=curr_rad_vec_color)
+
             
-    return t_mth_aproxim_list
+            
+    return t_mth_aproxim_list, algorithm_variables_dict
 
-def draw_vector(layer, start_pos, end_pos, color=(255, 255, 255), width=2):
+def draw_vector(layer, start_pos, end_pos, color=(255, 255, 255)):
   
-    # Рисува главната линия с antialiasing
-    pygame.draw.aaline(layer, color, start_pos, end_pos, width)
 
-    # Изчислява ъгъла на вектора
+    pygame.draw.aaline(layer, color, start_pos, end_pos)
+
     angle = np.arctan2(end_pos[1] - start_pos[1], end_pos[0] - start_pos[0])
 
     arrow_length = 10
-    arrow_angle = np.pi / 6  # 30 градуса
+    arrow_angle = np.pi / 6 
 
-    # Изчислява позициите на стрелките
+
     arrow1 = (end_pos[0] - arrow_length * np.cos(angle - arrow_angle),
               end_pos[1] - arrow_length * np.sin(angle - arrow_angle))
     arrow2 = (end_pos[0] - arrow_length * np.cos(angle + arrow_angle),
               end_pos[1] - arrow_length * np.sin(angle + arrow_angle))
 
-    # Рисува стрелките с antialiasing
-    pygame.draw.aaline(layer, color, end_pos, arrow1, width)
-    pygame.draw.aaline(layer, color, end_pos, arrow2, width)
+ 
+    pygame.draw.aaline(layer, color, end_pos, arrow1)
+    pygame.draw.aaline(layer, color, end_pos, arrow2)
 
     
