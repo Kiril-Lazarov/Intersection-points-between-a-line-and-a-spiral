@@ -9,9 +9,9 @@ def handle_key_commands(layers_list,
                         update_screen, update_spiral, update_line):
    
     
-    #Check for key combinations
+    # Check for key combinations
     keys = pygame.key.get_pressed()
-
+  
     # Right movement of the line
     if keys[pygame.K_x] and keys[pygame.K_RIGHT]:
 
@@ -40,9 +40,9 @@ def handle_key_commands(layers_list,
 
     # Increase initial spiral angle coefficient `k`  
     elif keys[pygame.K_k] and keys[pygame.K_UP]:
-        
+
         var_params_dict['k'] += steps_dict_constants['k']
- 
+
 
         if const_params_dict['k'] + var_params_dict['k'] >= 4:         
             var_params_dict['k'] = 0
@@ -52,7 +52,7 @@ def handle_key_commands(layers_list,
 
     # Decrease initial spiral angle coefficient `k`
     elif keys[pygame.K_k] and keys[pygame.K_DOWN]:
-        
+
         var_params_dict['k'] -= steps_dict_constants['k']
 
         if const_params_dict['k'] + var_params_dict['k'] <= 0:         
@@ -89,7 +89,7 @@ def handle_key_commands(layers_list,
             var_params_dict['t'] -= steps_dict_constants['t']
 
             update_screen, update_spiral = True, True
-   
+
             
     return update_screen, update_spiral, update_line, var_params_dict, const_params_dict
 
@@ -116,13 +116,66 @@ def handle_shift_key_commands(event, update_screen, update_spiral, const_params_
     return update_screen, update_spiral, const_params_dict, var_params_dict
 
 
-def handle_ctrl_commands(event, update_screen,  mode_statuses_dict):
+def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
            
+    is_turn_off = None
+    
     if event.type == pygame.KEYDOWN:
         mods = pygame.key.get_mods()
         if (mods & pygame.KMOD_CTRL) and not (mods & pygame.KMOD_SHIFT) and event.key == pygame.K_a:
             
-            mode_statuses_dict['Algorithm mode'] = False if mode_statuses_dict['Algorithm mode']== True else True
+            init_state = mode_statuses_dict['Algorithm mode']
+            mode_statuses_dict['Algorithm mode'] = False if init_state else True
+            
+            if init_state:
+                is_turn_off = True 
+            
             update_screen = True
 
-    return update_screen, mode_statuses_dict 
+    return update_screen, mode_statuses_dict, is_turn_off 
+
+
+
+def handle_algorithm_mode_controls(event, algorithm_variables_dict, t_mth_aproxim_list, update_screen):
+
+    n = algorithm_variables_dict['n']
+    m = algorithm_variables_dict['m']
+    total_n = algorithm_variables_dict['total_n']
+
+    keys = pygame.key.get_pressed()
+   
+   
+    if event.type == pygame.KEYDOWN and keys[pygame.K_n] and keys[pygame.K_UP]:
+        
+    
+        if n+1 <= total_n:
+            # print('n: ', algorithm_variables_dict['nth_y_intersect'])
+            algorithm_variables_dict['n'] +=1
+            algorithm_variables_dict['m'] = 0
+            
+            t_mth_aproxim_list.clear()
+            
+            update_screen = True
+            
+    elif event.type == pygame.KEYDOWN and keys[pygame.K_n] and keys[pygame.K_DOWN]:
+    
+        if n-1 > 0:
+            algorithm_variables_dict['n'] -=1
+            algorithm_variables_dict['m'] = 0
+            
+            t_mth_aproxim_list.clear()
+            update_screen = True
+            
+    elif event.type == pygame.KEYDOWN and keys[pygame.K_m] and keys[pygame.K_UP]:
+
+        algorithm_variables_dict['m'] +=1
+        
+        update_screen = True
+
+    elif event.type == pygame.KEYDOWN and keys[pygame.K_m] and keys[pygame.K_DOWN]:
+
+        if m-1 >= 0:
+            algorithm_variables_dict['m'] -=1
+            update_screen = True
+            
+    return algorithm_variables_dict, update_screen
