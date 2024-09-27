@@ -249,6 +249,19 @@ def blit_layers(win, layers_list, bg_color):
     for layer in layers_list:
         win.blit(layer, (0, 0))
         
+def calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m, v, w, k,
+                       half_screen_width, half_screen_height, length,
+                       color):
+    
+    curr_t = t_mth_aproxim_list[m]
+
+
+    x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
+
+    start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
+
+    draw_vector(algorithm_layer, start_pos, end_pos, color=color)
+        
         
 def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_list, algorithm_variables_dict, 
                         half_screen_width, half_screen_height, length,
@@ -276,14 +289,9 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
             t_mth_aproxim_list.append(zero_intersect_t)
             
             # Calc current radius-vector
-            curr_t = t_mth_aproxim_list[m]
-
-
-            x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
-
-            start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
-
-            draw_vector(algorithm_layer, start_pos, end_pos, color=curr_rad_vec_color)
+            calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m, v, w, k,
+                               half_screen_width, half_screen_height, length,
+                               curr_rad_vec_color)
         
         else:
             if m +1 > len(t_mth_aproxim_list):
@@ -293,47 +301,31 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
                 t_mth_aproxim_list.append(next_t)
                 
                 # Calc previous radius vector if it exists
-                if m -1> 0:
-                    curr_t = t_mth_aproxim_list[algorithm_variables_dict['m']-1]
-
-                    x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
-
-                    start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
-
-                    draw_vector(algorithm_layer, start_pos, end_pos, color=previous_rad_vec_color)
+                if m -1>= 0:
+                
+                    calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,
+                                       half_screen_width, half_screen_height, length,
+                                       previous_rad_vec_color)
                 
  
                 # Calc current radius-vector
-                curr_t = t_mth_aproxim_list[m]
-
-                x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
-
-                start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
-
-                draw_vector(algorithm_layer, start_pos, end_pos, color=curr_rad_vec_color)
+                calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m, v, w, k,
+                                   half_screen_width, half_screen_height, length,
+                                   curr_rad_vec_color)
 
                 
             else:
               
                 # Calc previous radius vector if it exists
                 if m -1>= 0:
-                    curr_t = t_mth_aproxim_list[m-1]
-
-                    x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
-
-                    start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
-
-                    draw_vector(algorithm_layer, start_pos, end_pos, color=previous_rad_vec_color)
+                    calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,
+                                       half_screen_width, half_screen_height, length,
+                                       previous_rad_vec_color)
                     
                 # Calc current radius-vector
-                curr_t = t_mth_aproxim_list[m]
-
-
-                x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
-
-                start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
-
-                draw_vector(algorithm_layer, start_pos, end_pos, color=curr_rad_vec_color)
+                calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m, v, w, k,
+                                   half_screen_width, half_screen_height, length,
+                                   curr_rad_vec_color)
 
             
             
