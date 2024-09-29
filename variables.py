@@ -12,35 +12,40 @@ FPS = 25
 
 
 '''
-    Global spiral and line variables
+Global spiral and line variables
 '''
-    
+
+# Total number of units on the x-axis – both positive and negative.
 units =20
 half_units = units/2
+
+# Length of one unit along the coordinate axis, calculated as a function of the screen width and the number of units.
 length = screen_width/ units
 
-t_step = 0.02
-v_step = 0.02
-w_step = 0.025
-k_step = 0.02
-x_step = 0.02
 
-# steps_dict_constants = {'t': t_step, 'v': v_step, 'w': w_step, 'k': k_step, 'x': x_step}
+# The step for changing the values of the spiral and line parameters.
+t_step = 0.025
+v_step = 0.025
+w_step = 0.04
+k_step = 0.025
+x_step = 0.025
 
-t = 1
-v = 1
-w = 1
-k = 0
-vert_line_x = 1
+# Spiral and line constants. The angular velocity is also constant, even though it can have a value of -1.
+t= 1 # Time
+v = 1 # Speed of the radius-vector
+w = 1 # Angular velocity
+k = 0 # Initial angle coefficient measured by pi/2
+vert_line_x = 1 # Start position of the vertical line over x-axis
 
-
-# const_params_dict = {'t': t,'v': v, 'w': w, 'k': k, 'x': vert_line_x}
-
-
+# Variables for parameter changes.
 t_additional, v_additional, w_additional, x_additional, k_additional = 0, 0, 0, 0, 0
 
-# var_params_dict = {'t': t_additional,
-#                    'v': v_additional, 
-#                    'w': w_additional, 
-#                    'k': k_additional, 
-#                    'x': x_additional}
+background_mode = True
+algorithm_mode = False
+line_mode = True
+spiral_mode = True
+y_axis_intersects = True
+line_intersects = True
+algorithm_data_mode = True
+parameters_mode = True 
+
