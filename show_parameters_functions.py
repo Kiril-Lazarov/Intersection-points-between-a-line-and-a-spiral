@@ -32,17 +32,20 @@ def show_mode_statuses(show_modes_layer, font_small, mode_statuses_dict):
     text_y = 20
    
     for mode, status in mode_statuses_dict.items():
+  
+        if mode not in ['Algorithm data mode', 'Modes layer', ]:
+            
+            statement = 'On' if status[1] else 'Off'
+            expression = f'{mode}: {statement}'
+            
+            text = font_small.render(expression, True, (0, 0, 0))
 
-        statement = 'On' if status else 'Off'
 
-        text = font_small.render(f'{mode}: {statement}', True, (0, 0, 0))
+            show_modes_layer.blit(text, (text_x, text_y))
 
-        
-        show_modes_layer.blit(text, (text_x, text_y))
-        
-        x_text_displacement = len(mode) * 8
-        
-        text_x += x_text_displacement
+            x_text_displacement = len(mode) * 12 + 40
+
+            text_x += x_text_displacement
         
 
 def show_algorithm_rows_and_cols(show_algorithm_data_layer, x, y, algorithm_variables_dict, font_small):
