@@ -249,9 +249,9 @@ def blit_layers(win, layers_list, bg_color):
     for layer in layers_list:
         win.blit(layer, (0, 0))
         
-def calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m, v, w, k,
+def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_line,
                        half_screen_width, half_screen_height, length,
-                       color):
+                       color, draw_leg_and_hip=False):
     
     curr_t = t_mth_aproxim_list[m]
 
@@ -261,17 +261,37 @@ def calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m, v, w, k,
     start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
 
     draw_vector(algorithm_layer, start_pos, end_pos, color=color)
+    
+    # Shows the step to construct the current radius vector based on the previous radius vector
+    if draw_leg_and_hip:
+        
+        x_line = x_transform(x_line, half_screen_width, length)
+        
+        next_t = t_mth_aproxim_list[m+1]
+        next_x, next_y = calc_single_t_aproxim(v, w, k, next_t, half_screen_width, half_screen_height, length)
+
+
+        # Draw horizontal leg
+        pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(half_screen_width, y), (x_line, y)])
+        
+        # Draw a part of the hipotenuse
+        pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(next_x, next_y), (x_line, y)])
+        
+        # A point on the spiral curve
+        pygame.draw.circle(algorithm_layer, color='red', center=(next_x, next_y), radius=3)
+        
+        # A crosspoint between horizontal leg and the hipotenuse 
+        pygame.draw.circle(algorithm_layer, color='black', center=(x_line, y), radius=3)
         
         
 def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_list, algorithm_variables_dict, 
                         half_screen_width, half_screen_height, length,
-                         accuracy=5, curr_rad_vec_color = 'black', previous_rad_vec_color = 'lightgreen'):
+                         accuracy=5, curr_rad_vec_color='black', previous_rad_vec_color='lightgreen'):
 
     algorithm_layer.fill((0, 0, 0, 0))
     
     algorithm_variables_dict['total_n'] = len(t_nth_list) # Stores now many are the y-intersection points
-    
-    # n = algorithm_variables_dict['n']
+  
     m = np.copy(algorithm_variables_dict['m'])
 
     if t_nth_list:
@@ -288,8 +308,8 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
             zero_intersect_t = get_mth_aproximation(y_intersect_t, x, v, w, k, i=1, accuracy=accuracy, correction_mech=False, f_binary=False)
             t_mth_aproxim_list.append(zero_intersect_t)
             
-            # Calc current radius-vector
-            calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m, v, w, k,
+            # Show current radius-vector
+            show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x,
                                half_screen_width, half_screen_height, length,
                                curr_rad_vec_color)
         
@@ -300,30 +320,30 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
                 next_t = get_mth_aproximation(y_intersect_t, x, v, w, k, i=m+1, correction_mech=False, f_binary=False)
                 t_mth_aproxim_list.append(next_t)
                 
-                # Calc previous radius vector if it exists
+                # Show previous radius vector if it exists
                 if m -1>= 0:
                 
-                    calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,
+                    show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,x,
                                        half_screen_width, half_screen_height, length,
-                                       previous_rad_vec_color)
+                                       previous_rad_vec_color, draw_leg_and_hip=True)
                 
  
-                # Calc current radius-vector
-                calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m, v, w, k,
+                # Show current radius-vector
+                show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x,
                                    half_screen_width, half_screen_height, length,
                                    curr_rad_vec_color)
 
                 
             else:
               
-                # Calc previous radius vector if it exists
+                # Show previous radius vector if it exists
                 if m -1>= 0:
-                    calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,
+                    show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,x,
                                        half_screen_width, half_screen_height, length,
-                                       previous_rad_vec_color)
+                                       previous_rad_vec_color, draw_leg_and_hip=True)
                     
-                # Calc current radius-vector
-                calc_radius_vector(algorithm_layer, t_mth_aproxim_list, m, v, w, k,
+                # Show current radius-vector
+                show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x,
                                    half_screen_width, half_screen_height, length,
                                    curr_rad_vec_color)
 
