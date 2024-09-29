@@ -245,10 +245,12 @@ def draw_dots(layer, half_screen_width, half_screen_height, length, t_list, v, w
             pygame.draw.circle(layer, color=color, center=(x, y), radius=4)
     
         
-def blit_layers(win, layers_list, bg_color):
+def blit_layers(win, mode_statuses_dict, bg_color):
     win.fill(bg_color)
-    for layer in layers_list:
-        win.blit(layer, (0, 0))
+    
+    for layer, boolean in mode_statuses_dict.values():
+        if boolean:
+            win.blit(layer, (0, 0))
         
 def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_line,
                        half_screen_width, half_screen_height, length,
