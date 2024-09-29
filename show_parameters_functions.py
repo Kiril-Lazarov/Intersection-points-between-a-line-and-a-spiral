@@ -18,7 +18,7 @@ def show_parameters(params_layer, font_small, const_params_dict,
 
         if param == 'k':
             theta_0 = (value + var_params_dict[param]) * (np.pi /2) * 180 / np.pi 
-            text = font_small.render(f'theta_0: {theta_0:.2f}', True, (0, 0, 0))
+            text = font_small.render(f'Start angle: {theta_0:.2f} deg', True, (0, 0, 0))
             
             params_layer.blit(text, (text_x, text_y))
             text_y += 20
@@ -43,3 +43,29 @@ def show_mode_statuses(show_modes_layer, font_small, mode_statuses_dict):
         x_text_displacement = len(mode) * 8
         
         text_x += x_text_displacement
+        
+
+def show_algorithm_rows_and_cols(show_algorithm_data_layer, x, y, algorithm_variables_dict, font_small):
+    
+    show_algorithm_data_layer.fill((0, 0, 0, 0))
+    
+    text_x = 20
+    text_y = 200
+    
+    for param, value in algorithm_variables_dict.items():
+
+        text = font_small.render(f'{param}: {value}', True, (0, 0, 0))
+        
+        show_algorithm_data_layer.blit(text, (text_x, text_y))
+        
+        text_y += 20
+    
+    text_y += 20
+    
+    text = font_small.render(f'Spiral x: {x}', True, (0, 0, 0))
+    show_algorithm_data_layer.blit(text, (text_x, text_y))
+    
+    text_y += 20
+    
+    text = font_small.render(f'Spiral y: {y}', True, (0, 0, 0))
+    show_algorithm_data_layer.blit(text, (text_x, text_y))
