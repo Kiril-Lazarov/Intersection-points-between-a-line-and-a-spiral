@@ -48,4 +48,4 @@ y_axis_intersects = True
 line_intersects = True
 algorithm_data_mode = True
 parameters_mode = True 
-
+t_diagram_mode = False
