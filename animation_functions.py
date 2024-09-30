@@ -3,7 +3,6 @@ import numpy as np
 
 from formula_functions import *
 
-
 def create_background(background_surface,screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
     
     background_surface.fill(bg_color)
@@ -126,6 +125,10 @@ def x_transform(x, half_screen_width,length):
     
     return x* length + half_screen_width
 
+def x_inverse_transform(x, half_screen_width,length):
+    
+    return (x - half_screen_width) / length
+
 def y_transform(y, half_screen_height,length):
     
     return -y * length + half_screen_height
@@ -156,10 +159,8 @@ def calc_spiral_coord(t=1 ,v=1, w=1, k=0) -> tuple:
     
     x = radiuses * np.cos(angles)
     y = radiuses * np.sin(angles)
-    
-    
-    
-    return x, y 
+
+    return x, y, T 
 
 def calc_y_intersects_t(t, w, k) -> list:
     
@@ -249,7 +250,7 @@ def blit_layers(win, mode_statuses_dict, bg_color):
     win.fill(bg_color)
     
     for layer, boolean in mode_statuses_dict.values():
-        if boolean:
+        if boolean and layer is not None:
             win.blit(layer, (0, 0))
         
 def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_line,
