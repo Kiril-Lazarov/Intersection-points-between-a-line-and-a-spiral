@@ -1,7 +1,7 @@
 import numpy as np 
 import pygame
 from animation_functions import *
-
+from variables import *
 
 def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants,
                         half_screen_width, half_screen_height, length, half_units,
@@ -94,7 +94,7 @@ def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants
     return update_screen, update_spiral, update_line, var_params_dict, const_params_dict
 
 
-def handle_shift_key_commands(event, update_screen, update_spiral, const_params_dict, var_params_dict):
+def handle_shift_key_commands(event, update_screen, update_spiral, const_params_dict, var_params_dict, mode_statuses_dict):
     
     # Turn the direction of the spiral
     if event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_w:
@@ -103,31 +103,39 @@ def handle_shift_key_commands(event, update_screen, update_spiral, const_params_
         var_params_dict['w'] *= -1
         
         update_screen, update_spiral = True, True
+       
       
     # Reset variables to their initial values
     if event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_r:
         
-        var_params_dict['t'], var_params_dict['v'], var_params_dict['w'], var_params_dict['x'], var_params_dict['k'] = 0, 0, 0, 0, 0
+        var_params_dict['t'], var_params_dict['v'], \
+        var_params_dict['w'], var_params_dict['x'], \
+        var_params_dict['k'] = t_additional, v_additional, w_additional, x_additional, k_additional
 
-        const_params_dict['w'] = 1
+        const_params_dict['w'] = w
         
+        '''background_mode = True
+            algorithm_mode = False
+            line_mode = True
+            spiral_mode = True
+            y_axis_intersects = True
+        line_intersects = True
+        algorithm_data_mode = True
+        parameters_mode = True 
+        t_diagram_mode = False'''
+        
+        mode_dict_keys = mode_statuses_dict.keys()
+        mode_dict_default_values = iter([background_mode, algorithm_mode, algorithm_data_mode, t_diagram_mode, line_mode, spiral_mode,\
+                                         y_axis_intersects, line_intersects, parameters_mode, True])
+        
+        for key in  mode_statuses_dict.keys():
+            mode_statuses_dict[key][1] = next(mode_dict_default_values)
+
         update_screen, update_spiral = True, True
    
     return update_screen, update_spiral, const_params_dict, var_params_dict
 
 
-'''
-mode_statuses_dict = {'Coordinates':[background_surface, background_mode],
-                          'Algorithm mode': [algorithm_layer, algorithm_mode],
-                          'Algorithm data mode': [show_algorithm_data_layer, algorithm_data_mode],
-                          'Line': [line_layer, line_mode],
-                          'Spiral': [spiral_layer, spiral_mode],
-                          'Y-intersects': [y_axis_intersects_layer, y_axis_intersects],
-                          'Line-intersects': [line_intersects_layer, line_intersects],
-                          'Parameters': [params_layer, parameters_mode],
-                          'Modes layer': [show_modes_layer, True] 
-                           }
-'''
 
 def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
            
@@ -147,9 +155,12 @@ def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
                 
             # Set the layers to True
             for mode, (_, boolean) in mode_statuses_dict.items():
-                if mode not in ['Algorithm mode', 'Algorithm data mode', 'Modes layer']:
+                if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode','Modes layer']:
                     if not boolean:
                         mode_statuses_dict[mode][1] = True 
+                        
+        elif (mods & pygame.KMOD_CTRL) and event.key == pygame.K_t:
+            mode_statuses_dict['T-diagram'][1] = not mode_statuses_dict['T-diagram'][1]
              
         if not mode_statuses_dict['Algorithm mode'][1]:
             if event.key == pygame.K_l:
