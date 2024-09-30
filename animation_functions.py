@@ -206,12 +206,13 @@ def calc_single_t_aproxim(v, w, k, t, half_screen_width, half_screen_height, len
     return x, y
 
 
-def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, v=1,w=1,k=0):
+def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, v=1,w=1,k=0, t_diagram_mode=False):
     
     spiral_layer.fill((0, 0, 0, 0))
     
+
     if w != 0:
-        x_spiral, y_spiral = calc_spiral_coord(t=t ,v=v, w=w, k=k)
+        x_spiral, y_spiral, T = calc_spiral_coord(t=t ,v=v, w=w, k=k)
 
         x_spiral = [x_transform(x, half_screen_width, length) for x in x_spiral]
         y_spiral = [y_transform(y, half_screen_height, length) for y in y_spiral]
@@ -223,7 +224,33 @@ def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, 
                (0 <=abs(curr_sp_point_y)<=half_screen_height * 2): 
                 
                 next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
-                pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), (next_sp_point_x, next_sp_point_y)])
+                if not t_diagram_mode:
+                    pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), \
+                                                                      (next_sp_point_x, next_sp_point_y)])
+                else:
+                 
+                    curr_t_point = T[i]
+                    curr_t_point = x_transform(curr_t_point, half_screen_width, length)
+               
+                    next_t_point = T[i+1]
+                    next_t_point= x_transform(next_t_point, half_screen_width, length)
+              
+                    backward_curr_sp_x = x_inverse_transform(curr_sp_point_x, half_screen_width, length)
+                    backward_curr_sp_x = y_transform(backward_curr_sp_x, half_screen_height, length)
+                    
+                    backward_next_sp_x =  x_inverse_transform(next_sp_point_x, half_screen_width, length)
+                    backward_next_sp_x = y_transform(backward_next_sp_x, half_screen_height, length)
+                    
+                    pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_t_point, backward_curr_sp_x), \
+                                                                      (next_t_point, backward_next_sp_x)])
+             
+                    pygame.draw.aalines(spiral_layer, 'blue',  False, [(curr_t_point, curr_sp_point_y), \
+                                                                      (next_t_point, next_sp_point_y)])
+        if t_diagram_mode:           
+            start_point = (x_transform(T[0], half_screen_width, length), y_transform(0, half_screen_height, length))
+            end_point = (x_transform(T[-1], half_screen_width, length), y_transform(T[-1] * v, half_screen_height, length))
+            pygame.draw.aalines(spiral_layer, 'green',  False, [start_point, end_point])
+                                                                          
                 
                 
                 
