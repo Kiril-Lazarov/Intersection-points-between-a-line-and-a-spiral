@@ -271,7 +271,7 @@ def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, 
                 
                 
                 
-def draw_dots(layer, half_screen_width, half_screen_height, length, t_list, v, w, k, color):
+def draw_dots(layer, half_screen_width, half_screen_height, length, t_list, v, w, k, color, t_diagram=False):
     
     layer.fill((0, 0, 0, 0))
     if t_list:
@@ -287,7 +287,17 @@ def draw_dots(layer, half_screen_width, half_screen_height, length, t_list, v, w
             x = x_transform(x, half_screen_width, length)
             y = y_transform(y, half_screen_height, length)
             
-            pygame.draw.circle(layer, color=color, center=(x, y), radius=4)
+            if not t_diagram:
+            
+                pygame.draw.circle(layer, color=color, center=(x, y), radius=4)
+                
+            else:
+                
+                t_trans = x_transform(t, half_screen_width, length)
+                x_new = transform_to_t_diagram(x, half_screen_width, half_screen_height, length)
+             
+                pygame.draw.circle(layer, color=color, center=(t_trans, y), radius=4)
+                pygame.draw.circle(layer, color=color, center=(t_trans, x_new), radius=4)                
     
         
 def blit_layers(win, mode_statuses_dict, bg_color):
