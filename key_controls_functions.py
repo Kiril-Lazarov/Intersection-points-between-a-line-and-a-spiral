@@ -113,17 +113,7 @@ def handle_shift_key_commands(event, update_screen, update_spiral, const_params_
         var_params_dict['k'] = t_additional, v_additional, w_additional, x_additional, k_additional
 
         const_params_dict['w'] = w
-        
-        '''background_mode = True
-            algorithm_mode = False
-            line_mode = True
-            spiral_mode = True
-            y_axis_intersects = True
-        line_intersects = True
-        algorithm_data_mode = True
-        parameters_mode = True 
-        t_diagram_mode = False'''
-        
+
         mode_dict_keys = mode_statuses_dict.keys()
         mode_dict_default_values = iter([background_mode, algorithm_mode, algorithm_data_mode, t_diagram_mode, line_mode, spiral_mode,\
                                          y_axis_intersects, line_intersects, parameters_mode, True])
@@ -140,28 +130,38 @@ def handle_shift_key_commands(event, update_screen, update_spiral, const_params_
 def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
            
     is_turn_off = None
-
+    is_t_diagram_change = False
     
     if event.type == pygame.KEYDOWN:
         mods = pygame.key.get_mods()
         update_screen = True
         if (mods & pygame.KMOD_CTRL)  and event.key == pygame.K_a:
-            
-            init_state = mode_statuses_dict['Algorithm mode'][1]
-            mode_statuses_dict['Algorithm mode'][1] = False if init_state else True
-            
-            if init_state:
-                is_turn_off = True
+            if not mode_statuses_dict['T-diagram'][1]:
+                init_state = mode_statuses_dict['Algorithm mode'][1]
+                mode_statuses_dict['Algorithm mode'][1] = False if init_state else True
+
+                if init_state:
+                    is_turn_off = True
+
+                if mode_statuses_dict['Algorithm mode'][1]:
+                    mode_statuses_dict['T-diagram'][1] = False
                 
-            # Set the layers to True
-            for mode, (_, boolean) in mode_statuses_dict.items():
-                if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode','Modes layer']:
-                    if not boolean:
-                        mode_statuses_dict[mode][1] = True 
+                # Set the layers to True
+                for mode, (_, boolean) in mode_statuses_dict.items():
+                    if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode','Modes layer']:
+                        if not boolean:
+                            mode_statuses_dict[mode][1] = True 
                         
         elif (mods & pygame.KMOD_CTRL) and event.key == pygame.K_t:
-            mode_statuses_dict['T-diagram'][1] = not mode_statuses_dict['T-diagram'][1]
-             
+            
+            if not mode_statuses_dict['Algorithm mode'][1]:
+                mode_statuses_dict['T-diagram'][1] = not mode_statuses_dict['T-diagram'][1]
+                is_t_diagram_change = True 
+
+                if mode_statuses_dict['T-diagram'][1]:
+                    mode_statuses_dict['Algorithm mode'][1] = False
+                    mode_statuses_dict['Line'][1] = False
+                
         if not mode_statuses_dict['Algorithm mode'][1]:
             if event.key == pygame.K_l:
                 mode_statuses_dict['Line'][1] = not mode_statuses_dict['Line'][1]
@@ -181,7 +181,7 @@ def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
             elif event.key == pygame.K_c:
                 mode_statuses_dict['Coordinates'][1] = not mode_statuses_dict['Coordinates'][1]
             
-    return update_screen, mode_statuses_dict, is_turn_off 
+    return update_screen, mode_statuses_dict, is_turn_off, is_t_diagram_change 
 
 
 
