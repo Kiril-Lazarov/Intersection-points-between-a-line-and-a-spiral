@@ -133,6 +133,12 @@ def y_transform(y, half_screen_height,length):
     
     return -y * length + half_screen_height
 
+def transform_to_t_diagram(x, half_screen_width, half_screen_height, length):
+    
+    x = x_inverse_transform(x, half_screen_width, length)
+    x = y_transform(x, half_screen_height, length)
+    
+    return x
 
 def draw_vertical_line(line_layer, half_screen_width, half_screen_height, length, half_units,x_axis_value=1):
     
@@ -234,22 +240,33 @@ def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, 
                
                     next_t_point = T[i+1]
                     next_t_point= x_transform(next_t_point, half_screen_width, length)
-              
-                    backward_curr_sp_x = x_inverse_transform(curr_sp_point_x, half_screen_width, length)
-                    backward_curr_sp_x = y_transform(backward_curr_sp_x, half_screen_height, length)
                     
-                    backward_next_sp_x =  x_inverse_transform(next_sp_point_x, half_screen_width, length)
-                    backward_next_sp_x = y_transform(backward_next_sp_x, half_screen_height, length)
+                    backward_curr_sp_x = transform_to_t_diagram(curr_sp_point_x, half_screen_width, half_screen_height, length)
+                    backward_next_sp_x = transform_to_t_diagram(next_sp_point_x, half_screen_width, half_screen_height, length)
                     
                     pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_t_point, backward_curr_sp_x), \
                                                                       (next_t_point, backward_next_sp_x)])
              
                     pygame.draw.aalines(spiral_layer, 'blue',  False, [(curr_t_point, curr_sp_point_y), \
                                                                       (next_t_point, next_sp_point_y)])
-        if t_diagram_mode:           
+        if t_diagram_mode:
+            
+            
+            last_t = x_transform(T[-1], half_screen_width, length)
+            
+            last_rad_vec =  T[-1] * v
+            last_rad_vec = y_transform(last_rad_vec, half_screen_height, length)
+            
+            # Draw hipotenuse
             start_point = (x_transform(T[0], half_screen_width, length), y_transform(0, half_screen_height, length))
-            end_point = (x_transform(T[-1], half_screen_width, length), y_transform(T[-1] * v, half_screen_height, length))
+            end_point = (last_t, last_rad_vec)
             pygame.draw.aalines(spiral_layer, 'green',  False, [start_point, end_point])
+            
+            # Draw spiral radius vector
+            start_pos = (last_t, y_transform(0 , half_screen_height, length)) 
+            end_pos = (last_t, last_rad_vec)
+            
+            draw_vector(spiral_layer,start_pos, end_pos, color='black' )
                                                                           
                 
                 
