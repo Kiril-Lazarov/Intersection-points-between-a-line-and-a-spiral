@@ -4,118 +4,121 @@ from animation_functions import *
 from variables import *
 
 def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants,
-                        update_screen, update_spiral, update_line,block_sp_keys=False):
+                        update_screen, update_spiral, update_line):
                         
-   
     shift_coords = False
     # Check for key combinations
     keys = pygame.key.get_pressed()
+
+    # Check for key combinations
+    keys = pygame.key.get_pressed()
+
+    # Right movement of the line
+    if keys[pygame.K_x] and keys[pygame.K_RIGHT]:
+
+        var_params_dict['x'] += steps_dict_constants['x']           
+
+        update_screen, update_line = True, True
+
+    # Left movement of the line
+    elif keys[pygame.K_x] and keys[pygame.K_LEFT]:
+        var_params_dict['x'] -= steps_dict_constants['x']
+
+        update_screen, update_line = True, True
+
+    # Increase angular velocity `w`    
+    elif keys[pygame.K_w] and keys[pygame.K_UP]:
+        var_params_dict['w'] += steps_dict_constants['w']
+
+        update_screen, update_spiral = True, True
+
+    # Decrease angular velocity `w`  
+    elif keys[pygame.K_w] and keys[pygame.K_DOWN]:
+        var_params_dict['w'] -= steps_dict_constants['w']
+
+
+        update_screen, update_spiral = True, True
+
+    # Increase initial spiral angle coefficient `k`  
+    elif keys[pygame.K_k] and keys[pygame.K_UP]:
+
+        var_params_dict['k'] += steps_dict_constants['k']
+
+
+        if const_params_dict['k'] + var_params_dict['k'] >= 4:         
+            var_params_dict['k'] = 0
+
+        update_screen, update_spiral = True, True
+
+
+    # Decrease initial spiral angle coefficient `k`
+    elif keys[pygame.K_k] and keys[pygame.K_DOWN]:
+
+        var_params_dict['k'] -= steps_dict_constants['k']
+
+        if const_params_dict['k'] + var_params_dict['k'] <= 0:         
+            var_params_dict['k'] = 4
+
+        update_screen, update_spiral = True, True
+
+    # Increase spiral radius velocity `v`
+    elif keys[pygame.K_v] and keys[pygame.K_UP]:
+        var_params_dict['v'] += steps_dict_constants['v']            
+
+
+        update_screen, update_spiral = True, True
+
+    # Decrease spiral radius velocity `v`
+    elif keys[pygame.K_v] and keys[pygame.K_DOWN]:           
+
+        if const_params_dict['v'] + var_params_dict['v'] > 0:
+            var_params_dict['v'] -= steps_dict_constants['v']
+
+            update_screen, update_spiral = True, True
+
+
+    # Increase time `t`
+    elif keys[pygame.K_t] and keys[pygame.K_UP]:
+        var_params_dict['t'] += steps_dict_constants['t']            
+
+        update_screen, update_spiral = True, True
+
+    # Decrease time `t`
+    elif keys[pygame.K_t] and keys[pygame.K_DOWN]:           
+
+        if const_params_dict['t'] + var_params_dict['t'] > 0:
+            var_params_dict['t'] -= steps_dict_constants['t']
+
+            update_screen, update_spiral = True, True
   
-    if not block_sp_keys:
-        
-        # Right movement of the line
-        if keys[pygame.K_x] and keys[pygame.K_RIGHT]:
-
-            var_params_dict['x'] += steps_dict_constants['x']           
-
-            update_screen, update_line = True, True
-
-        # Left movement of the line
-        elif keys[pygame.K_x] and keys[pygame.K_LEFT]:
-            var_params_dict['x'] -= steps_dict_constants['x']
-
-            update_screen, update_line = True, True
-
-        # Increase angular velocity `w`    
-        elif keys[pygame.K_w] and keys[pygame.K_UP]:
-            var_params_dict['w'] += steps_dict_constants['w']
-
-            update_screen, update_spiral = True, True
-
-        # Decrease angular velocity `w`  
-        elif keys[pygame.K_w] and keys[pygame.K_DOWN]:
-            var_params_dict['w'] -= steps_dict_constants['w']
-
-
-            update_screen, update_spiral = True, True
-
-        # Increase initial spiral angle coefficient `k`  
-        elif keys[pygame.K_k] and keys[pygame.K_UP]:
-
-            var_params_dict['k'] += steps_dict_constants['k']
-
-
-            if const_params_dict['k'] + var_params_dict['k'] >= 4:         
-                var_params_dict['k'] = 0
-
-            update_screen, update_spiral = True, True
-
-
-        # Decrease initial spiral angle coefficient `k`
-        elif keys[pygame.K_k] and keys[pygame.K_DOWN]:
-
-            var_params_dict['k'] -= steps_dict_constants['k']
-
-            if const_params_dict['k'] + var_params_dict['k'] <= 0:         
-                var_params_dict['k'] = 4
-
-            update_screen, update_spiral = True, True
-
-        # Increase spiral radius velocity `v`
-        elif keys[pygame.K_v] and keys[pygame.K_UP]:
-            var_params_dict['v'] += steps_dict_constants['v']            
-
-
-            update_screen, update_spiral = True, True
-
-        # Decrease spiral radius velocity `v`
-        elif keys[pygame.K_v] and keys[pygame.K_DOWN]:           
-
-            if const_params_dict['v'] + var_params_dict['v'] > 0:
-                var_params_dict['v'] -= steps_dict_constants['v']
-
-                update_screen, update_spiral = True, True
-
-
-        # Increase time `t`
-        elif keys[pygame.K_t] and keys[pygame.K_UP]:
-            var_params_dict['t'] += steps_dict_constants['t']            
-
-            update_screen, update_spiral = True, True
-
-        # Decrease time `t`
-        elif keys[pygame.K_t] and keys[pygame.K_DOWN]:           
-
-            if const_params_dict['t'] + var_params_dict['t'] > 0:
-                var_params_dict['t'] -= steps_dict_constants['t']
-
-                update_screen, update_spiral = True, True
-       
-    
-    if keys[pygame.K_b] and keys[pygame.K_UP]:
+  
+    elif keys[pygame.K_b] and keys[pygame.K_UP]:
         var_params_dict['c'][1] -= steps_dict_constants['c']
-        
+
         update_screen, update_spiral, update_line, shift_coords = True, True, True, True
-        
+
     elif keys[pygame.K_b] and keys[pygame.K_DOWN]:
         var_params_dict['c'][1] += steps_dict_constants['c']
-        
+
         update_screen, update_spiral, update_line, shift_coords = True, True, True, True
-        
+
     elif keys[pygame.K_b] and keys[pygame.K_LEFT]:
         var_params_dict['c'][0] -= steps_dict_constants['c']
-        
+
         update_screen, update_spiral, update_line, shift_coords = True, True, True, True
-        
+
     elif keys[pygame.K_b] and keys[pygame.K_RIGHT]:
         var_params_dict['c'][0] += steps_dict_constants['c']
-        
+
         update_screen, update_spiral, update_line, shift_coords = True, True, True, True
             
     return update_screen, update_spiral, update_line, var_params_dict, const_params_dict, shift_coords
 
 
+
 def handle_shift_key_commands(event, update_screen, update_spiral, const_params_dict, var_params_dict, mode_statuses_dict):
+     
+    shift_coords = True
     
     # Turn the direction of the spiral
     if event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_w:
@@ -123,7 +126,7 @@ def handle_shift_key_commands(event, update_screen, update_spiral, const_params_
 
         var_params_dict['w'] *= -1
         
-        update_screen, update_spiral = True, True
+        update_screen, update_spiral,shift_coords = True, True, False
        
       
     # Reset variables to their initial values
@@ -131,10 +134,10 @@ def handle_shift_key_commands(event, update_screen, update_spiral, const_params_
         
         var_params_dict['t'], var_params_dict['v'], \
         var_params_dict['w'], var_params_dict['x'], \
-        var_params_dict['k'] = t_additional, v_additional, w_additional, x_additional, k_additional
+        var_params_dict['k'], var_params_dict['c'] = t_additional, v_additional, w_additional, x_additional, k_additional, [0, 0]
 
         const_params_dict['w'] = w
-
+ 
         mode_dict_keys = mode_statuses_dict.keys()
         mode_dict_default_values = iter([background_mode, algorithm_mode, algorithm_data_mode, t_diagram_mode, line_mode, spiral_mode,\
                                          y_axis_intersects, line_intersects, parameters_mode, True])
@@ -142,10 +145,9 @@ def handle_shift_key_commands(event, update_screen, update_spiral, const_params_
         for key in  mode_statuses_dict.keys():
             mode_statuses_dict[key][1] = next(mode_dict_default_values)
 
-        update_screen, update_spiral = True, True
+        update_screen, update_spiral, shift_coords = True, True, True
    
-    return update_screen, update_spiral, const_params_dict, var_params_dict
-
+    return update_screen, update_spiral, shift_coords, const_params_dict, var_params_dict
 
 
 def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
