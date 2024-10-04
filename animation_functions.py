@@ -3,12 +3,13 @@ import numpy as np
 
 from formula_functions import *
 
-def create_background(background_surface,screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
+def create_background(background_surface, const_coord_origin, var_coord_origin,
+                      screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
     
     background_surface.fill(bg_color)
 
     line_color = (200,200,200)
-    center_point = (screen_width/2, screen_height/2)
+    
 
     # Coordinate x-line parameters
     x_line_start = 0
@@ -19,7 +20,7 @@ def create_background(background_surface,screen_width, screen_height, units, len
     y_line_end = screen_height
     
     # Height of the numbers lines
-    y_line = screen_height/2
+    y_line = const_coord_origin[1] + var_coord_origin[1]
     
     x_line = screen_width/2
     
@@ -63,34 +64,46 @@ def create_background(background_surface,screen_width, screen_height, units, len
 
 
 
-def draw_x_axis_values(background_surface, screen_width, screen_height,
+def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, screen_height,
                 i, length, x_line_start,vertical_line_start,
-                vertical_line_end, line_color,font_small, half_units,number_y,pos_number, neg_number):
+                vertical_line_end, line_color,font_small, half_units,number_y,total_numbers_on_screen):
     
-    vertical_line_x_neg = x_line_start + i*length
-    vertical_line_x_pos = screen_width/2 + i*length
-
-    #Draw unit lines for negative x-axis
-    pygame.draw.line(background_surface, color = line_color, start_pos=(vertical_line_x_neg, vertical_line_start),
-                 end_pos = (vertical_line_x_neg, vertical_line_end), width=1)  
-
-    #Draw unit lines for positive x-axis
-    pygame.draw.line(background_surface, color = line_color, start_pos=(vertical_line_x_pos, vertical_line_start),
-                 end_pos = (vertical_line_x_pos, vertical_line_end), width=1)  
-
-    #Draw zero
-    if i == 0:
-        pos_number_text = font_small.render(f'{pos_number}', True, line_color)
-        background_surface.blit(pos_number_text, (vertical_line_x_pos-15,number_y-4))
+    
+    vertical_line_x_pos = center_point_x + i*length
+   
+    
+    if vertical_line_x_pos <= screen_width:
         
-    else:
-        #Draw negative numbers
-        neg_number_text = font_small.render(f'-{neg_number}', True, line_color)
-        background_surface.blit(neg_number_text, (vertical_line_x_neg-12,number_y-4)) 
+        #Draw unit lines for positive x-axis
+        pygame.draw.line(background_surface, color = line_color, start_pos=(vertical_line_x_pos, vertical_line_start),
+                     end_pos = (vertical_line_x_pos, vertical_line_end), width=1)  
 
-        #Draw positive numbers
-        pos_number_text = font_small.render(f'{pos_number}', True, line_color)
-        background_surface.blit(pos_number_text, (vertical_line_x_pos-5,number_y-4))
+        #Draw zero
+        if i == 0:
+            pos_number_text = font_small.render(f'{i}', True, line_color)
+            background_surface.blit(pos_number_text, (vertical_line_x_pos-15,number_y-4))
+
+        else:
+            #Draw positive numbers
+            pos_number_text = font_small.render(f'{i}', True, line_color)
+            background_surface.blit(pos_number_text, (vertical_line_x_pos-5,number_y-4))
+            
+            
+def draw_x_axis_neg_values(background_surface, center_point_x, screen_width, screen_height,
+                            i, length, x_line_start,vertical_line_start, vertical_line_end, line_color,
+                           font_small, half_units,number_y,total_numbers_on_screen):
+    
+    vertical_line_x_neg = center_point_x - i*length
+    
+    if vertical_line_x_neg >= 0:
+        #Draw unit lines for negative x-axis
+        pygame.draw.line(background_surface, color = line_color, start_pos=(vertical_line_x_neg, vertical_line_start),
+                     end_pos = (vertical_line_x_neg, vertical_line_end), width=1)  
+        
+        if i != 0:
+            #Draw negative numbers
+            neg_number_text = font_small.render(f'-{i}', True, line_color)
+            background_surface.blit(neg_number_text, (vertical_line_x_neg-12,number_y-4)) 
 
     
     
@@ -224,29 +237,36 @@ def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, 
         y_spiral = [y_transform(y, half_screen_height, length) for y in y_spiral]
 
         for i in range(len(x_spiral) -1):
-            curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
             
-            if (0 <=abs(curr_sp_point_x)<=half_screen_width * 2) and \
-               (0 <=abs(curr_sp_point_y)<=half_screen_height * 2): 
-                
-                next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
-                if not t_diagram_mode:
+            curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
+            next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
+            
+            if not t_diagram_mode:
+                if (0 <=abs(curr_sp_point_x)<=half_screen_width * 2) and \
+                   (0 <=abs(curr_sp_point_y)<=half_screen_height * 2): 
+
                     pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), \
                                                                       (next_sp_point_x, next_sp_point_y)])
-                else:
-                 
-                    curr_t_point = T[i]
-                    curr_t_point = x_transform(curr_t_point, half_screen_width, length)
-               
-                    next_t_point = T[i+1]
-                    next_t_point= x_transform(next_t_point, half_screen_width, length)
+            else:
+
+                curr_t_point = T[i]
+                curr_t_point = x_transform(curr_t_point, half_screen_width, length)
+                
+                next_t_point = T[i+1]
+                next_t_point= x_transform(next_t_point, half_screen_width, length)
+
+                backward_curr_sp_x = transform_to_t_diagram(curr_sp_point_x, half_screen_width, half_screen_height, length)
+                backward_next_sp_x = transform_to_t_diagram(next_sp_point_x, half_screen_width, half_screen_height, length)
+                
+                if (0 <=abs(curr_t_point)<=half_screen_width * 2) and \
+                   (0 <=abs(curr_sp_point_y) <=half_screen_height * 2 or \
+                    0 <=abs(backward_next_sp_x) <= half_screen_height * 2): 
+
                     
-                    backward_curr_sp_x = transform_to_t_diagram(curr_sp_point_x, half_screen_width, half_screen_height, length)
-                    backward_next_sp_x = transform_to_t_diagram(next_sp_point_x, half_screen_width, half_screen_height, length)
-                    
+
                     pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_t_point, backward_curr_sp_x), \
                                                                       (next_t_point, backward_next_sp_x)])
-             
+
                     pygame.draw.aalines(spiral_layer, 'blue',  False, [(curr_t_point, curr_sp_point_y), \
                                                                       (next_t_point, next_sp_point_y)])
         if t_diagram_mode:
