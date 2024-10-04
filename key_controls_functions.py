@@ -116,21 +116,19 @@ def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants
 
 
 
-def handle_shift_key_commands(event, update_screen, update_spiral, const_params_dict, var_params_dict, mode_statuses_dict):
+def handle_shift_key_commands(event, update_screen, update_spiral, reset_background, const_params_dict, var_params_dict, mode_statuses_dict):
      
-    shift_coords = True
-    
     # Turn the direction of the spiral
     if event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_w:
         const_params_dict['w'] *= -1
 
         var_params_dict['w'] *= -1
         
-        update_screen, update_spiral,shift_coords = True, True, False
-       
+        update_screen, update_spiral = True, True 
+        
       
     # Reset variables to their initial values
-    if event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_r:
+    elif event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT) and event.key == pygame.K_r:
         
         var_params_dict['t'], var_params_dict['v'], \
         var_params_dict['w'], var_params_dict['x'], \
@@ -145,9 +143,9 @@ def handle_shift_key_commands(event, update_screen, update_spiral, const_params_
         for key in  mode_statuses_dict.keys():
             mode_statuses_dict[key][1] = next(mode_dict_default_values)
 
-        update_screen, update_spiral, shift_coords = True, True, True
-   
-    return update_screen, update_spiral, shift_coords, const_params_dict, var_params_dict
+        update_screen, update_spiral, reset_background = True, True, True
+        
+    return update_screen, update_spiral, reset_background, const_params_dict, var_params_dict
 
 
 def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
