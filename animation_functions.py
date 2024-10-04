@@ -9,7 +9,7 @@ def create_background(background_surface, const_coord_origin, var_coord_origin,
     background_surface.fill(bg_color)
 
     line_color = (200,200,200)
-    
+    center_point = [const_coord_origin[0] + var_coord_origin[0] ,const_coord_origin[1] + var_coord_origin[1]]
 
     # Coordinate x-line parameters
     x_line_start = 0
@@ -20,9 +20,10 @@ def create_background(background_surface, const_coord_origin, var_coord_origin,
     y_line_end = screen_height
     
     # Height of the numbers lines
-    y_line = const_coord_origin[1] + var_coord_origin[1]
+    y_line = center_point[1]
     
-    x_line = screen_width/2
+    # Width of the numbers lines
+    x_line = center_point[0]
     
 
     
@@ -42,28 +43,56 @@ def create_background(background_surface, const_coord_origin, var_coord_origin,
     horizontal_line_start = x_line - 5
     horizontal_line_end = x_line + 5
     
-    
+    # Positions of the numbers relative to the corresponding axis line.
     number_y = vertical_line_end + 15
-     
     number_x = horizontal_line_end + 15
         
-   
-    half_units = (units)/2
+    
+    # Number of numbers that need to be displayed on the screen.
+    pos_x_axis_nums_count = int(np.ceil((screen_width - center_point[0])/length))
+    neg_x_axis_nums_count = int(np.ceil(center_point[0]/length))
+    pos_y_axis_nums_count = int(np.ceil(center_point[1]/length))
+    neg_y_axis_nums_count = int(np.ceil(screen_height - center_point[1]/length))
 
-    for i in range(int(half_units)):
+
+    
+    #Draw positive x-axis numbers
+    if pos_x_axis_nums_count >= 0:    
         
-        neg_number = int((half_units)-i)
-        pos_number = int(half_units - neg_number)
-        draw_x_axis_values(background_surface, screen_width, screen_height,
-                i, length, x_line_start,vertical_line_start,
-                vertical_line_end, line_color, font_small, half_units, number_y, pos_number, neg_number)
+        for i in range(pos_x_axis_nums_count):
+
+            draw_x_axis_pos_values(background_surface, center_point[0], screen_width, screen_height,
+                                   i, length, x_line_start,vertical_line_start, vertical_line_end,
+                                   line_color, font_small, number_y)
+            
+    # Draw negative x-axis numbers 
+    if neg_x_axis_nums_count >= 0:
+           
+        for i in range(neg_x_axis_nums_count):
+            draw_x_axis_neg_values(background_surface, center_point[0], screen_width, screen_height,
+                                i, length, x_line_start,vertical_line_start, vertical_line_end, line_color,
+                               font_small, number_y)
+
         
-        draw_y_axis_values(background_surface, screen_width, screen_height,
-                i, length, y_line_start,horizontal_line_start,
-                horizontal_line_end, line_color,font_small, half_units,number_x,pos_number, neg_number)
+    #Draw positive y-axis numbers
+    if pos_y_axis_nums_count >= 0:
+        
+        for i in range(pos_y_axis_nums_count):
+            
+            draw_y_axis_pos_values(background_surface, center_point[1], screen_width, screen_height,
+                                   i, length, y_line_start,horizontal_line_start, horizontal_line_end, 
+                                   line_color,font_small,number_x)
+        
+    #Draw negative y-axis numbers
+    if neg_y_axis_nums_count >=0:
+        
+        for i in range(neg_y_axis_nums_count):
 
-
-
+            draw_y_axis_neg_values(background_surface, center_point[1], screen_width, screen_height,
+                    i, length, y_line_start,horizontal_line_start,
+                    horizontal_line_end, line_color,font_small, number_x) 
+            
+ 
 def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, screen_height,
                 i, length, x_line_start,vertical_line_start,
                 vertical_line_end, line_color,font_small,number_y):
