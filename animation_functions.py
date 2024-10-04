@@ -3,6 +3,7 @@ import numpy as np
 
 from formula_functions import *
 
+
 def create_background(background_surface, const_coord_origin, var_coord_origin,
                       screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
     
@@ -259,15 +260,15 @@ def calc_single_t_aproxim(v, w, k, t, half_screen_width, half_screen_height, len
     return x, y
 
 
-def draw_vertical_line(line_layer, const_center_point, var_center_point, length, half_units,x_axis_value=1):
+def draw_vertical_line(line_layer, const_center_point, var_center_point,screen_height, length,x_axis_value=1):
     
     line_layer.fill((0, 0, 0, 0))
     
-    half_screen_width = const_center_point[0] + var_center_point[0]
-    half_screen_height = const_center_point[1] + var_center_point[1]
-    
-    x_up, y_up  = x_transform(x_axis_value, half_screen_width, length),x_transform(half_units, half_screen_width, length)
-    x_down, y_down = x_transform(x_axis_value, half_screen_width, length),x_transform(-half_units, half_screen_width, length)
+
+    center_point_width = const_center_point[0] + var_center_point[0]
+
+    x_up, y_up  = x_transform(x_axis_value, center_point_width, length),y_transform(0, screen_height, length)
+    x_down, y_down = x_transform(x_axis_value, center_point_width, length),y_transform(screen_height, 0, length)
     
     pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
     
@@ -343,9 +344,13 @@ def draw_spiral(spiral_layer,const_center_point, var_center_point, half_screen_w
                 
                 
                 
-def draw_dots(layer, half_screen_width, half_screen_height, length, t_list, v, w, k, color, t_diagram=False):
+def draw_dots(layer, const_center_point, var_center_point, length, t_list, v, w, k, color, t_diagram=False):
     
     layer.fill((0, 0, 0, 0))
+    
+    center_point_width = const_center_point[0] + var_center_point[0]
+    center_point_height = const_center_point[1] + var_center_point[1]
+    
     if t_list:
         theta_0 = k * np.pi/2
 
@@ -356,8 +361,8 @@ def draw_dots(layer, half_screen_width, half_screen_height, length, t_list, v, w
             x = radius_vec * np.cos(angle)
             y = radius_vec * np.sin(angle)
             
-            x = x_transform(x, half_screen_width, length)
-            y = y_transform(y, half_screen_height, length)
+            x = x_transform(x, center_point_width, length)
+            y = y_transform(y, center_point_height, length)
             
             if not t_diagram:
             
@@ -365,11 +370,11 @@ def draw_dots(layer, half_screen_width, half_screen_height, length, t_list, v, w
                 
             else:
                 
-                t_trans = x_transform(t, half_screen_width, length)
-                x_new = transform_to_t_diagram(x, half_screen_width, half_screen_height, length)
+                t_trans = x_transform(t, center_point_width, length)
+                x_new = transform_to_t_diagram(x, center_point_width, center_point_height, length)
              
                 pygame.draw.circle(layer, color=color, center=(t_trans, y), radius=4)
-                pygame.draw.circle(layer, color=color, center=(t_trans, x_new), radius=4)                
+                pygame.draw.circle(layer, color=color, center=(t_trans, x_new), radius=4)               
     
         
 def blit_layers(win, mode_statuses_dict, bg_color):
