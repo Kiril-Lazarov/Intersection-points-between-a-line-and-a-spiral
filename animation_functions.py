@@ -91,8 +91,8 @@ def create_background(background_surface, const_coord_origin, var_coord_origin,
             draw_y_axis_neg_values(background_surface, center_point[1], screen_width, screen_height,
                     i, length, y_line_start,horizontal_line_start,
                     horizontal_line_end, line_color,font_small, number_x) 
+
             
- 
 def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, screen_height,
                 i, length, x_line_start,vertical_line_start,
                 vertical_line_end, line_color,font_small,number_y):
@@ -116,6 +116,9 @@ def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, scr
             #Draw positive numbers
             pos_number_text = font_small.render(f'{i}', True, line_color)
             background_surface.blit(pos_number_text, (vertical_line_x_pos-5,number_y-4))
+
+
+
             
             
 def draw_x_axis_neg_values(background_surface, center_point_x, screen_width, screen_height,
@@ -174,35 +177,26 @@ def draw_y_axis_neg_values(background_surface, center_point_y, screen_width, scr
         
         
             
-def x_transform(x, half_screen_width,length):
+def x_transform(x, curr_screen_width,length):
     
-    return x* length + half_screen_width
+    return x* length + curr_screen_width
 
-def x_inverse_transform(x, half_screen_width,length):
+def x_inverse_transform(x, curr_screen_width,length):
     
-    return (x - half_screen_width) / length
+    return (x - curr_screen_width) / length
 
-def y_transform(y, half_screen_height,length):
+def y_transform(y, curr_screen_height,length):
     
-    return -y * length + half_screen_height
+    return -y * length + curr_screen_height
 
-def transform_to_t_diagram(x, half_screen_width, half_screen_height, length):
+def transform_to_t_diagram(x, curr_screen_width, curr_screen_height, length):
     
-    x = x_inverse_transform(x, half_screen_width, length)
-    x = y_transform(x, half_screen_height, length)
+    x = x_inverse_transform(x, curr_screen_width, length)
+    x = y_transform(x, curr_screen_height, length)
     
     return x
 
-def draw_vertical_line(line_layer, half_screen_width, half_screen_height, length, half_units,x_axis_value=1):
-    
-    line_layer.fill((0, 0, 0, 0))
-    
-    x_up, y_up  = x_transform(x_axis_value, half_screen_width, length),x_transform(half_units, half_screen_width, length)
-    x_down, y_down = x_transform(x_axis_value, half_screen_width, length),x_transform(-half_units, half_screen_width, length)
-    
-    pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
-    
-       
+      
 def calc_spiral_coord(t=1 ,v=1, w=1, k=0) -> tuple:
     
     theta_0 = k * np.pi/2
@@ -265,39 +259,58 @@ def calc_single_t_aproxim(v, w, k, t, half_screen_width, half_screen_height, len
     return x, y
 
 
-def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, v=1,w=1,k=0, t_diagram_mode=False):
+def draw_vertical_line(line_layer, const_center_point, var_center_point, length, half_units,x_axis_value=1):
+    
+    line_layer.fill((0, 0, 0, 0))
+    
+    half_screen_width = const_center_point[0] + var_center_point[0]
+    half_screen_height = const_center_point[1] + var_center_point[1]
+    
+    x_up, y_up  = x_transform(x_axis_value, half_screen_width, length),x_transform(half_units, half_screen_width, length)
+    x_down, y_down = x_transform(x_axis_value, half_screen_width, length),x_transform(-half_units, half_screen_width, length)
+    
+    pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
+    
+    
+
+def draw_spiral(spiral_layer,const_center_point, var_center_point, half_screen_width, half_screen_height, length, t=1, v=1,w=1,k=0, t_diagram_mode=False):
     
     spiral_layer.fill((0, 0, 0, 0))
     
-
+    # Get current coordinate center point position on the screen
+    center_point_width = const_center_point[0] + var_center_point[0]
+    center_point_height = const_center_point[1] + var_center_point[1]
+    
     if w != 0:
         x_spiral, y_spiral, T = calc_spiral_coord(t=t ,v=v, w=w, k=k)
 
-        x_spiral = [x_transform(x, half_screen_width, length) for x in x_spiral]
-        y_spiral = [y_transform(y, half_screen_height, length) for y in y_spiral]
+        x_spiral = [x_transform(x, center_point_width, length) for x in x_spiral]
+        y_spiral = [y_transform(y, center_point_height, length) for y in y_spiral]
 
         for i in range(len(x_spiral) -1):
             
             curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
             next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
             
+            # Check if the points are within the screen boundaries.
             if not t_diagram_mode:
                 if (0 <=abs(curr_sp_point_x)<=half_screen_width * 2) and \
-                   (0 <=abs(curr_sp_point_y)<=half_screen_height * 2): 
+                   (0 <=abs(curr_sp_point_y)<=half_screen_height * 2):
 
                     pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), \
                                                                       (next_sp_point_x, next_sp_point_y)])
             else:
 
                 curr_t_point = T[i]
-                curr_t_point = x_transform(curr_t_point, half_screen_width, length)
+                curr_t_point = x_transform(curr_t_point, center_point_width, length)
                 
                 next_t_point = T[i+1]
-                next_t_point= x_transform(next_t_point, half_screen_width, length)
+                next_t_point= x_transform(next_t_point, center_point_width, length)
 
-                backward_curr_sp_x = transform_to_t_diagram(curr_sp_point_x, half_screen_width, half_screen_height, length)
-                backward_next_sp_x = transform_to_t_diagram(next_sp_point_x, half_screen_width, half_screen_height, length)
+                backward_curr_sp_x = transform_to_t_diagram(curr_sp_point_x, center_point_width, center_point_height, length)
+                backward_next_sp_x = transform_to_t_diagram(next_sp_point_x, center_point_width, center_point_height, length)
                 
+                # Check if the points are within the screen boundaries.
                 if (0 <=abs(curr_t_point)<=half_screen_width * 2) and \
                    (0 <=abs(curr_sp_point_y) <=half_screen_height * 2 or \
                     0 <=abs(backward_next_sp_x) <= half_screen_height * 2): 
@@ -312,20 +325,19 @@ def draw_spiral(spiral_layer, half_screen_width, half_screen_height,length,t=1, 
         if t_diagram_mode:
             
             
-            last_t = x_transform(T[-1], half_screen_width, length)
+            last_t = x_transform(T[-1], center_point_width, length)
             
             last_rad_vec =  T[-1] * v
-            last_rad_vec = y_transform(last_rad_vec, half_screen_height, length)
+            last_rad_vec = y_transform(last_rad_vec, center_point_height, length)
             
             # Draw hipotenuse
-            start_point = (x_transform(T[0], half_screen_width, length), y_transform(0, half_screen_height, length))
+            start_point = (x_transform(T[0], center_point_width, length), y_transform(0, center_point_height, length))
             end_point = (last_t, last_rad_vec)
             pygame.draw.aalines(spiral_layer, 'green',  False, [start_point, end_point])
             
             # Draw spiral radius vector
-            start_pos = (last_t, y_transform(0 , half_screen_height, length)) 
-            end_pos = (last_t, last_rad_vec)
-            
+            start_pos = (last_t, y_transform(0 , center_point_height, length)) 
+            end_pos = (last_t, last_rad_vec)            
             draw_vector(spiral_layer,start_pos, end_pos, color='black' )
                                                                           
                 
