@@ -66,7 +66,7 @@ def create_background(background_surface, const_coord_origin, var_coord_origin,
 
 def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, screen_height,
                 i, length, x_line_start,vertical_line_start,
-                vertical_line_end, line_color,font_small, half_units,number_y,total_numbers_on_screen):
+                vertical_line_end, line_color,font_small,number_y):
     
     
     vertical_line_x_pos = center_point_x + i*length
@@ -91,7 +91,7 @@ def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, scr
             
 def draw_x_axis_neg_values(background_surface, center_point_x, screen_width, screen_height,
                             i, length, x_line_start,vertical_line_start, vertical_line_end, line_color,
-                           font_small, half_units,number_y,total_numbers_on_screen):
+                           font_small,number_y):
     
     vertical_line_x_neg = center_point_x - i*length
     
@@ -107,30 +107,41 @@ def draw_x_axis_neg_values(background_surface, center_point_x, screen_width, scr
 
     
     
-def draw_y_axis_values(background_surface, screen_width, screen_height,
+def draw_y_axis_pos_values(background_surface, center_point_y, screen_width, screen_height,
                 i, length, y_line_start,horizontal_line_start,
-                horizontal_line_end, line_color,font_small, half_units,number_x,pos_number, neg_number):
-    
-    horizontal_line_y_neg = screen_height/2 + i*length
-    horizontal_line_y_pos = screen_height/2 - i*length
+                horizontal_line_end, line_color,font_small, number_x):
 
-    #Draw unit lines for negative y-axis
-    pygame.draw.line(background_surface, color = line_color, start_pos=(horizontal_line_start, horizontal_line_y_neg),
-             end_pos = (horizontal_line_end, horizontal_line_y_neg), width=1)
+    horizontal_line_y_pos = center_point_y - i*length
 
     #Draw unit lines for positive y-axis
     pygame.draw.line(background_surface, color = line_color, start_pos=(horizontal_line_start, horizontal_line_y_pos),
              end_pos = (horizontal_line_end, horizontal_line_y_pos), width=1)
 
     if i >=1:
-       
-        #Draw negative numbers
-        neg_number_text = font_small.render(f'-{pos_number}', True, line_color)
-        background_surface.blit(neg_number_text, (number_x-46,horizontal_line_y_neg-4)) 
 
         #Draw positive numbers
-        neg_number_text = font_small.render(f'{pos_number}', True, line_color)
+        neg_number_text = font_small.render(f'{i}', True, line_color)
         background_surface.blit(neg_number_text, (number_x-46,horizontal_line_y_pos-4))
+        
+        
+def draw_y_axis_neg_values(background_surface, center_point_y, screen_width, screen_height,
+                i, length, y_line_start,horizontal_line_start,
+                horizontal_line_end, line_color,font_small, number_x):
+    
+    horizontal_line_y_neg = center_point_y + i*length
+
+
+    #Draw unit lines for negative y-axis
+    pygame.draw.line(background_surface, color = line_color, start_pos=(horizontal_line_start, horizontal_line_y_neg),
+             end_pos = (horizontal_line_end, horizontal_line_y_neg), width=1)
+
+
+    if i >=1:
+       
+        #Draw negative numbers
+        neg_number_text = font_small.render(f'-{i}', True, line_color)
+        background_surface.blit(neg_number_text, (number_x-46,horizontal_line_y_neg-4)) 
+
         
         
             
