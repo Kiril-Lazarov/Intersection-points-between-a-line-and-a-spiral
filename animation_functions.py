@@ -204,7 +204,7 @@ def calc_spiral_coord(t=1 ,v=1, w=1, k=0) -> tuple:
 
     lin_space = (0, t)
     
-    num = 3000
+    num = 500
 
     T = np.linspace(*lin_space, num)
     
@@ -249,18 +249,19 @@ def calc_line_intersections_t(t_nth_list, x, v, w, k, correction_mech=False, f_b
     return t_mth_list
 
 
-def calc_single_t_aproxim(v, w, k, t, half_screen_width, half_screen_height, length, transform=True):
+def calc_single_t_aproxim(v, w, k, t, center_point_width, center_point_height, length, transform=True):
     x = get_x_coord(v, w, k, t)
     y = get_y_coord(v, w, k, t)
     
+    
     if transform:
-        x = x_transform(x, half_screen_width, length)
-        y = y_transform(y, half_screen_height, length)
+        x = x_transform(x, center_point_width, length)
+        y = y_transform(y, center_point_height, length)
 
     return x, y
 
 
-def draw_vertical_line(line_layer, const_center_point, var_center_point,screen_height, length,x_axis_value=1):
+def draw_vertical_line(line_layer, const_center_point, var_center_point, screen_height, length,x_axis_value=1):
     
     line_layer.fill((0, 0, 0, 0))
     
@@ -385,15 +386,18 @@ def blit_layers(win, mode_statuses_dict, bg_color):
             win.blit(layer, (0, 0))
         
 def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_line,
-                       half_screen_width, half_screen_height, length,
-                       color, draw_leg_and_hip=False):
+                           const_center_point, var_center_point, length,
+                           color, draw_leg_and_hip=False):
+    
+    center_point_width = const_center_point[0] + var_center_point[0]
+    center_point_height = const_center_point[1] + var_center_point[1]
     
     curr_t = t_mth_aproxim_list[m]
 
 
-    x, y = calc_single_t_aproxim(v, w, k, curr_t, half_screen_width, half_screen_height, length)
+    x, y = calc_single_t_aproxim(v, w, k, curr_t, center_point_width, center_point_height, length)
 
-    start_pos, end_pos = (half_screen_width, half_screen_height), (x, y)
+    start_pos, end_pos = (center_point_width, center_point_height), (x, y)
 
     draw_vector(algorithm_layer, start_pos, end_pos, color=color)
     
@@ -402,10 +406,10 @@ def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_li
         
         if m+1 <= len(t_mth_aproxim_list):
         
-            x_line = x_transform(x_line, half_screen_width, length)
+            x_line = x_transform(x_line, center_point_width, length)
 
             next_t = t_mth_aproxim_list[m+1]
-            next_x, next_y = calc_single_t_aproxim(v, w, k, next_t, half_screen_width, half_screen_height, length)
+            next_x, next_y = calc_single_t_aproxim(v, w, k, next_t, center_point_width, center_point_height, length)
 
 
             # Draw horizontal leg
@@ -422,7 +426,7 @@ def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_li
         
         
 def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_list, algorithm_variables_dict, 
-                        half_screen_width, half_screen_height, length,
+                        const_center_point, var_center_point, length,
                          accuracy=5, curr_rad_vec_color='black', previous_rad_vec_color='lightgreen'):
 
     algorithm_layer.fill((0, 0, 0, 0))
@@ -447,7 +451,7 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
             
             # Show current radius-vector
             show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x,
-                               half_screen_width, half_screen_height, length,
+                               const_center_point, var_center_point, length,
                                curr_rad_vec_color)
         
         else:
@@ -461,13 +465,13 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
                 if m -1>= 0:
                 
                     show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,x,
-                                       half_screen_width, half_screen_height, length,
+                                       const_center_point, var_center_point, length,
                                        previous_rad_vec_color, draw_leg_and_hip=True)
                 
  
                 # Show current radius-vector
                 show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x,
-                                   half_screen_width, half_screen_height, length,
+                                   const_center_point, var_center_point, length,
                                    curr_rad_vec_color)
 
                 
@@ -476,17 +480,17 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
                 # Show previous radius vector if it exists
                 if m -1>= 0:
                     show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,x,
-                                       half_screen_width, half_screen_height, length,
+                                       const_center_point, var_center_point, length,
                                        previous_rad_vec_color, draw_leg_and_hip=True)
                     
                 # Show current radius-vector
                 show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x,
-                                   half_screen_width, half_screen_height, length,
+                                   const_center_point, var_center_point, length,
                                    curr_rad_vec_color)
 
-            
-            
     return t_mth_aproxim_list, algorithm_variables_dict
+
+
 
 def draw_vector(layer, start_pos, end_pos, color=(255, 255, 255)):
   
