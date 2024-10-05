@@ -11,11 +11,13 @@ def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants
     # Check for key combinations
     keys = pygame.key.get_pressed()
     
+    # Zoom-in 
     if keys[pygame.K_z] and keys[pygame.K_UP]:
         var_params_dict['l'] += steps_dict_constants['l']
 
         update_screen, update_spiral, update_line, shift_coords = True, True, True, True
         
+    # Zoom-out
     elif keys[pygame.K_z] and keys[pygame.K_DOWN]:
         
         possible_length = const_params_dict['l'] + var_params_dict['l'] - steps_dict_constants['l']
@@ -25,21 +27,25 @@ def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants
 
         update_screen, update_spiral, update_line, shift_coords = True, True, True, True
         
+    # Move the screen up along the y-axis.   
     elif keys[pygame.K_b] and keys[pygame.K_UP]:
-        var_params_dict['c'][1] -= steps_dict_constants['c']
-
-        update_screen, update_spiral, update_line, shift_coords = True, True, True, True
-
-    elif keys[pygame.K_b] and keys[pygame.K_DOWN]:
         var_params_dict['c'][1] += steps_dict_constants['c']
 
         update_screen, update_spiral, update_line, shift_coords = True, True, True, True
 
+    # Move the screen down along the y-axis.    
+    elif keys[pygame.K_b] and keys[pygame.K_DOWN]:
+        var_params_dict['c'][1] -= steps_dict_constants['c']
+
+        update_screen, update_spiral, update_line, shift_coords = True, True, True, True
+
+    # Move the screen left along the y-axis.    
     elif keys[pygame.K_b] and keys[pygame.K_LEFT]:
         var_params_dict['c'][0] -= steps_dict_constants['c']
 
         update_screen, update_spiral, update_line, shift_coords = True, True, True, True
 
+    # Move the screen right along the y-axis. 
     elif keys[pygame.K_b] and keys[pygame.K_RIGHT]:
         var_params_dict['c'][0] += steps_dict_constants['c']
 
@@ -147,7 +153,8 @@ def handle_shift_key_commands(event, update_screen, update_spiral, update_line, 
         
         var_params_dict['t'], var_params_dict['v'], \
         var_params_dict['w'], var_params_dict['x'], \
-        var_params_dict['k'], var_params_dict['c'] = t_additional, v_additional, w_additional, x_additional, k_additional, [0, 0]
+        var_params_dict['k'], var_params_dict['l'], \
+        var_params_dict['c'] = t_additional, v_additional, w_additional, x_additional, k_additional, l_additional, [0, 0]
 
         const_params_dict['w'] = w
  
