@@ -1,11 +1,12 @@
 import pygame 
 import numpy as np
+from scipy.integrate import quad
 
 from formula_functions import *
 
 
 def create_background(background_surface, const_coord_origin, var_coord_origin,
-                      screen_width, screen_height, units, length, bg_color, font_small, after_stop = False):
+                      screen_width, screen_height, length, bg_color, font_small, after_stop = False):
     
     background_surface.fill(bg_color)
 
@@ -182,13 +183,16 @@ def x_transform(x, curr_screen_width,length):
     
     return x* length + curr_screen_width
 
+
 def x_inverse_transform(x, curr_screen_width,length):
     
     return (x - curr_screen_width) / length
 
+
 def y_transform(y, curr_screen_height,length):
     
     return -y * length + curr_screen_height
+
 
 def transform_to_t_diagram(x, curr_screen_width, curr_screen_height, length):
     
@@ -197,12 +201,33 @@ def transform_to_t_diagram(x, curr_screen_width, curr_screen_height, length):
     
     return x
 
+def get_x_derivative()
+
+    v*( np.cos(theta) - w* t_l * np.sin(theta))
+
+def calc_spiral_length(v, w, t):
+
+    a = 0
+
+    def f(t_l):
+        theta = w* t
+        dx_dt =v*( np.cos(theta) - w* t_l * np.sin(theta))
+        dy_dt =v*( np.sin(theta) + w* t_l * np.cos(theta))
+        
+        return np.sqrt(dx_dt**2 + dy_dt **2)
+
+    length, _ = quad(f, a, t)
+    
+    return length
+
       
 def calc_spiral_coord(t=1 ,v=1, w=1, k=0) -> tuple:
     
     theta_0 = k * np.pi/2
 
     lin_space = (0, t)
+    
+    spiral_length = calc_spiral_length(v, w, t)
     
     num = 500
 
