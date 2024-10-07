@@ -201,17 +201,25 @@ def transform_to_t_diagram(x, curr_screen_width, curr_screen_height, length):
     
     return x
 
-def get_x_derivative()
+def calc_x_derivative(t, v, w, k):
+    
+    theta = k* np.pi/2 + w * t
+    
+    return v*( np.cos(theta) - w* t * np.sin(theta))
 
-    v*( np.cos(theta) - w* t_l * np.sin(theta))
+def calc_y_derivative(t, v, w, k):
+    
+    theta = k* np.pi/2 + w * t
+    
+    return v*( np.sin(theta) + w* t * np.cos(theta))
 
-def calc_spiral_length(v, w, t):
+def calc_spiral_length(t, v, w, k):
 
     a = 0
 
     def f(t_l):
-        theta = w* t
-        dx_dt =v*( np.cos(theta) - w* t_l * np.sin(theta))
+       
+        dx_dt = calc_x_derivative(t, v, w, k)
         dy_dt =v*( np.sin(theta) + w* t_l * np.cos(theta))
         
         return np.sqrt(dx_dt**2 + dy_dt **2)
