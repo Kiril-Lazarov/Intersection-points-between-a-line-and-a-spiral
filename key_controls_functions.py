@@ -159,8 +159,8 @@ def handle_shift_key_commands(event, update_screen, update_spiral, update_line, 
         const_params_dict['w'] = w
  
         mode_dict_keys = mode_statuses_dict.keys()
-        mode_dict_default_values = iter([background_mode, algorithm_mode, algorithm_data_mode, t_diagram_mode, line_mode, spiral_mode,\
-                                         y_axis_intersects, line_intersects, parameters_mode, True])
+        mode_dict_default_values = iter([background_mode, algorithm_mode, algorithm_data_mode, t_diagram_mode, vertical_line_mode, spiral_mode,\
+                                         y_axis_intersects, line_intersects, parameters_mode, True, derivatives_mode])
         
         for key in  mode_statuses_dict.keys():
             mode_statuses_dict[key][1] = next(mode_dict_default_values)
@@ -203,11 +203,11 @@ def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
 
                 if mode_statuses_dict['T-diagram'][1]:
                     mode_statuses_dict['Algorithm mode'][1] = False
-                    mode_statuses_dict['Line'][1] = False
+                    mode_statuses_dict['Vertical line'][1] = False
                 
         if not mode_statuses_dict['Algorithm mode'][1]:
             if event.key == pygame.K_l:
-                mode_statuses_dict['Line'][1] = not mode_statuses_dict['Line'][1]
+                mode_statuses_dict['Vertical line'][1] = not mode_statuses_dict['Vertical line'][1]
 
             elif event.key == pygame.K_s:
                 mode_statuses_dict['Spiral'][1] = not mode_statuses_dict['Spiral'][1]
@@ -223,7 +223,10 @@ def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
             
             elif event.key == pygame.K_c:
                 mode_statuses_dict['Coordinates'][1] = not mode_statuses_dict['Coordinates'][1]
-            
+                
+            elif event.key == pygame.K_d:
+                mode_statuses_dict['Derivatives'][1] = not mode_statuses_dict['Derivatives'][1]
+                
     return update_screen, mode_statuses_dict, is_turn_off, is_t_diagram_change 
 
 
