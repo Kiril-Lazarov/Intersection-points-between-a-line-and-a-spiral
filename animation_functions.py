@@ -410,67 +410,89 @@ def draw_dots(layer, const_center_point, var_center_point, length, t_list, v, w,
              
                 pygame.draw.circle(layer, color=color, center=(t_trans, y), radius=4)
                 pygame.draw.circle(layer, color=color, center=(t_trans, x_new), radius=4) 
+    
+def get_line_boundary_points(length, angle, x, y):
+    
+    x_leg = length * np.cos(angle) 
+    y_leg = length * np.sin(angle)
+    
+    front_xx = x + x_leg 
+    front_xy = y - y_leg
+    
+    back_xx = x - x_leg
+    back_xy = y + y_leg
+    
+    return front_xx, front_xy, back_xx, back_xy    
+    
                 
+def draw_derivatives(layer, t, v, w, k, const_center_point, var_center_point, 
+                     screen_width, screen_height, length,
+                     t_diagram= False, show_derivatives=False):
+    
+    if show_derivatives:
+        
+        layer.fill((0, 0, 0, 0))
+
+        x_der_color = 'red'
+        y_der_color = 'blue'
+
+        t-=1
+
+
+        center_point_width = const_center_point[0] + var_center_point[0]
+        center_point_height = const_center_point[1] + var_center_point[1]
+
+        theta = k*np.pi/2 + w*t
+        rad_vec = v*t
+
+        # Current point spiral coords 
+        x = rad_vec * np.cos(theta)
+        y = rad_vec * np.sin(theta)
+
+        # Derivatives in this point 
+        dx_dt = calc_x_derivative(t, v, w, k)
+        dy_dt = calc_y_derivative(t, v, w, k)
+        
+        # Spiral derivative
+        dx_dy = dy_dt/ dx_dt
+
+        x_der_angle = np.arctan(dx_dt)
+        y_der_angle = np.arctan(dy_dt)
+        
+        spiral_der_angle = np.arctan(dx_dy)
+
+        x = x_transform(x, center_point_width, length)
+        y = y_transform(y, center_point_height, length)
+
+        ll = 3* length
+
+        if t_diagram:
+            t_trans = x_transform(t, center_point_width, length)
+            x_new = transform_to_t_diagram(x, center_point_width, center_point_height, length)
+            
+            colors = iter([x_der_color, y_der_color])
+            
+            for angle in [x_der_angle, y_der_angle]:
+
+                front_xx, front_xy, back_xx, back_xy = get_line_boundary_points(ll, angle, t_trans, x_new)
+                pygame.draw.aalines(layer, next(colors),  False, [(back_xx,  back_xy), (front_xx, front_xy)])
+
+            pygame.draw.circle(layer, color=x_der_color, center=(t_trans, x_new), radius=4)
+            pygame.draw.circle(layer, color=y_der_color, center=(t_trans, y), radius=4)
+        
+
+
+        else:
+            colors = iter([x_der_color, y_der_color, 'green'])
+            
+            # Draw derivatives         
+            for angle in [x_der_angle, y_der_angle, spiral_der_angle]:
+            
+                front_xx, front_xy, back_xx, back_xy = get_line_boundary_points(ll, angle, x, y)
+
+                pygame.draw.aalines(layer, next(colors),  False, [(back_xx, back_xy), (front_xx, front_xy)])
                 
-def draw_derivatives(layer, t, v, w, k, 
-                     const_center_point, var_center_point, screen_width, screen_height, length):
-    
-    layer.fill((0, 0, 0, 0))
-    
-    x_der_color = 'red'
-    y_der_color = 'blue'
-    
-    t-=1
-  
-
-    center_point_width = const_center_point[0] + var_center_point[0]
-    center_point_height = const_center_point[1] + var_center_point[1]
-    
-    theta = k*np.pi/2 + w*t
-    rad_vec = v*t
-    
-    # Current point spiral coords 
-    x = rad_vec * np.cos(theta)
-    y = rad_vec * np.sin(theta)
-    
-    # Derivatives in this point 
-    dx_dt = calc_x_derivative(t, v, w, k)
-    dy_dt = calc_y_derivative(t, v, w, k)
-    
-    x_der_angle = np.arctan(dx_dt)
-    y_der_angle = np.arctan(dy_dt)
-
-    x = x_transform(x, center_point_width, length)
-    y = y_transform(y, center_point_height, length)
-
-    ll = 3* length
-    t_trans = x_transform(t, center_point_width, length)
-    x_new = transform_to_t_diagram(x, center_point_width, center_point_height, length)
-
-    # Draw x-derivative 
-    front_end_x_t_axis = t_trans + ll * np.cos(x_der_angle) 
-    back_end_x_t_axis = t_trans - ll * np.cos(x_der_angle) 
-    
-    front_end_x_der = x_new -  ll * np.sin(x_der_angle)
-    back_end_x_der = x_new + ll * np.sin(x_der_angle)
-    
-    pygame.draw.circle(layer, color=x_der_color, center=(t_trans, x_new), radius=4)
-    pygame.draw.aalines(layer, x_der_color,  False, [(t_trans, x_new), (front_end_x_t_axis,  front_end_x_der)])
-    pygame.draw.aalines(layer, x_der_color,  False, [(t_trans, x_new), (back_end_x_t_axis,  back_end_x_der)])
-    
-    
-    # Draw y-derivative
-    front_end_y_t_axis = t_trans + ll * np.cos(y_der_angle) 
-    back_end_y_t_axis = t_trans - ll * np.cos(y_der_angle) 
-    
-    front_end_y_der = y -  ll * np.sin(y_der_angle)
-    back_end_y_der = y + ll * np.sin(y_der_angle)
-
-   
-    
-    pygame.draw.circle(layer, color=y_der_color, center=(t_trans, y), radius=4)
-    pygame.draw.aalines(layer, y_der_color,  False, [(t_trans, y), (front_end_y_t_axis,  front_end_y_der)])
-    pygame.draw.aalines(layer, y_der_color,  False, [(t_trans, y), (back_end_y_t_axis,  back_end_y_der)])
+            pygame.draw.circle(layer, color='purple', center=(x, y), radius=4)
     
     
         
