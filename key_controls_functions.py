@@ -204,6 +204,9 @@ def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
                 if mode_statuses_dict['T-diagram'][1]:
                     mode_statuses_dict['Algorithm mode'][1] = False
                     mode_statuses_dict['Vertical line'][1] = False
+                    mode_statuses_dict['Derivatives'][1] = False
+                    mode_statuses_dict['Y-intersects'][1] = False
+                    mode_statuses_dict['Line-intersects'][1] = False
                 
         if not mode_statuses_dict['Algorithm mode'][1]:
             if event.key == pygame.K_l:
@@ -226,6 +229,9 @@ def handle_ctrl_commands(event, update_screen, mode_statuses_dict):
                 
             elif event.key == pygame.K_d:
                 mode_statuses_dict['Derivatives'][1] = not mode_statuses_dict['Derivatives'][1]
+                if mode_statuses_dict['Derivatives'][1]:
+                    mode_statuses_dict['Y-intersects'][1] = False
+                    mode_statuses_dict['Line-intersects'][1] = False
                 
     return update_screen, mode_statuses_dict, is_turn_off, is_t_diagram_change 
 
