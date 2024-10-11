@@ -260,22 +260,19 @@ def calc_spiral_length(t, v, w, k):
     return length
 
       
-def calc_spiral_coord(t=1 ,v=1, w=1, k=0) -> tuple:
+def calc_spiral_coord(deg=3, t=1 ,v=1, w=1, k=0) -> tuple:
     
     theta_0 = k * np.pi/2
 
     lin_space = (0, t)
     
-    num = 500
+    num = 300
 
     T = np.linspace(*lin_space, num)
     
-    angles = np.array([theta_0 + t * w for t in T])
-    radiuses = np.array([v * t for t in T])
+    x = np.array([get_nth_deg_x_derivative(deg,t, v,w,k) for t in T])
+    y = np.array([get_nth_deg_y_derivative(deg,t, v,w,k) for t in T])
     
-    x = radiuses * np.cos(angles)
-    y = radiuses * np.sin(angles)
-
     return x, y, T 
 
 def calc_y_intersects_t(t, w, k) -> list:
