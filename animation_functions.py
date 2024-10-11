@@ -214,6 +214,34 @@ def calc_y_derivative(t, v, w, k):
     
     return v*( np.sin(theta) + w* t * np.cos(theta))
 
+def get_nth_deg_x_derivative(deg,t, v,w,k):
+    theta = k*np.pi/ 2 + w * t
+    sin_theta = np.sin(theta)
+    cos_theta = np.cos(theta)
+    
+    trig_derivatives_cycle = [sin_theta, cos_theta, -sin_theta, -cos_theta]
+    nth_der = deg%4
+    next_nth = (deg+1) % 4
+    
+    nth_cos_deriv = trig_derivatives_cycle[nth_der]
+    nth_sin_deriv = trig_derivatives_cycle[next_nth]
+    
+    return v * w ** (deg-1) * (deg * nth_cos_deriv + w*t * nth_sin_deriv)
+
+def get_nth_deg_y_derivative(deg, t, v, w, k):
+    theta = k*np.pi/ 2 + w * t
+    sin_theta = np.sin(theta)
+    cos_theta = np.cos(theta)
+    
+    trig_derivatives_cycle = [sin_theta, cos_theta, -sin_theta, -cos_theta]
+    nth_der = deg%4
+    prev_nth = (deg-1) % 4
+
+    nth_cos_deriv = trig_derivatives_cycle[nth_der]
+    nth_sin_deriv = trig_derivatives_cycle[prev_nth]
+    
+    return  v * w ** (deg-1) * ( deg *  nth_sin_deriv + w * t * nth_cos_deriv)
+
 
 
 def calc_spiral_length(t, v, w, k):
@@ -436,9 +464,8 @@ def draw_derivatives(layer, t, v, w, k, const_center_point, var_center_point,
         x_der_color = 'red'
         y_der_color = 'blue'
 
-        t-=1
-
-
+        # t-=1
+        
         center_point_width = const_center_point[0] + var_center_point[0]
         center_point_height = const_center_point[1] + var_center_point[1]
 
@@ -472,9 +499,11 @@ def draw_derivatives(layer, t, v, w, k, const_center_point, var_center_point,
             
             colors = iter([x_der_color, y_der_color])
             
+            y_points = iter([x_new, y])
+            
             for angle in [x_der_angle, y_der_angle]:
 
-                front_xx, front_xy, back_xx, back_xy = get_line_boundary_points(ll, angle, t_trans, x_new)
+                front_xx, front_xy, back_xx, back_xy = get_line_boundary_points(ll, angle, t_trans, next(y_points))
                 pygame.draw.aalines(layer, next(colors),  False, [(back_xx,  back_xy), (front_xx, front_xy)])
 
             pygame.draw.circle(layer, color=x_der_color, center=(t_trans, x_new), radius=4)
@@ -493,7 +522,6 @@ def draw_derivatives(layer, t, v, w, k, const_center_point, var_center_point,
                 pygame.draw.aalines(layer, next(colors),  False, [(back_xx, back_xy), (front_xx, front_xy)])
                 
             pygame.draw.circle(layer, color='purple', center=(x, y), radius=4)
-    
     
         
 def blit_layers(win, mode_statuses_dict, bg_color):
