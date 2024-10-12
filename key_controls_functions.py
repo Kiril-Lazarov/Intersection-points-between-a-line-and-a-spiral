@@ -131,7 +131,7 @@ def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants
                 var_params_dict['t'] -= steps_dict_constants['t']
 
                 update_screen, update_spiral = True, True
-   
+
             
     return update_screen, update_spiral, update_line, var_params_dict, const_params_dict, shift_coords
 
@@ -154,7 +154,8 @@ def handle_shift_key_commands(event, update_screen, update_spiral, update_line, 
         var_params_dict['t'], var_params_dict['v'], \
         var_params_dict['w'], var_params_dict['x'], \
         var_params_dict['k'], var_params_dict['l'], \
-        var_params_dict['c'] = t_additional, v_additional, w_additional, x_additional, k_additional, l_additional, [0, 0]
+        var_params_dict['c'],var_params_dict['deg'] = t_additional, v_additional, w_additional,\
+                                                      x_additional, k_additional, l_additional, [0, 0], deg_additional
 
         const_params_dict['w'] = w
  
@@ -166,6 +167,19 @@ def handle_shift_key_commands(event, update_screen, update_spiral, update_line, 
             mode_statuses_dict[key][1] = next(mode_dict_default_values)
 
         update_screen, update_spiral, update_line, reset_background = True, True, True, True
+    
+    # Change the degree of the spiral curve
+    elif event.type == pygame.KEYDOWN and (pygame.key.get_mods() & pygame.KMOD_SHIFT):
+        
+        keys = pygame.key.get_pressed()
+        
+        if keys[pygame.K_e] and keys[pygame.K_UP]:
+            var_params_dict['deg'] += 1
+            
+        elif keys[pygame.K_e] and keys[pygame.K_DOWN]:
+            var_params_dict['deg'] -= 1
+            
+        update_screen, update_spiral = True, True
         
     return update_screen, update_spiral, update_line, reset_background, const_params_dict, var_params_dict
 
