@@ -260,7 +260,7 @@ def calc_spiral_length(t, v, w, k):
     return length
 
       
-def calc_spiral_coord(deg=3, t=1 ,v=1, w=1, k=0) -> tuple:
+def calc_spiral_coord(deg=0, t=1 ,v=1, w=1, k=0) -> tuple:
     
     theta_0 = k * np.pi/2
 
@@ -289,7 +289,7 @@ def calc_y_intersects_t(t, w, k) -> list:
     while not is_bigger:
         curr_t = get_nth_intersect(n, k, w)
         
-        if curr_t <= t:
+        if abs(curr_t) <= abs(t):
             t_list.append(curr_t)
             n += 1
         else:
@@ -334,7 +334,7 @@ def draw_vertical_line(line_layer, const_center_point, var_center_point, screen_
     
     
 
-def draw_spiral(spiral_layer,const_center_point, var_center_point, half_screen_width, half_screen_height, length, t=1, v=1,w=1,k=0, t_diagram_mode=False):
+def draw_spiral(spiral_layer,const_center_point, var_center_point, half_screen_width, half_screen_height, length, deg=0, t=1, v=1,w=1,k=0, t_diagram_mode=False):
     
     spiral_layer.fill((0, 0, 0, 0))
     
@@ -343,13 +343,18 @@ def draw_spiral(spiral_layer,const_center_point, var_center_point, half_screen_w
     center_point_height = const_center_point[1] + var_center_point[1]
     
     if w != 0:
-        x_spiral, y_spiral, T = calc_spiral_coord(t=t ,v=v, w=w, k=k)
-
+        x_spiral, y_spiral, T = calc_spiral_coord(deg=deg,t=t ,v=v, w=w, k=k)
+        
+        # Euclidеan distances list
+        rad_vec_distances = np.sqrt(x_spiral**2 + y_spiral**2)
+        rad_vec_distances = [y_transform(y, center_point_height, length) for y in rad_vec_distances]
+        
+        # Transform the x and y spiral coords into the screen coordinate system
         x_spiral = [x_transform(x, center_point_width, length) for x in x_spiral]
         y_spiral = [y_transform(y, center_point_height, length) for y in y_spiral]
 
         for i in range(len(x_spiral) -1):
-            
+
             curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
             next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
             
@@ -370,31 +375,40 @@ def draw_spiral(spiral_layer,const_center_point, var_center_point, half_screen_w
 
                 backward_curr_sp_x = transform_to_t_diagram(curr_sp_point_x, center_point_width, center_point_height, length)
                 backward_next_sp_x = transform_to_t_diagram(next_sp_point_x, center_point_width, center_point_height, length)
-                
+            
+                # Euclidean distances 
+                curr_rad_vec_dist = rad_vec_distances[i]
+                next_rad_vec_dist = rad_vec_distances[i+1]
+       
                 # Check if the points are within the screen boundaries.
                 if (0 <=abs(curr_t_point)<=half_screen_width * 2) and \
                    (0 <=abs(curr_sp_point_y) <=half_screen_height * 2 or \
-                    0 <=abs(backward_next_sp_x) <= half_screen_height * 2): 
+                    0 <=abs(backward_next_sp_x) <= half_screen_height * 2 or \
+                    0 <= abs(next_rad_vec_dist) <= half_screen_height * 2): 
 
-                    
 
                     pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_t_point, backward_curr_sp_x), \
                                                                       (next_t_point, backward_next_sp_x)])
 
                     pygame.draw.aalines(spiral_layer, 'blue',  False, [(curr_t_point, curr_sp_point_y), \
                                                                       (next_t_point, next_sp_point_y)])
+                    
+                    pygame.draw.aalines(spiral_layer, 'green',  False, [(curr_t_point, curr_rad_vec_dist), \
+                                                                       (next_t_point, next_rad_vec_dist)])
+                    
+                    
         if t_diagram_mode:
-            
-            
+
             last_t = x_transform(T[-1], center_point_width, length)
             
             last_rad_vec =  T[-1] * v
-            last_rad_vec = y_transform(last_rad_vec, center_point_height, length)
             
-            # Draw hipotenuse
-            start_point = (x_transform(T[0], center_point_width, length), y_transform(0, center_point_height, length))
-            end_point = (last_t, last_rad_vec)
-            pygame.draw.aalines(spiral_layer, 'green',  False, [start_point, end_point])
+            last_spiral_x = get_nth_deg_x_derivative(deg, T[-1], v,w, k)
+            last_spiral_y = get_nth_deg_y_derivative(deg, T[-1], v,w, k)
+            
+            last_rad_vec = np.sqrt(last_spiral_x**2 + last_spiral_y ** 2)
+            last_rad_vec = y_transform(last_rad_vec, center_point_height, length)
+
             
             # Draw spiral radius vector
             start_pos = (last_t, y_transform(0 , center_point_height, length)) 
