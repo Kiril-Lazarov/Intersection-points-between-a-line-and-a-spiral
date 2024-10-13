@@ -32,8 +32,8 @@ def get_delta_theta(w, k):
     
     
 
-def X_bin(x_line):
-    return (x_line ** (0 ** abs(x_line) - 1)) ** -1
+def X_bin(x):
+    return (x ** (0 ** abs(x) - 1)) ** -1
 
 def get_y_coord(v, w, k, prev_t):
     return v * prev_t * np.sin(k*np.pi/2 + w*prev_t)
@@ -42,6 +42,36 @@ def get_y_coord(v, w, k, prev_t):
 
 def get_x_coord(v, w, k, prev_t):
     return v * prev_t * np.cos(k*np.pi/2 + w*prev_t)
+
+
+
+def get_nth_deg_x_derivative(deg,t, v,w,k):
+    theta = k*np.pi/ 2 + w * t
+    sin_theta = np.sin(theta)
+    cos_theta = np.cos(theta)
+    
+    trig_derivatives_cycle = [sin_theta, cos_theta, -sin_theta, -cos_theta]
+    nth_der = deg%4
+    next_nth = (deg+1) % 4
+    
+    nth_cos_deriv = trig_derivatives_cycle[nth_der]
+    nth_sin_deriv = trig_derivatives_cycle[next_nth]
+    
+    return v * w ** (deg-1) * (deg * nth_cos_deriv + w*t * nth_sin_deriv)
+
+def get_nth_deg_y_derivative(deg, t, v, w, k):
+    theta = k*np.pi/ 2 + w * t
+    sin_theta = np.sin(theta)
+    cos_theta = np.cos(theta)
+    
+    trig_derivatives_cycle = [sin_theta, cos_theta, -sin_theta, -cos_theta]
+    nth_der = deg%4
+    prev_nth = (deg-1) % 4
+
+    nth_cos_deriv = trig_derivatives_cycle[nth_der]
+    nth_sin_deriv = trig_derivatives_cycle[prev_nth]
+    
+    return  v * w ** (deg-1) * ( deg *  nth_sin_deriv + w * t * nth_cos_deriv)
 
     
 
@@ -60,51 +90,82 @@ def get_nth_intersect(n, k, w):
 
 
 
-def get_mth_aproximation(t_nth, x_line, v, w, k, i=200, accuracy=5):
+
+
+def get_mth_aproximation(t_nth, x_line, deg, v, w, k, i, accuracy, correction_mech, f_binary=False):
     
     t_0 = np.copy(t_nth)
     init_theta_angle = k * np.pi/2
     
     init_y = get_y_coord(v, w, k, t_0)
-
+    
+    # a_coeff = float(round(A_coeff(x_line, w, v, k, init_y),5))
     a_coeff = A_coeff(x_line, w, v, k, init_y)
     
-    diffs_massive = [np.copy(t_nth)]
+   
+    
+    # x_coeff = X_bin(x_line)
+    diffs_massive = []
     
     last_t = np.copy(t_0)
-        
-    for m in range(1, i):
-        # print('m : ', m)
-        curr_x = get_x_coord(v, w, k, t_0)
-        curr_y = get_y_coord(v, w, k, t_0)
-        
-        if abs(curr_x) > abs(x_line):
-            curr_x = x_line
+    
 
-        c = abs(curr_x - x_line)
+    
+    for m in range(1, i):
+  
+        # curr_x = get_x_coord(v, w, k, t_0)
+        # curr_y = get_y_coord(v, w, k, t_0)
         
+        curr_x = get_nth_deg_x_derivative(deg,t_0, v,w,k)
+        curr_y= get_nth_deg_y_derivative(deg,t_0, v,w,k)
+        
+        
+        if f_binary:
+            x_bin = X_bin(abs(x_line) - abs(curr_x))
+  
+
+            t_ternary = T_ternary(abs(x_line), abs(curr_x), x_bin)
+            g_bin = G_bin(t_ternary)
+            f_bin = F_bin(abs(x_line), abs(curr_x), g_bin)
+            c = f_bin
+        else:
+            if correction_mech:
+                if abs(curr_x) > abs(x_line):
+                    curr_x = np.copy(x_line)
+
+
+            c = abs(x_line) - abs(curr_x)
+
         a = np.sqrt(x_line**2 + curr_y**2)
         
         b = v*t_0 # Current radius vector
         
         cos_delta_phi = (a ** 2 + b**2 - c ** 2)/(2 * a * b)
+        
+        
    
         if abs(cos_delta_phi) > 1:
+
             cos_delta_phi = 1
- 
+
         delta_phi = np.arccos(cos_delta_phi)
 
-        curr_t = (a_coeff * delta_phi)/ abs(w)
+        curr_t = (a_coeff * delta_phi) / abs(w)
   
-            
-        t_0 += curr_t
-        
-        if f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}':
+        if c == 0:
+              
+            t_0 +=curr_t*(-1)
+     
+        else:
+            '(x_line/abs(x_line))*'
+            t_0 += (c/abs(c))*curr_t 
+    
+        statement = f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
 
-            return float(f'{sum(diffs_massive):.{accuracy}f}')
+        if statement:
+
+            return t_0
 
         last_t = np.copy(t_0)
-        
-        diffs_massive.append(curr_t)
-        
-    return float(f'{sum(diffs_massive):.{accuracy}f}')
+
+    return last_t
