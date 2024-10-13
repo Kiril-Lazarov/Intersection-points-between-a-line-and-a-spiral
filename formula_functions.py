@@ -92,22 +92,16 @@ def get_nth_intersect(n, k, w):
 
 
 
-def get_mth_aproximation(t_nth, x_line, v, w, k, i=200, accuracy=5, correction_mech=False, f_binary=False):
+def get_mth_aproximation(t_nth, deg, x_line, v, w, k, i=200, accuracy=5, correction_mech=False, f_binary=False):
 
     t_0 = np.copy(t_nth)
     init_theta_angle = k * np.pi/2
-    # deg = 0
 
-    init_y = get_y_coord(v, w, k, t_0)
-    # init_y = get_nth_deg_y_derivative(deg, t_0, v, w, k)
+    init_y = get_nth_deg_y_derivative(deg, t_0, v, w, k)
 
     # a_coeff = float(round(A_coeff(x_line, w, v, k, init_y),5))
     a_coeff = A_coeff(x_line, w, v, k, init_y)
 
-
-
-    # x_coeff = X_bin(x_line)
-    # diffs_massive = []
 
     last_t = np.copy(t_0)
 
@@ -115,11 +109,8 @@ def get_mth_aproximation(t_nth, x_line, v, w, k, i=200, accuracy=5, correction_m
 
     for _ in range(1,i):
 
-        curr_x = get_x_coord(v, w, k, t_0)
-        curr_y = get_y_coord(v, w, k, t_0)
-
-        # curr_x = get_nth_deg_x_derivative(deg,t_0, v,w,k)
-        # curr_y= get_nth_deg_y_derivative(deg,t_0, v,w,k)
+        curr_x = get_nth_deg_x_derivative(deg,t_0, v,w,k)
+        curr_y= get_nth_deg_y_derivative(deg,t_0, v,w,k)
 
 
         if f_binary:
