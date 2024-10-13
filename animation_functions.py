@@ -440,7 +440,7 @@ def get_line_boundary_points(length, angle, x, y):
     return front_xx, front_xy, back_xx, back_xy    
     
                 
-def draw_derivatives(layer, t, v, w, k, const_center_point, var_center_point, 
+def draw_derivatives(layer, curr_deg, t, v, w, k, const_center_point, var_center_point, 
                      screen_width, screen_height, length,
                      t_diagram= False, show_derivatives=False):
     
