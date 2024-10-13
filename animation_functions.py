@@ -272,21 +272,20 @@ def calc_y_intersects_t(t, w, k) -> list:
     return t_list
 
 
-def calc_line_intersections_t(t_nth_list, x, v, w, k, correction_mech=False, f_binary=False, accuracy=5, i=200) -> list:
+def calc_line_intersections_t(t_nth_list,deg, x, v, w, k, correction_mech=False, f_binary=False, accuracy=5, i=200) -> list:
     
     t_mth_list = []
     for t_nth in t_nth_list:
-        curr_t_mth = get_mth_aproximation(t_nth, x, v, w, k, i=200, accuracy=5)
+        curr_t_mth = get_mth_aproximation(t_nth, deg, x, v, w, k, i=200, accuracy=5)
         t_mth_list.append(curr_t_mth)
         
     return t_mth_list
 
 
-def calc_single_t_aproxim(v, w, k, t, center_point_width, center_point_height, length, transform=True):
-    x = get_x_coord(v, w, k, t)
-    y = get_y_coord(v, w, k, t)
-    # x = get_nth_deg_x_derivative(deg, t, v, w, k)
-    # y = get_nth_deg_y_derivative(deg, t, v, w, k)
+def calc_single_t_aproxim(deg, v, w, k, t, center_point_width, center_point_height, length, transform=True):
+   
+    x = get_nth_deg_x_derivative(deg, t, v, w, k)
+    y = get_nth_deg_y_derivative(deg, t, v, w, k)
     
     
     if transform:
@@ -520,7 +519,7 @@ def blit_layers(win, mode_statuses_dict, bg_color):
         if boolean and layer is not None:
             win.blit(layer, (0, 0))
         
-def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_line,
+def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, deg,  v, w, k,x_line,
                            const_center_point, var_center_point, length,
                            color, draw_leg_and_hip=False):
     
@@ -530,7 +529,7 @@ def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_li
     curr_t = t_mth_aproxim_list[m]
 
 
-    x, y = calc_single_t_aproxim(v, w, k, curr_t, center_point_width, center_point_height, length)
+    x, y = calc_single_t_aproxim(deg, v, w, k, curr_t, center_point_width, center_point_height, length)
 
     start_pos, end_pos = (center_point_width, center_point_height), (x, y)
 
@@ -544,7 +543,7 @@ def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_li
             x_line = x_transform(x_line, center_point_width, length)
 
             next_t = t_mth_aproxim_list[m+1]
-            next_x, next_y = calc_single_t_aproxim( v, w, k, next_t, center_point_width, center_point_height, length)
+            next_x, next_y = calc_single_t_aproxim(deg, v, w, k, next_t, center_point_width, center_point_height, length)
 
 
             # Draw horizontal leg
@@ -560,7 +559,7 @@ def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x_li
             pygame.draw.circle(algorithm_layer, color='blue', center=(x_line, y), radius=4)
         
         
-def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_list, algorithm_variables_dict, 
+def draw_algorithm_steps(algorithm_layer, t_nth_list, deg, v, w, k, x, t_mth_aproxim_list, algorithm_variables_dict, 
                         const_center_point, var_center_point, length,
                          accuracy=5, curr_rad_vec_color='black', previous_rad_vec_color='lightgreen'):
     
@@ -581,11 +580,11 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
             '''t_nth, x_line, v, w, k, i=200, accuracy=5, correction_mech=False, f_binary=False'''
-            zero_intersect_t = get_mth_aproximation(y_intersect_t, x, v, w, k, i=1, accuracy=accuracy, correction_mech=False, f_binary=False)
+            zero_intersect_t = get_mth_aproximation(y_intersect_t, deg, x, v, w, k, i=1, accuracy=accuracy, correction_mech=False, f_binary=False)
             t_mth_aproxim_list.append(zero_intersect_t)
             
             # Show current radius-vector
-            show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x,
+            show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, deg,  v, w, k,x,
                                const_center_point, var_center_point, length,
                                curr_rad_vec_color)
         
@@ -593,19 +592,19 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
             if m +1 > len(t_mth_aproxim_list):
                 
                 
-                next_t = get_mth_aproximation(y_intersect_t, x, v, w, k, i=m+1,accuracy=accuracy,  correction_mech=False, f_binary=False)
+                next_t = get_mth_aproximation(y_intersect_t, deg, x, v, w, k, i=m+1,accuracy=accuracy,  correction_mech=False, f_binary=False)
                 t_mth_aproxim_list.append(next_t)
                 
                 # Show previous radius vector if it exists
                 if m -1>= 0:
                 
-                    show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,x,
+                    show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m-1, deg,  v, w, k,x,
                                        const_center_point, var_center_point, length,
                                        previous_rad_vec_color, draw_leg_and_hip=True)
                 
  
                 # Show current radius-vector
-                show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x,
+                show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, deg, v, w, k,x,
                                    const_center_point, var_center_point, length,
                                    curr_rad_vec_color)
 
@@ -614,16 +613,17 @@ def draw_algorithm_steps(algorithm_layer, t_nth_list, v, w, k, x, t_mth_aproxim_
               
                 # Show previous radius vector if it exists
                 if m -1>= 0:
-                    show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m-1, v, w, k,x,
+                    show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m-1, deg, v, w, k,x,
                                        const_center_point, var_center_point, length,
                                        previous_rad_vec_color, draw_leg_and_hip=True)
                     
                 # Show current radius-vector
-                show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, v, w, k,x,
+                show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, deg, v, w, k,x,
                                    const_center_point, var_center_point, length,
                                    curr_rad_vec_color)
 
     return t_mth_aproxim_list, algorithm_variables_dict
+
 
 
 
