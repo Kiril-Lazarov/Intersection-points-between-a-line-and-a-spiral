@@ -440,7 +440,7 @@ def get_line_boundary_points(length, angle, x, y):
     return front_xx, front_xy, back_xx, back_xy    
     
                 
-def draw_derivatives(layer, curr_deg, t, v, w, k, const_center_point, var_center_point, 
+def draw_derivatives(layer, deg, t, v, w, k, const_center_point, var_center_point, 
                      screen_width, screen_height, length,
                      t_diagram= False, show_derivatives=False):
     
@@ -457,15 +457,16 @@ def draw_derivatives(layer, curr_deg, t, v, w, k, const_center_point, var_center
         center_point_height = const_center_point[1] + var_center_point[1]
 
         theta = k*np.pi/2 + w*t
-        rad_vec = v*t
+        
 
+        
         # Current point spiral coords 
-        x = rad_vec * np.cos(theta)
-        y = rad_vec * np.sin(theta)
+        x = get_nth_deg_x_derivative(deg,t, v,w,k)
+        y = get_nth_deg_y_derivative(deg,t, v,w,k)
 
         # Derivatives in this point 
-        dx_dt = calc_x_derivative(t, v, w, k)
-        dy_dt = calc_y_derivative(t, v, w, k)
+        dx_dt = get_nth_deg_x_derivative(deg+1,t, v,w,k)
+        dy_dt = get_nth_deg_y_derivative(deg+1,t, v,w,k)
         
         # Spiral derivative
         dx_dy = dy_dt/ dx_dt
