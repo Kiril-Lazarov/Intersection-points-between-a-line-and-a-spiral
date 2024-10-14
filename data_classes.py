@@ -103,6 +103,10 @@ class Booleans(Data):
             if not name.startswith('__') and name != 'create_dict' and name != '_abc_impl':
                 
                 self.booleans_dict[name] = value
+                
+    def switch_mode(self, mode):
+        print('mode' ,mode)
+        self.booleans_dict[mode] = not self.booleans_dict[mode]
     
 class AdditionalVariables(Data):
     
