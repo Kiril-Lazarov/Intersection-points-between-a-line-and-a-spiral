@@ -2,42 +2,16 @@ from Data_classes.data_abstract import Data
 import inspect
 
 class Variables(Data):
-    """
-    Global animation variables
-
-    """ 
-
-    screen_width = 1500
-    screen_height = 800
-    half_screen_width = screen_width / 2
-    half_screen_height = screen_height / 2
-
-    coord_origin = [half_screen_width, half_screen_height]
-
-    FPS = 24
-
-
-    '''
-    Global spiral and line variables
-    '''
-
-    # Total number of units on the x-axis – both positive and negative.
-    units =20
-    half_units = units/2
-
-    # Length of one unit along the coordinate axis, calculated as a function of the screen width and the number of    units.
-    length = screen_width/ units
-    l_step = 3 # pixels
-
-    # The step for changing the values of the spiral and line parameters.
-    deg_step = 1
-    t_step = 0.025
-    v_step = 0.025
-    w_step = 0.025
-    k_step = 0.025
-    x_step = 0.03
-
-    c_step = 10 # pixels
+   
+    # Variables for parameter changes.
+    deg_additional =  0
+    t_additional =  0
+    v_additional =  0
+    w_additional =  0
+    x_additional =  0
+    k_additional =  0
+    l_additional =  0
+    coord_additional = [0, 0]
     
     def __init__(self):
         super().__init__()
@@ -51,4 +25,3 @@ class Variables(Data):
             if not name.startswith('__') and name not in self.excluded_methods_names:
                 
                 self.variables_dict[name] = value
-                

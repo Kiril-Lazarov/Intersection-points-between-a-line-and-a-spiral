@@ -20,8 +20,8 @@ class DataProcessing(Variables, Constants, Booleans,
     booleans = Booleans()
     booleans.create_dict()
     
-    add_vars = AdditionalVariables()
-    add_vars.create_dict()
+#     add_vars = AdditionalVariables()
+#     add_vars.create_dict()
     
     algorithm_vars = AlgorithmVariables()
     algorithm_vars.create_dict()
