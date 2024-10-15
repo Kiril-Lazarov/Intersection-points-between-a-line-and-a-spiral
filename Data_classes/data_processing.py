@@ -1,13 +1,14 @@
+import pygame 
+
 from Data_classes.variables import Variables
 from Data_classes.constants import Constants
 from Data_classes.booleans import Booleans
-from Data_classes.additional_variables import AdditionalVariables
 from Data_classes.algorithm_variables import AlgorithmVariables
 from Animation_layers.animation_layers import AnimationLayers
 
 
 class DataProcessing(Variables, Constants, Booleans, 
-                     AdditionalVariables, AlgorithmVariables, AnimationLayers):
+                     AlgorithmVariables, AnimationLayers):
     
     bg_color = (255, 255, 255)
     
@@ -19,10 +20,7 @@ class DataProcessing(Variables, Constants, Booleans,
     
     booleans = Booleans()
     booleans.create_dict()
-    
-#     add_vars = AdditionalVariables()
-#     add_vars.create_dict()
-    
+
     algorithm_vars = AlgorithmVariables()
     algorithm_vars.create_dict()
     
@@ -62,16 +60,12 @@ class DataProcessing(Variables, Constants, Booleans,
                                          booleans.booleans_dict['derivatives_mode']]
                            }
     
-    '''Variables dict: {'screen_width': 1500, 'screen_height': 800, 'half_screen_width': 750.0, 'half_screen_height': 400.0, 'coord_origin': [750.0, 400.0], 'FPS': 24, 'units': 20, 'half_units': 10.0, 'length': 75.0, 'l_step': 3, 'deg_step': 1, 't_step': 0.025, 'v_step': 0.025, 'w_step': 0.025, 'k_step': 0.025, 'x_step': 0.03, 'c_step': 10}
+    
+    def blit_layers(self, win):
 
-Constants dict: {'deg': 0, 't': 1, 'v': 1, 'w': 1, 'k': 0, 'vert_line_x': 1}
+        win.fill(self.bg_color)
 
-Booleans dict: {'background_mode': True, 'algorithm_mode': False, 'vertical_line_mode': True, 'derivatives_mode': False, 'spiral_mode': True, 'y_axis_intersects': True, 'line_intersects': True, 'algorithm_data_mode': True, 'parameters_mode': True, 't_diagram_mode': False, 'switch_mode': <function Booleans.switch_mode at 0x000001C640942310>}
+        for layer, boolean in self.mode_statuses_dict.values():
+            if boolean and layer is not None:
+                win.blit(layer, (0, 0))
 
-Add_vars dict: {'deg_additional': 0, 't_additional': 0, 'v_additional': 0, 'w_additional': 0, 'x_additional': 0, 'k_additional': 0, 'l_additional': 0, 'coord_additional': [0, 0]}
-
-Algorithm_vars dict: {'n': 0, 'm': 0, 'total_n': 0}
-
-Animation_layers dict: {'win': <Surface(Dead Display)>, 'background_surface': <Surface(1500x800x32 SW)>, 'derivatives_layer': <Surface(1500x800x32 SW)>, 'vertical_line_layer': <Surface(1500x800x32 SW)>, 'spiral_layer': <Surface(1500x800x32 SW)>, 'y_axis_intersects_layer': <Surface(1500x800x32 SW)>, 'line_intersects_layer': <Surface(1500x800x32 SW)>, 'algorithm_layer': <Surface(1500x800x32 SW)>, 'params_layer': <Surface(1500x800x32 SW)>, 'show_modes_layer': <Surface(1500x800x32 SW)>, 'show_algorithm_data_layer': <Surface(1500x800x32 SW)>}
-
-dict_keys(['Coordinates', 'Algorithm mode', 'Algorithm data mode', 'T-diagram', 'Vertical line', 'Spiral', 'Y-intersects', 'Line-intersects', 'Parameters', 'Modes layer', 'Derivatives'])'''
