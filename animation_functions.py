@@ -512,13 +512,6 @@ def draw_derivatives(layer, deg, t, v, w, k, const_center_point, var_center_poin
             pygame.draw.circle(layer, color='purple', center=(x, y), radius=4)
     
         
-def blit_layers(win, mode_statuses_dict, bg_color):
-    win.fill(bg_color)
-    
-    for layer, boolean in mode_statuses_dict.values():
-        if boolean and layer is not None:
-            win.blit(layer, (0, 0))
-        
 def show_radius_vector_step(algorithm_layer, t_mth_aproxim_list, m, deg,  v, w, k,x_line,
                            const_center_point, var_center_point, length,
                            color, draw_leg_and_hip=False):
