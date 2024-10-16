@@ -300,12 +300,16 @@ def calc_single_t_aproxim(deg, v, w, k, t, center_point_width, center_point_heig
     return x, y
 
 
-def draw_vertical_line(line_layer, const_center_point, var_center_point, screen_height, length,x_axis_value=1):
+def draw_vertical_line(data_processing, x_axis_value=1):
     
+    line_layer = data_processing.animation_layers.layers_dict['vertical_line_layer']
+    screen_height = screen_height = data_processing.constants.screen_height
+    length = data_processing.constants.constants_dict['l'] + data_processing.variables.variables_dict['l']
+        
     line_layer.fill((0, 0, 0, 0))
     
 
-    center_point_width = const_center_point[0] + var_center_point[0]
+    center_point_width = data_processing.constants.constants_dict['c'][0] + data_processing.variables.variables_dict['c'][0]
 
     x_up, y_up  = x_transform(x_axis_value, center_point_width, length),y_transform(0, screen_height, length)
     x_down, y_down = x_transform(x_axis_value, center_point_width, length),y_transform(screen_height, 0, length)
