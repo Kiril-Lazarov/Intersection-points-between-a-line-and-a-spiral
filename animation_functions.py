@@ -10,13 +10,12 @@ def create_background(data_processing, font_small):
     background_surface = data_processing.animation_layers.layers_dict['background_surface']
     screen_width = data_processing.constants.screen_width
     screen_height = data_processing.constants.screen_height
-    length = data_processing.constants.constants_dict['l'] + data_processing.variables.variables_dict['l']
+    length = data_processing.get_curr_param('l')
     
     background_surface.fill(data_processing.bg_color)
 
     line_color = (200,200,200)
-    center_point = [data_processing.constants.constants_dict['c'][0] + data_processing.variables.variables_dict['c'][0],
-                    data_processing.constants.constants_dict['c'][1] + data_processing.variables.variables_dict['c'][1]]
+    center_point = data_processing.get_curr_param('c')
 
     # Coordinate x-line parameters
     x_line_start = 0
@@ -304,12 +303,12 @@ def draw_vertical_line(data_processing, x_axis_value=1):
     
     line_layer = data_processing.animation_layers.layers_dict['vertical_line_layer']
     screen_height = screen_height = data_processing.constants.screen_height
-    length = data_processing.constants.constants_dict['l'] + data_processing.variables.variables_dict['l']
+    length = data_processing.get_curr_param('l')
         
     line_layer.fill((0, 0, 0, 0))
     
 
-    center_point_width = data_processing.constants.constants_dict['c'][0] + data_processing.variables.variables_dict['c'][0]
+    center_point_width = data_processing.get_curr_param('c')[0]
 
     x_up, y_up  = x_transform(x_axis_value, center_point_width, length),y_transform(0, screen_height, length)
     x_down, y_down = x_transform(x_axis_value, center_point_width, length),y_transform(screen_height, 0, length)
@@ -318,15 +317,35 @@ def draw_vertical_line(data_processing, x_axis_value=1):
     
     
 
-def draw_spiral(spiral_layer,const_center_point, var_center_point, 
-                half_screen_width, half_screen_height, length, deg=0, t=1, v=1,w=1,k=0, t_diagram_mode=False):
+def draw_spiral(data_processing):
     
+    spiral_layer = data_processing.animation_layers.layers_dict['spiral_layer']
     spiral_layer.fill((0, 0, 0, 0))
     
-    # Get current coordinate center point position on the screen
-    center_point_width = const_center_point[0] + var_center_point[0]
-    center_point_height = const_center_point[1] + var_center_point[1]
+    # Get current coordinate center point position on the screen    
+    center_point_width, center_point_height = data_processing.get_curr_param('c')
     
+    half_screen_width, half_screen_height = data_processing.constants.half_screen_width, data_processing.constants.half_screen_height
+    
+    
+    # Current unit length of the coordinate system
+    length = data_processing.get_curr_param('l')
+    
+    # Current spiral degree
+    deg = data_processing.get_curr_param('deg')
+    
+    # Curr time
+    t = data_processing.get_curr_param('t')
+    
+    # Curr vector velocity
+    v = data_processing.get_curr_param('v')
+    
+    # Curr angular velocity
+    w = data_processing.get_curr_param('w')
+    
+    # Curr initial spiral angle
+    k = data_processing.get_curr_param('k')
+
     if w != 0:
         x_spiral, y_spiral, T = calc_spiral_coord(deg=deg,t=t ,v=v, w=w, k=k)
         
@@ -344,7 +363,7 @@ def draw_spiral(spiral_layer,const_center_point, var_center_point,
             next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
             
             # Check if the points are within the screen boundaries.
-            if not t_diagram_mode:
+            if not data_processing.mode_statuses_dict['T-diagram'][1]:
                 if (0 <=abs(curr_sp_point_x)<=half_screen_width * 2) and \
                    (0 <=abs(curr_sp_point_y)<=half_screen_height * 2):
 
@@ -382,7 +401,7 @@ def draw_spiral(spiral_layer,const_center_point, var_center_point,
                                                                        (next_t_point, next_rad_vec_dist)])
                     
                     
-        if t_diagram_mode:
+        if data_processing.mode_statuses_dict['T-diagram'][1]:
 
             last_t = x_transform(T[-1], center_point_width, length)
             
@@ -398,7 +417,7 @@ def draw_spiral(spiral_layer,const_center_point, var_center_point,
             # Draw spiral radius vector
             start_pos = (last_t, y_transform(0 , center_point_height, length)) 
             end_pos = (last_t, last_rad_vec)            
-            draw_vector(spiral_layer,start_pos, end_pos, color='black' )
+            draw_vector(spiral_layer,start_pos, end_pos, color='black')
                                                                           
                 
                 
