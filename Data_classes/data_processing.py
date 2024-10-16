@@ -45,10 +45,10 @@ class DataProcessing(Variables, Constants, Booleans,
                                      booleans.booleans_dict['spiral_mode']],
                           
                           'Y-intersects': [animation_layers.layers_dict['y_axis_intersects_layer'],
-                                           booleans.booleans_dict['y_axis_intersects']],
+                                           booleans.booleans_dict['y_axis_intersects_mode']],
                           
                           'Line-intersects': [animation_layers.layers_dict['line_intersects_layer'],
-                                              booleans.booleans_dict['line_intersects']],
+                                              booleans.booleans_dict['line_intersects_mode']],
                           
                           'Parameters': [animation_layers.layers_dict['params_layer'],
                                          booleans.booleans_dict['parameters_mode']],
@@ -59,8 +59,7 @@ class DataProcessing(Variables, Constants, Booleans,
                           'Derivatives': [animation_layers.layers_dict['derivatives_layer'],
                                          booleans.booleans_dict['derivatives_mode']]
                            }
-    
-    
+
     def blit_layers(self, win):
 
         win.fill(self.bg_color)
@@ -69,3 +68,10 @@ class DataProcessing(Variables, Constants, Booleans,
             if boolean and layer is not None:
                 win.blit(layer, (0, 0))
 
+    def get_curr_param(self, param):
+        
+        if param == 'c':
+            return [self.constants.constants_dict[param][0] + self.variables.variables_dict[param][0],
+                    self.constants.constants_dict[param][1] + self.variables.variables_dict[param][1]]
+        
+        return self.constants.constants_dict[param] + self.variables.variables_dict[param]
