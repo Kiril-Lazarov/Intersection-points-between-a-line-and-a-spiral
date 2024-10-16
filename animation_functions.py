@@ -5,13 +5,18 @@ from scipy.integrate import quad
 from formula_functions import *
 
 
-def create_background(background_surface, const_coord_origin, var_coord_origin,
-                      screen_width, screen_height, length, bg_color, font_small, after_stop = False):
+def create_background(data_processing, font_small):
     
-    background_surface.fill(bg_color)
+    background_surface = data_processing.animation_layers.layers_dict['background_surface']
+    screen_width = data_processing.constants.screen_width
+    screen_height = data_processing.constants.screen_height
+    length = data_processing.constants.constants_dict['l'] + data_processing.variables.variables_dict['l']
+    
+    background_surface.fill(data_processing.bg_color)
 
     line_color = (200,200,200)
-    center_point = [const_coord_origin[0] + var_coord_origin[0] ,const_coord_origin[1] + var_coord_origin[1]]
+    center_point = [data_processing.constants.constants_dict['c'][0] + data_processing.variables.variables_dict['c'][0],
+                    data_processing.constants.constants_dict['c'][1] + data_processing.variables.variables_dict['c'][1]]
 
     # Coordinate x-line parameters
     x_line_start = 0
