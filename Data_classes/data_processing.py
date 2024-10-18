@@ -27,6 +27,8 @@ class DataProcessing(Variables, Constants, Booleans,
     animation_layers = AnimationLayers()
     animation_layers.create_dict()
     
+    dict_objects = [variables, constants, booleans, algorithm_vars, animation_layers]
+    
     mode_statuses_dict = {'Coordinates':[animation_layers.layers_dict['background_surface'],
                                          booleans.booleans_dict['background_mode']],
                           
@@ -75,3 +77,20 @@ class DataProcessing(Variables, Constants, Booleans,
                     self.constants.constants_dict[param][1] + self.variables.variables_dict[param][1]]
         
         return self.constants.constants_dict[param] + self.variables.variables_dict[param]
+
+    def reset_variables_dict(self):
+        
+        index = 0
+        for key, _ in self.variables.variables_dict.items():
+  
+            if key == 'c':
+                
+                self.variables.variables_dict[key] = [self.constants.constants_dict[key][0] - self.constants.half_screen_width,
+                                                        self.constants.constants_dict[key][1]  - self.constants.half_screen_height]
+            else:
+                
+                self.variables.variables_dict[key] = self.variables.class_init_values[index]
+
+            index += 1
+            
+        self.constants.constants_dict['w'] = self.constants.w
