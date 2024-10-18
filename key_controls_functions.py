@@ -3,9 +3,14 @@ import pygame
 from animation_functions import *
 from variables import *
 
-def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants,
-                        updates_dict, algorithm_mode):
+def handle_key_commands(data_processing):
       
+    updates_dict = data_processing.booleans.update_booleans_dict    
+    const_params_dict = data_processing.constants.constants_dict    
+    var_params_dict = data_processing.variables.variables_dict
+    steps_dict_constants = data_processing.constants.steps_constants_dict
+
+    
     updates_dict['shift_coords'] = False    
     
     # Check for key combinations
@@ -64,7 +69,7 @@ def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants
             updates_dict['update_line'], updates_dict['shift_coords'] = True, True, True, True
 
     
-    if not algorithm_mode:    
+    if not data_processing.mode_statuses_dict['Algorithm mode'][1]:    
         
         
         if keys[pygame.K_x]:
@@ -157,13 +162,15 @@ def handle_key_commands(const_params_dict, var_params_dict, steps_dict_constants
                     var_params_dict['t'] -= steps_dict_constants['t']
 
                     updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
-                    
-    return const_params_dict, var_params_dict, steps_dict_constants, updates_dict, algorithm_mode
 
 
-
-def handle_shift_key_commands(event, updates_dict, const_params_dict, var_params_dict, mode_statuses_dict):
+def handle_shift_key_commands(event, data_processing):
      
+    updates_dict = data_processing.booleans.update_booleans_dict    
+    const_params_dict = data_processing.constants.constants_dict    
+    var_params_dict = data_processing.variables.variables_dict
+    mode_statuses_dict = data_processing.mode_statuses_dict
+        
     # Turn the direction of the spiral
     if event.type == pygame.KEYDOWN:
         
@@ -181,22 +188,8 @@ def handle_shift_key_commands(event, updates_dict, const_params_dict, var_params
         elif (pygame.key.get_mods() & pygame.KMOD_SHIFT):
             
             if event.key == pygame.K_r:
-
-                var_params_dict['t'], var_params_dict['v'], \
-                var_params_dict['w'], var_params_dict['x'], \
-                var_params_dict['k'], var_params_dict['l'], \
-                var_params_dict['c'],var_params_dict['deg'] = t_additional, v_additional, w_additional,\
-                                                              x_additional, k_additional, l_additional, [0, 0], deg_additional
-
-                const_params_dict['w'] = w
-
-                mode_dict_keys = mode_statuses_dict.keys()
-                mode_dict_default_values = iter([background_mode, algorithm_mode, algorithm_data_mode,\
-                                                 t_diagram_mode, vertical_line_mode,spiral_mode,\
-                                                 y_axis_intersects, line_intersects, parameters_mode, True, derivatives_mode])
-
-                for key in  mode_statuses_dict.keys():
-                    mode_statuses_dict[key][1] = next(mode_dict_default_values)
+                
+                data_processing.reset_variables_dict()
 
                 updates_dict['update_spiral'], updates_dict['update_line'], updates_dict['reset_background'] = True, True, True
             
@@ -212,12 +205,13 @@ def handle_shift_key_commands(event, updates_dict, const_params_dict, var_params
                     var_params_dict['deg'] -= 1
 
                 updates_dict['update_spiral'] = True
-            
-            
-    return updates_dict, const_params_dict, var_params_dict, mode_statuses_dict
 
-def handle_ctrl_commands(event, updates_dict, mode_statuses_dict):
-           
+
+def handle_ctrl_commands(event, data_processing):
+    
+    updates_dict = data_processing.booleans.update_booleans_dict
+    mode_statuses_dict = data_processing.mode_statuses_dict
+    
     updates_dict['is_turn_off'] = None
     updates_dict['is_t_diagram_change'] = False
     
@@ -259,6 +253,7 @@ def handle_ctrl_commands(event, updates_dict, mode_statuses_dict):
                     mode_statuses_dict['Line-intersects'][1] = True
                 
         if not mode_statuses_dict['Algorithm mode'][1]:
+            
             if event.key == pygame.K_l:
                 mode_statuses_dict['Vertical line'][1] = not mode_statuses_dict['Vertical line'][1]
 
@@ -282,12 +277,12 @@ def handle_ctrl_commands(event, updates_dict, mode_statuses_dict):
                 if mode_statuses_dict['Derivatives'][1]:
                     mode_statuses_dict['Y-intersects'][1] = False
                     mode_statuses_dict['Line-intersects'][1] = False
-                
-    return updates_dict, mode_statuses_dict
 
 
 
-def handle_algorithm_mode_controls(event, algorithm_variables_dict, t_mth_aproxim_list, updates_dict):
+def handle_algorithm_mode_controls(event, data_processing, t_mth_aproxim_list):
+
+    algorithm_variables_dict = data_processing.algorithm_vars.algorithm_vars_dict
 
     n = algorithm_variables_dict['n']
     m = algorithm_variables_dict['m']
@@ -296,7 +291,7 @@ def handle_algorithm_mode_controls(event, algorithm_variables_dict, t_mth_aproxi
     keys = pygame.key.get_pressed()
    
     if event.type == pygame.KEYDOWN:
-        updates_dict['update_screen'] = True
+        data_processing.booleans.update_booleans_dict['update_screen'] = True
         
         if keys[pygame.K_n] and keys[pygame.K_UP]:
 
@@ -327,6 +322,5 @@ def handle_algorithm_mode_controls(event, algorithm_variables_dict, t_mth_aproxi
 
             if m-1 >= 0:
                 algorithm_variables_dict['m'] -=1
- 
-            
-    return algorithm_variables_dict, updates_dict
+                
+    return t_mth_aproxim_list
