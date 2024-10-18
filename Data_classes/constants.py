@@ -1,5 +1,5 @@
+from numpy import copy
 import inspect
-
 from Data_classes.data_abstract import Data
 
 
@@ -63,8 +63,9 @@ class Constants(Data):
         super().__init__()
         self.constants_dict = {}
         self.steps_constants_dict = {}
-        self.excluded_methods_names = [name[0] for name in inspect.getmembers(Constants, predicate=inspect.isfunction)] + ['_abc_impl']
-        
+        self.excluded_methods_names = [name[0] for name in inspect.getmembers(Constants, predicate=inspect.isfunction)]\
+                                    + ['_abc_impl'] + ['class_init_values']
+         
 
     def create_dict(self):        
         
@@ -79,4 +80,7 @@ class Constants(Data):
                     
                 elif name in self.params_constants_list:    
                     self.constants_dict[name] = value
+                    
+    def reset_dict(self):
+        self.constants_dict['w'] = self.w
                 
