@@ -1,5 +1,5 @@
 import numpy as np
-
+# from Data_classes.data_processing import DataProcessing
 
 def D_bin(k):
     return (1 + (-1) ** np.floor(k+1))/2
@@ -92,8 +92,15 @@ def get_nth_intersect(n, k, w):
 
 
 
-def get_mth_aproximation(t_nth, deg, x_line, v, w, k, i=200, accuracy=5, correction_mech=False, f_binary=False):
+def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, correction_mech=False, f_binary=False):
 
+
+    deg = data_processing.get_curr_param('deg')
+    v = data_processing.get_curr_param('v')
+    w = data_processing.get_curr_param('w')
+    k = data_processing.get_curr_param('k')
+    x_line = data_processing.get_curr_param('x')
+    
     t_0 = np.copy(t_nth)
     init_theta_angle = k * np.pi/2
 
@@ -127,7 +134,7 @@ def get_mth_aproximation(t_nth, deg, x_line, v, w, k, i=200, accuracy=5, correct
                     curr_x = np.copy(x_line)
 
 
-            c = abs(x_line) - abs(curr_x)
+        c = abs(x_line) - abs(curr_x)
 
         a = np.sqrt(x_line**2 + curr_y**2)
 
