@@ -280,7 +280,15 @@ def calc_y_intersects_t(data_processing) -> list:
     return t_list
 
 
-def calc_line_intersections_t(t_nth_list,deg, x, v, w, k, correction_mech=False, f_binary=False, accuracy=5, i=200) -> list:
+def calc_line_intersections_t(data_processing, t_nth_list,correction_mech=False, f_binary=False, accuracy=5, i=200) -> list:
+    
+    data_processing
+    
+    deg = data_processing.get_curr_param('deg')
+    x = data_processing.get_curr_param('x')
+    v = data_processing.get_curr_param('v')
+    w = data_processing.get_curr_param('w')
+    k = data_processing.get_curr_param('k')
     
     t_mth_list = []
     for t_nth in t_nth_list:
@@ -303,11 +311,13 @@ def calc_single_t_aproxim(deg, v, w, k, t, center_point_width, center_point_heig
     return x, y
 
 
-def draw_vertical_line(data_processing, x_axis_value=1):
+def draw_vertical_line(data_processing):
     
     line_layer = data_processing.animation_layers.layers_dict['vertical_line_layer']
     screen_height = screen_height = data_processing.constants.screen_height
     length = data_processing.get_curr_param('l')
+    
+    x_axis_value = data_processing.get_curr_param('x')
         
     line_layer.fill((0, 0, 0, 0))
     
