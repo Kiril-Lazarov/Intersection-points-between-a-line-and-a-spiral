@@ -422,9 +422,24 @@ def draw_spiral(data_processing):
                 
                 
                 
-def draw_dots(layer, const_center_point, var_center_point, length, t_list, deg, v, w, k, color, t_diagram=False):
+def draw_dots(data_processing, t_list, layer):
     
+    color = 'black' if layer == 'Y-intersects' else 'purple'
+    
+    layer = data_processing.mode_statuses_dict[layer][0]
     layer.fill((0, 0, 0, 0))
+
+    const_center_point = data_processing.constants.constants_dict['c']
+    var_center_point = data_processing.variables.variables_dict['c']
+    
+    length = data_processing.get_curr_param('l')
+    
+    deg = data_processing.get_curr_param('deg')
+    v = data_processing.get_curr_param('v')
+    w = data_processing.get_curr_param('w')
+    k = data_processing.get_curr_param('k')
+    
+    t_diagram = data_processing.mode_statuses_dict['T-diagram'][1]
     
     center_point_width = const_center_point[0] + var_center_point[0]
     center_point_height = const_center_point[1] + var_center_point[1]
@@ -433,9 +448,7 @@ def draw_dots(layer, const_center_point, var_center_point, length, t_list, deg, 
         theta_0 = k * np.pi/2
 
         for t in t_list:
-            # angle = theta_0 + w * t
-            # radius_vec = v * t
-            
+ 
             x = get_nth_deg_x_derivative(deg,t, v,w,k)
             y = get_nth_deg_y_derivative(deg,t, v,w,k)
             
