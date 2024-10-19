@@ -505,21 +505,31 @@ def get_line_boundary_points(length, angle, x, y):
     return front_xx, front_xy, back_xx, back_xy    
     
                 
-def draw_derivatives(layer, deg, t, v, w, k, const_center_point, var_center_point, 
-                     screen_width, screen_height, length,
-                     t_diagram= False, show_derivatives=False):
-    
-    if show_derivatives:
+def draw_derivatives(data_processing):  
+
+    if data_processing.mode_statuses_dict['Derivatives'][1]:
         
+        layer = data_processing.mode_statuses_dict['Derivatives'][0]
         layer.fill((0, 0, 0, 0))
+    
+        center_point_width, center_point_height = data_processing.get_curr_param('c')
+
+        length = data_processing.get_curr_param('l')
+
+        deg = data_processing.get_curr_param('deg')
+        t = data_processing.get_curr_param('t')
+        v = data_processing.get_curr_param('v')
+        w = data_processing.get_curr_param('w')
+        k = data_processing.get_curr_param('k')
+        
+        screen_width = data_processing.constants.screen_width
+        screen_height = data_processing.constants.screen_width
 
         x_der_color = 'red'
         y_der_color = 'blue'
 
         # t-=1
-        
-        center_point_width = const_center_point[0] + var_center_point[0]
-        center_point_height = const_center_point[1] + var_center_point[1]
+
 
         theta = k*np.pi/2 + w*t
         
@@ -546,7 +556,7 @@ def draw_derivatives(layer, deg, t, v, w, k, const_center_point, var_center_poin
 
         ll = 3* length
 
-        if t_diagram:
+        if data_processing.mode_statuses_dict['T-diagram'][1]:
             t_trans = x_transform(t, center_point_width, length)
             x_new = transform_to_t_diagram(x, center_point_width, center_point_height, length)
             
