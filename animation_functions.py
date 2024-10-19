@@ -253,7 +253,11 @@ def calc_spiral_coord(deg=0, t=1 ,v=1, w=1, k=0) -> tuple:
     
     return x, y, T 
 
-def calc_y_intersects_t(t, w, k) -> list:
+def calc_y_intersects_t(data_processing) -> list:
+    
+    t = data_processing.get_curr_param('t')
+    w = data_processing.get_curr_param('w')
+    k = data_processing.get_curr_param('k')
     
     is_bigger = False
     t_list = []
