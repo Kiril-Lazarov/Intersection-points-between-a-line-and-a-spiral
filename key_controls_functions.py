@@ -197,12 +197,20 @@ def handle_shift_key_commands(event, data_processing):
             
             # Change the degree of the spiral curve
             if keys[pygame.K_e]:
+                
+                add_num = data_processing.constants.step_constants_dict['deg_step']
                
                 if keys[pygame.K_UP]:
-                    var_params_dict['deg'] += 1
+                    var_params_dict['deg'][1] += add_num
 
                 elif keys[pygame.K_DOWN]:
-                    var_params_dict['deg'] -= 1
+                    var_params_dict['deg'][1] -= add_num
+                    
+                elif keys[pygame.K_RIGHT]:
+                    var_params_dict['deg'][0] += add_num
+                    
+                elif keys[pygame.K_LEFT]:
+                    var_params_dict['deg'][0] -= add_num
 
                 updates_dict['update_spiral'] = True
 
