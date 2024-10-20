@@ -19,6 +19,8 @@ class Constants(Data):
     coord_origin = [half_screen_width, half_screen_height]
 
     FPS = 24
+    
+    text_unit = screen_width/75
 
     '''
     Global spiral and line variables
@@ -47,7 +49,7 @@ class Constants(Data):
     
     '''Spiral and line constants. The angular velocity is also constant, even though it can have a value of -1.'''
     
-    deg = 0 # Spiral degree
+    deg = [0, 0] # Spiral components degrees
     t= 1 # Time
     v = 1 # Speed of the radius-vector
     w = 1 # Angular velocity

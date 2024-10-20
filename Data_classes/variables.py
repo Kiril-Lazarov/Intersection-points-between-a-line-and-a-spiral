@@ -8,7 +8,7 @@ class Variables(Data):
     '''{'deg': 0, 't': 0, 'v': 0, 'w': 0, 'x': 0, 'k': 0, 'l': 0, 'c': [0, 0]'''
    
     # Variables for parameter changes.
-    deg_additional =  0
+    deg_additional =  [0, 0]
     t_additional =  0
     v_additional =  0
     w_additional =  0
