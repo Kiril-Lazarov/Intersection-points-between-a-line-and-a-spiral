@@ -27,7 +27,7 @@ class DataProcessing(Variables, Constants, Booleans,
     animation_layers = AnimationLayers()
     animation_layers.create_dict()
     
-    variable_dict_objects = [variables, booleans, constants,algorithm_vars]
+    variable_dict_objects = [variables, booleans, constants, algorithm_vars]
     
     mode_statuses_dict = {'Coordinates':[animation_layers.layers_dict['background_surface'],
                                          booleans.booleans_dict['background_mode']],
@@ -82,4 +82,9 @@ class DataProcessing(Variables, Constants, Booleans,
         
         for obj in self.variable_dict_objects:
             obj.reset_dict()
+            
+                
+            
+    def switch_mode(self, mode):
+        self.mode_statuses_dict[mode][1] = not self.mode_statuses_dict[mode][1]
   
