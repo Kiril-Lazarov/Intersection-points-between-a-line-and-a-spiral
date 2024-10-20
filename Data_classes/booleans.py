@@ -33,9 +33,11 @@ class Booleans(Data):
     @property    
     def class_init_values(self):
         
-        return [self.background_mode, self.algorithm_mode, self.vertical_line_mode, self.derivatives_mode,
-                         self.spiral_mode, self.y_axis_intersects_mode, self.line_intersects_mode, self.algorithm_data_mode,
-                         self.parameters_mode, self.t_diagram_mode]
+        # return [self.background_mode, self.algorithm_mode, self.vertical_line_mode, self.derivatives_mode,
+        #                  self.spiral_mode, self.y_axis_intersects_mode, self.line_intersects_mode, self.algorithm_data_mode,
+        #                  self.parameters_mode, self.t_diagram_mode]
+        
+        return [True, False, True, False, True, True, True, True, True, False]
   
     def create_dict(self, update_dict=True):        
         
@@ -57,10 +59,7 @@ class Booleans(Data):
             
             self.booleans_dict[key] = self.class_init_values[index]
             index += 1
-            
-            
-    def switch_mode(self, mode):
-        self.booleans_dict[mode] = not self.booleans_dict[mode]
+
         
     
     def reset_to_false(self):
