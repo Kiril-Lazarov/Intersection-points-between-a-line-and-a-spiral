@@ -189,7 +189,7 @@ def handle_shift_key_commands(event, data_processing):
             
             if event.key == pygame.K_r:
                 
-                data_processing.reset_variables_dict()
+                data_processing.reset_dicts()
 
                 updates_dict['update_spiral'], updates_dict['update_line'], updates_dict['reset_background'] = True, True, True
             
@@ -251,33 +251,6 @@ def handle_ctrl_commands(event, data_processing):
                     mode_statuses_dict['Derivatives'][1] = False
                     mode_statuses_dict['Y-intersects'][1] = True
                     mode_statuses_dict['Line-intersects'][1] = True
-                
-        if not mode_statuses_dict['Algorithm mode'][1]:
-            
-            if event.key == pygame.K_l:
-                mode_statuses_dict['Vertical line'][1] = not mode_statuses_dict['Vertical line'][1]
-
-            elif event.key == pygame.K_s:
-                mode_statuses_dict['Spiral'][1] = not mode_statuses_dict['Spiral'][1]
-                
-            elif event.key == pygame.K_n:
-                mode_statuses_dict['Y-intersects'][1] = not mode_statuses_dict['Y-intersects'][1]
-
-            elif event.key == pygame.K_m:
-                mode_statuses_dict['Line-intersects'][1] = not mode_statuses_dict['Line-intersects'][1]
-
-            elif event.key == pygame.K_p:
-                mode_statuses_dict['Parameters'][1] = not mode_statuses_dict['Parameters'][1]
-            
-            elif event.key == pygame.K_c:
-                mode_statuses_dict['Coordinates'][1] = not mode_statuses_dict['Coordinates'][1]
-                
-            elif event.key == pygame.K_d:
-                mode_statuses_dict['Derivatives'][1] = not mode_statuses_dict['Derivatives'][1]
-                if mode_statuses_dict['Derivatives'][1]:
-                    mode_statuses_dict['Y-intersects'][1] = False
-                    mode_statuses_dict['Line-intersects'][1] = False
-
 
 
 def handle_algorithm_mode_controls(event, data_processing, t_mth_aproxim_list):
@@ -324,3 +297,48 @@ def handle_algorithm_mode_controls(event, data_processing, t_mth_aproxim_list):
                 algorithm_variables_dict['m'] -=1
                 
     return t_mth_aproxim_list
+
+def handle_switch_commands(event, data_processing):
+    
+    mode_statuses_dict = data_processing.mode_statuses_dict
+    
+    if event.type == pygame.KEYDOWN:
+    
+        if not mode_statuses_dict['Algorithm mode'][1]:
+
+            if event.key == pygame.K_l:
+
+                data_processing.switch_mode('Vertical line')
+                
+
+            elif event.key == pygame.K_s:
+
+                data_processing.switch_mode('Spiral')
+
+            elif event.key == pygame.K_n:
+
+                data_processing.switch_mode('Y-intersects')
+
+            elif event.key == pygame.K_m:
+
+                data_processing.switch_mode('Line-intersects')
+
+            elif event.key == pygame.K_p:
+
+                data_processing.switch_mode('Parameters')
+
+            elif event.key == pygame.K_c:
+
+                data_processing.switch_mode('Coordinates')
+
+            elif event.key == pygame.K_d:
+
+                data_processing.switch_mode('Derivatives')
+
+                if mode_statuses_dict['Derivatives'][1]:
+                    mode_statuses_dict['Y-intersects'][1] = False
+                    mode_statuses_dict['Line-intersects'][1] = False
+                    
+                else:
+                    mode_statuses_dict['Y-intersects'][1] = True
+                    mode_statuses_dict['Line-intersects'][1] = True
