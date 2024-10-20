@@ -28,39 +28,11 @@ class DataProcessing(Variables, Constants, Booleans,
     animation_layers.create_dict()
     
     variable_dict_objects = [variables, booleans, constants, algorithm_vars]
+
+    def __init__(self):
+        
+        self.initialize_mode_status_dict()
     
-    mode_statuses_dict = {'Coordinates':[animation_layers.layers_dict['background_surface'],
-                                         booleans.booleans_dict['background_mode']],
-                          
-                          'Algorithm mode': [animation_layers.layers_dict['algorithm_layer'],
-                                             booleans.booleans_dict['algorithm_mode']],
-                          
-                          'Algorithm data mode': [animation_layers.layers_dict['show_algorithm_data_layer'],
-                                                  booleans.booleans_dict['algorithm_data_mode']],
-                          
-                          'T-diagram': [None,  booleans.booleans_dict['t_diagram_mode']],
-                          
-                          'Vertical line': [animation_layers.layers_dict['vertical_line_layer'],
-                                            booleans.booleans_dict['vertical_line_mode']],
-                          
-                          'Spiral': [animation_layers.layers_dict['spiral_layer'],
-                                     booleans.booleans_dict['spiral_mode']],
-                          
-                          'Y-intersects': [animation_layers.layers_dict['y_axis_intersects_layer'],
-                                           booleans.booleans_dict['y_axis_intersects_mode']],
-                          
-                          'Line-intersects': [animation_layers.layers_dict['line_intersects_layer'],
-                                              booleans.booleans_dict['line_intersects_mode']],
-                          
-                          'Parameters': [animation_layers.layers_dict['params_layer'],
-                                         booleans.booleans_dict['parameters_mode']],
-                          
-                          'Modes layer': [animation_layers.layers_dict['show_modes_layer'],
-                                         True],
-                          
-                          'Derivatives': [animation_layers.layers_dict['derivatives_layer'],
-                                         booleans.booleans_dict['derivatives_mode']]
-                           }
 
     def blit_layers(self, win):
 
@@ -77,14 +49,49 @@ class DataProcessing(Variables, Constants, Booleans,
                     self.constants.constants_dict[param][1] + self.variables.variables_dict[param][1]]
         
         return self.constants.constants_dict[param] + self.variables.variables_dict[param]
+    
+    def initialize_mode_status_dict(self):
+        
+         self.mode_statuses_dict = {'Coordinates':[self.animation_layers.layers_dict['background_surface'],
+                                         self.booleans.booleans_dict['background_mode']],
+                          
+                                    'Algorithm mode': [self.animation_layers.layers_dict['algorithm_layer'],
+                                             self.booleans.booleans_dict['algorithm_mode']],
+                          
+                                    'Algorithm data mode': [self.animation_layers.layers_dict['show_algorithm_data_layer'],
+                                                  self.booleans.booleans_dict['algorithm_data_mode']],
+                          
+                                    'T-diagram': [None,  self.booleans.booleans_dict['t_diagram_mode']],
+
+                                    'Vertical line': [self.animation_layers.layers_dict['vertical_line_layer'],
+                                                    self.booleans.booleans_dict['vertical_line_mode']],
+
+                                    'Spiral': [self.animation_layers.layers_dict['spiral_layer'],
+                                             self.booleans.booleans_dict['spiral_mode']],
+
+                                    'Y-intersects': [self.animation_layers.layers_dict['y_axis_intersects_layer'],
+                                                   self.booleans.booleans_dict['y_axis_intersects_mode']],
+
+                                    'Line-intersects': [self.animation_layers.layers_dict['line_intersects_layer'],
+                                                      self.booleans.booleans_dict['line_intersects_mode']],
+
+                                    'Parameters': [self.animation_layers.layers_dict['params_layer'],
+                                                 self.booleans.booleans_dict['parameters_mode']],
+
+                                    'Modes layer': [self.animation_layers.layers_dict['show_modes_layer'],
+                                                 True],
+
+                                    'Derivatives': [self.animation_layers.layers_dict['derivatives_layer'],
+                                                 self.booleans.booleans_dict['derivatives_mode']]
+                                   }
 
     def reset_dicts(self):
         
         for obj in self.variable_dict_objects:
             obj.reset_dict()
-            
-                
-            
+        
+        self.initialize_mode_status_dict()
+           
     def switch_mode(self, mode):
         self.mode_statuses_dict[mode][1] = not self.mode_statuses_dict[mode][1]
   
