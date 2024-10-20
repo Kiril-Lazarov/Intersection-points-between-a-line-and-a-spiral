@@ -238,7 +238,9 @@ def calc_spiral_length(t, v, w, k):
     return length
 
       
-def calc_spiral_coord(deg=0, t=1 ,v=1, w=1, k=0) -> tuple:
+def calc_spiral_coord(deg=[0, 0], t=1 ,v=1, w=1, k=0) -> tuple:
+    
+    deg_x, deg_y = deg
     
     theta_0 = k * np.pi/2
 
@@ -248,8 +250,8 @@ def calc_spiral_coord(deg=0, t=1 ,v=1, w=1, k=0) -> tuple:
 
     T = np.linspace(*lin_space, num)
     
-    x = np.array([get_nth_deg_x_derivative(deg,t, v,w,k) for t in T])
-    y = np.array([get_nth_deg_y_derivative(deg,t, v,w,k) for t in T])
+    x = np.array([get_nth_deg_x_derivative(deg_x, t, v,w,k) for t in T])
+    y = np.array([get_nth_deg_y_derivative(deg_y, t, v,w,k) for t in T])
     
     return x, y, T 
 
@@ -284,11 +286,11 @@ def calc_line_intersections_t(data_processing, t_nth_list,correction_mech=False,
     
     data_processing
     
-    deg = data_processing.get_curr_param('deg')
-    x = data_processing.get_curr_param('x')
-    v = data_processing.get_curr_param('v')
-    w = data_processing.get_curr_param('w')
-    k = data_processing.get_curr_param('k')
+#     deg = data_processing.get_curr_param('deg')
+#     x = data_processing.get_curr_param('x')
+#     v = data_processing.get_curr_param('v')
+#     w = data_processing.get_curr_param('w')
+#     k = data_processing.get_curr_param('k')
     
     t_mth_list = []
     for t_nth in t_nth_list:
@@ -302,7 +304,7 @@ def calc_single_t_aproxim(data_processing, mth_t, transform=True):
     
     center_point_width, center_point_height = data_processing.get_curr_param('c')
     
-    deg = data_processing.get_curr_param('deg')
+    deg_x, deg_y = data_processing.get_curr_param('deg')
 
     v = data_processing.get_curr_param('v')
     x = data_processing.get_curr_param('x')   
@@ -310,8 +312,8 @@ def calc_single_t_aproxim(data_processing, mth_t, transform=True):
     k = data_processing.get_curr_param('k')
     length = data_processing.get_curr_param('l')
    
-    x = get_nth_deg_x_derivative(deg, mth_t, v, w, k)
-    y = get_nth_deg_y_derivative(deg, mth_t, v, w, k)
+    x = get_nth_deg_x_derivative(deg_x, mth_t, v, w, k)
+    y = get_nth_deg_y_derivative(deg_y, mth_t, v, w, k)
     
     
     if transform:
@@ -355,7 +357,7 @@ def draw_spiral(data_processing):
     # Current unit length of the coordinate system
     length = data_processing.get_curr_param('l')
     
-    # Current spiral degree
+    # Current spiral degrees
     deg = data_processing.get_curr_param('deg')
     
     # Curr time
@@ -426,13 +428,15 @@ def draw_spiral(data_processing):
                     
                     
         if data_processing.mode_statuses_dict['T-diagram'][1]:
+            
+            deg_x, deg_y = deg
 
             last_t = x_transform(T[-1], center_point_width, length)
             
             last_rad_vec =  T[-1] * v
             
-            last_spiral_x = get_nth_deg_x_derivative(deg, T[-1], v,w, k)
-            last_spiral_y = get_nth_deg_y_derivative(deg, T[-1], v,w, k)
+            last_spiral_x = get_nth_deg_x_derivative(deg_x, T[-1], v,w, k)
+            last_spiral_y = get_nth_deg_y_derivative(deg_y, T[-1], v,w, k)
             
             last_rad_vec = np.sqrt(last_spiral_x**2 + last_spiral_y ** 2)
             last_rad_vec = y_transform(last_rad_vec, center_point_height, length)
@@ -458,7 +462,7 @@ def draw_dots(data_processing, t_list, layer):
     
     length = data_processing.get_curr_param('l')
     
-    deg = data_processing.get_curr_param('deg')
+    deg_x, deg_y = data_processing.get_curr_param('deg')
     v = data_processing.get_curr_param('v')
     w = data_processing.get_curr_param('w')
     k = data_processing.get_curr_param('k')
@@ -473,8 +477,8 @@ def draw_dots(data_processing, t_list, layer):
 
         for t in t_list:
  
-            x = get_nth_deg_x_derivative(deg,t, v,w,k)
-            y = get_nth_deg_y_derivative(deg,t, v,w,k)
+            x = get_nth_deg_x_derivative(deg_x, t, v, w, k)
+            y = get_nth_deg_y_derivative(deg_y, t, v, w, k)
             
             x = x_transform(x, center_point_width, length)
             y = y_transform(y, center_point_height, length)
@@ -516,7 +520,7 @@ def draw_derivatives(data_processing):
 
         length = data_processing.get_curr_param('l')
 
-        deg = data_processing.get_curr_param('deg')
+        deg_x, deg_y = data_processing.get_curr_param('deg')
         t = data_processing.get_curr_param('t')
         v = data_processing.get_curr_param('v')
         w = data_processing.get_curr_param('w')
@@ -528,20 +532,15 @@ def draw_derivatives(data_processing):
         x_der_color = 'red'
         y_der_color = 'blue'
 
-        # t-=1
-
-
         theta = k*np.pi/2 + w*t
-        
-
-        
+    
         # Current point spiral coords 
-        x = get_nth_deg_x_derivative(deg,t, v,w,k)
-        y = get_nth_deg_y_derivative(deg,t, v,w,k)
+        x = get_nth_deg_x_derivative(deg_x, t, v, w, k)
+        y = get_nth_deg_y_derivative(deg_y, t, v, w, k)
 
         # Derivatives in this point 
-        dx_dt = get_nth_deg_x_derivative(deg+1,t, v,w,k)
-        dy_dt = get_nth_deg_y_derivative(deg+1,t, v,w,k)
+        dx_dt = get_nth_deg_x_derivative(deg_x+1, t, v, w, k)
+        dy_dt = get_nth_deg_y_derivative(deg_y+1, t, v, w, k)
         
         # Spiral derivative
         dx_dy = dy_dt/ dx_dt
