@@ -285,13 +285,7 @@ def calc_y_intersects_t(data_processing) -> list:
 def calc_line_intersections_t(data_processing, t_nth_list,correction_mech=False, f_binary=False) -> list:
     
     data_processing
-    
-#     deg = data_processing.get_curr_param('deg')
-#     x = data_processing.get_curr_param('x')
-#     v = data_processing.get_curr_param('v')
-#     w = data_processing.get_curr_param('w')
-#     k = data_processing.get_curr_param('k')
-    
+
     t_mth_list = []
     for t_nth in t_nth_list:
         curr_t_mth = get_mth_aproximation(data_processing, t_nth)
@@ -326,7 +320,8 @@ def calc_single_t_aproxim(data_processing, mth_t, transform=True):
 def draw_vertical_line(data_processing):
     
     line_layer = data_processing.animation_layers.layers_dict['vertical_line_layer']
-    screen_height = screen_height = data_processing.constants.screen_height
+    screen_height = data_processing.constants.screen_height
+    screen_width = data_processing.constants.screen_width
     length = data_processing.get_curr_param('l')
     
     x_axis_value = data_processing.get_curr_param('x')
@@ -334,12 +329,25 @@ def draw_vertical_line(data_processing):
     line_layer.fill((0, 0, 0, 0))
     
 
-    center_point_width = data_processing.get_curr_param('c')[0]
-
-    x_up, y_up  = x_transform(x_axis_value, center_point_width, length),y_transform(0, screen_height, length)
-    x_down, y_down = x_transform(x_axis_value, center_point_width, length),y_transform(screen_height, 0, length)
+    center_point_width, center_point_height = data_processing.get_curr_param('c')
     
-    pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
+    if not data_processing.mode_statuses_dict['T-diagram'][1]:
+        
+        x_up  = x_down = x_transform(x_axis_value, center_point_width, length)
+
+        y_up  = y_transform(0, screen_height, length)
+        y_down = y_transform(screen_height, 0, length)
+
+        pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
+        
+    else:
+   
+        y_left = y_right = y_transform(x_axis_value, center_point_height, length)
+        
+        x_left, x_right =0, screen_width
+     
+ 
+        pygame.draw.aalines(line_layer, 'blue',  False, [(x_left, y_left), (x_right, y_right)])
     
     
 
