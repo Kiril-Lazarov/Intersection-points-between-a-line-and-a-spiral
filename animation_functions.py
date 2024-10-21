@@ -375,6 +375,9 @@ def draw_spiral(data_processing):
     if w != 0:
         x_spiral, y_spiral, T = calc_spiral_coord(deg=deg,t=t ,v=v, w=w, k=k)
         
+        data_processing.spiral_coordinates['x'] = x_spiral[-1]
+        data_processing.spiral_coordinates['y'] = y_spiral[-1]
+       
         # Euclidеan distances list
         rad_vec_distances = np.sqrt(x_spiral**2 + y_spiral**2)
         rad_vec_distances = [y_transform(y, center_point_height, length) for y in rad_vec_distances]
@@ -544,11 +547,16 @@ def draw_derivatives(data_processing):
         
         # Spiral derivative
         dx_dy = dy_dt/ dx_dt
+        
 
         x_der_angle = np.arctan(dx_dt)
         y_der_angle = np.arctan(dy_dt)
         
         spiral_der_angle = np.arctan(dx_dy)
+        
+        data_processing.derivative_slopes['dx_dt'] = x_der_angle * 180/ np.pi
+        data_processing.derivative_slopes['dy_dt'] = y_der_angle * 180/ np.pi
+        data_processing.derivative_slopes['dy_dx'] = spiral_der_angle * 180/ np.pi
 
         x = x_transform(x, center_point_width, length)
         y = y_transform(y, center_point_height, length)
