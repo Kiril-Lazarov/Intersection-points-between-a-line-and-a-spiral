@@ -31,6 +31,8 @@ class DataProcessing(Variables, Constants, Booleans,
 
     def __init__(self):
         
+        self.derivative_slopes = {'dx_dt': 0, 'dy_dt': 0, 'dy_dx': 0}
+        self.spiral_coordinates = {'x': 0, 'y': 0}
         self.initialize_mode_status_dict()
     
 
