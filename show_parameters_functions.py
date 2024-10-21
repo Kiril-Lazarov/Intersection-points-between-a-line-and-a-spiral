@@ -29,6 +29,48 @@ def show_parameters(data_processing, font_small):
 
             params_layer.blit(text, (text_x, text_y))
             text_y += data_processing.text_unit
+   
+    if not data_processing.mode_statuses_dict['Algorithm mode'][1]:
+        text_y += data_processing.text_unit
+      
+        x = data_processing.spiral_coordinates['x']
+        y = data_processing.spiral_coordinates['y']
+        
+        coordinates_list = list(zip(data_processing.spiral_coordinates.keys(), [x, y]))
+        
+        accuracy = data_processing.constants.accuracy
+        
+        for name, coord in coordinates_list:
+        
+            text = font_small.render(f'Spiral {name}: {coord:.{accuracy}f}', True, (0, 0, 0))
+            params_layer.blit(text, (text_x, text_y))
+
+            text_y += data_processing.text_unit
+
+        
+    if data_processing.mode_statuses_dict['Derivatives'][1]:
+        
+                
+        colors = iter([(255, 0, 0),  (0, 0,255), (0, 255, 0)])
+        
+        text_y += data_processing.text_unit
+        
+        dx_dt = data_processing.derivative_slopes['dx_dt']
+        dy_dt = data_processing.derivative_slopes['dy_dt']
+        dy_dx = data_processing.derivative_slopes['dy_dx']
+        
+        derivatives_list = list(zip(data_processing.derivative_slopes.keys(), [dx_dt, dy_dt, dy_dx]))
+ 
+        
+        for name, slope in derivatives_list:
+            
+
+        
+            text = font_small.render(f'{name}: {slope:.2f} deg', True, next(colors))
+            params_layer.blit(text, (text_x, text_y))
+
+            text_y += data_processing.text_unit
+
 
 
 
