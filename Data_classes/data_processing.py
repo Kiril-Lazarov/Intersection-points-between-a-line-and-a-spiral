@@ -85,7 +85,9 @@ class DataProcessing(Variables, Constants, Booleans,
                                                  True],
 
                                     'Derivatives': [self.animation_layers.layers_dict['derivatives_layer'],
-                                                 self.booleans.booleans_dict['derivatives_mode']]
+                                                 self.booleans.booleans_dict['derivatives_mode']],
+                                    
+                                    'Steps change': [None, self.booleans.booleans_dict['steps_change_mode']]
                                    }
 
     def reset_dicts(self):
