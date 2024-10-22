@@ -9,6 +9,7 @@ def handle_key_commands(data_processing):
     const_params_dict = data_processing.constants.constants_dict    
     var_params_dict = data_processing.variables.variables_dict
     steps_dict_constants = data_processing.constants.steps_constants_dict
+    factors_dict = data_processing.variables.factors_dict
 
     
     updates_dict['shift_coords'] = False    
@@ -21,7 +22,7 @@ def handle_key_commands(data_processing):
         
         # Zoom-in 
         if keys[pygame.K_UP]:
-            var_params_dict['l'] += steps_dict_constants['l']
+            var_params_dict['l'] += steps_dict_constants['l'] * factors_dict['l']
 
             updates_dict['update_screen'], updates_dict['update_spiral'],\
             updates_dict['update_line'], updates_dict['shift_coords'] = True, True, True, True
@@ -29,10 +30,10 @@ def handle_key_commands(data_processing):
         # Zoom-out
         elif keys[pygame.K_DOWN]:
 
-            possible_length = const_params_dict['l'] + var_params_dict['l'] - steps_dict_constants['l']
+            possible_length = const_params_dict['l'] + var_params_dict['l'] - steps_dict_constants['l'] * factors_dict['l']
 
             if possible_length > 0:
-                var_params_dict['l'] -= steps_dict_constants['l']
+                var_params_dict['l'] -= steps_dict_constants['l'] * factors_dict['l']
 
             updates_dict['update_screen'], updates_dict['update_spiral'],\
             updates_dict['update_line'], updates_dict['shift_coords'] = True, True, True, True
@@ -77,13 +78,13 @@ def handle_key_commands(data_processing):
             # Right movement of the line
             if keys[pygame.K_RIGHT]:
 
-                var_params_dict['x'] += steps_dict_constants['x']           
+                var_params_dict['x'] += steps_dict_constants['x'] * factors_dict['x']          
 
                 updates_dict['update_screen'], updates_dict['update_line'] = True, True
 
             # Left movement of the line
             elif keys[pygame.K_LEFT]:
-                var_params_dict['x'] -= steps_dict_constants['x']
+                var_params_dict['x'] -= steps_dict_constants['x'] * factors_dict['x']
 
                 updates_dict['update_screen'], updates_dict['update_line'] = True, True
 
@@ -91,14 +92,14 @@ def handle_key_commands(data_processing):
             
             # Increase angular velocity `w`    
             if keys[pygame.K_UP]:
-                var_params_dict['w'] += steps_dict_constants['w']
+                var_params_dict['w'] += steps_dict_constants['w'] * factors_dict['w']
 
                 updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
             # Decrease angular velocity `w`  
             elif keys[pygame.K_w] and keys[pygame.K_DOWN]:
 
-                var_params_dict['w'] -= steps_dict_constants['w']
+                var_params_dict['w'] -= steps_dict_constants['w'] * factors_dict['w']
 
                 updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
@@ -108,7 +109,7 @@ def handle_key_commands(data_processing):
             # Increase initial spiral angle coefficient `k`
             if keys[pygame.K_UP]:
 
-                var_params_dict['k'] += steps_dict_constants['k']
+                var_params_dict['k'] += steps_dict_constants['k'] * factors_dict['k']
 
 
                 if const_params_dict['k'] + var_params_dict['k'] >= 4:         
@@ -120,7 +121,7 @@ def handle_key_commands(data_processing):
             # Decrease initial spiral angle coefficient `k`
             elif keys[pygame.K_DOWN]:
 
-                var_params_dict['k'] -= steps_dict_constants['k']
+                var_params_dict['k'] -= steps_dict_constants['k'] * factors_dict['k']
 
                 if const_params_dict['k'] + var_params_dict['k'] <= 0:         
                     var_params_dict['k'] = 4
@@ -132,7 +133,7 @@ def handle_key_commands(data_processing):
             
             # Increase spiral radius velocity `v`
             if keys[pygame.K_UP]:
-                var_params_dict['v'] += steps_dict_constants['v']            
+                var_params_dict['v'] += steps_dict_constants['v'] * factors_dict['v']          
 
 
                 updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
@@ -141,7 +142,7 @@ def handle_key_commands(data_processing):
             elif keys[pygame.K_DOWN]:           
 
                 if const_params_dict['v'] + var_params_dict['v'] > 0:
-                    var_params_dict['v'] -= steps_dict_constants['v']
+                    var_params_dict['v'] -= steps_dict_constants['v'] * factors_dict['v']
 
                     updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
@@ -151,15 +152,17 @@ def handle_key_commands(data_processing):
             
             # Increase time `t`
             if keys[pygame.K_UP]:
-                var_params_dict['t'] += steps_dict_constants['t']            
+                var_params_dict['t'] += steps_dict_constants['t'] * factors_dict['t']            
 
                 updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
             # Decrease time `t`
-            elif  keys[pygame.K_DOWN]:           
+            elif  keys[pygame.K_DOWN]:  
+                
+                possible_t = const_params_dict['t'] - var_params_dict['t'] * steps_dict_constants['t'] * factors_dict['t'] 
 
-                if const_params_dict['t'] + var_params_dict['t'] > 0:
-                    var_params_dict['t'] -= steps_dict_constants['t']
+                if possible_t > 0:
+                    var_params_dict['t'] -= steps_dict_constants['t'] * factors_dict['v']
 
                     updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
@@ -198,7 +201,7 @@ def handle_shift_key_commands(event, data_processing):
             # Change the degree of the spiral curve
             if keys[pygame.K_e]:
                 
-                add_num = data_processing.constants.step_constants_dict['deg_step']
+                add_num = data_processing.constants.steps_constants_dict['deg']
                
                 if keys[pygame.K_UP]:
                     var_params_dict['deg'][1] += add_num
@@ -228,37 +231,58 @@ def handle_ctrl_commands(event, data_processing):
         mods = pygame.key.get_mods()
         updates_dict['update_screen'] = True
         
-        if (mods & pygame.KMOD_CTRL)  and event.key == pygame.K_a:
-            
-            if not mode_statuses_dict['T-diagram'][1]:
-                init_state = mode_statuses_dict['Algorithm mode'][1]
-                mode_statuses_dict['Algorithm mode'][1] = False if init_state else True
+        if not mode_statuses_dict['Steps change'][1]:
+        
+            if (mods & pygame.KMOD_CTRL)  and event.key == pygame.K_a:
 
-                if init_state:
-                    updates_dict['is_turn_off'] = True
+                if not mode_statuses_dict['T-diagram'][1]:
+                    init_state = mode_statuses_dict['Algorithm mode'][1]
+                    mode_statuses_dict['Algorithm mode'][1] = False if init_state else True
 
-                if mode_statuses_dict['Algorithm mode'][1]:
-                    mode_statuses_dict['T-diagram'][1] = False
-                
-                # Set the layers to True
-                for mode, (_, boolean) in mode_statuses_dict.items():
-                    if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode','Modes layer']:
-                        if not boolean:
-                            mode_statuses_dict[mode][1] = True 
+                    if init_state:
+                        updates_dict['is_turn_off'] = True
+
+                    if mode_statuses_dict['Algorithm mode'][1]:
+                        mode_statuses_dict['T-diagram'][1] = False
+                        mode_statuses_dict['Steps change'][1] = False
+
+                    # Set the layers to True
+                    for mode, (_, boolean) in mode_statuses_dict.items():
+                        if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode','Modes layer', 'Steps change']:
+                            if not boolean:
+                                mode_statuses_dict[mode][1] = True 
+
+            elif (mods & pygame.KMOD_CTRL) and event.key == pygame.K_t:
+
+                if not mode_statuses_dict['Algorithm mode'][1]:
+                    data_processing.switch_mode('T-diagram')
+                    # mode_statuses_dict['T-diagram'][1] = not mode_statuses_dict['T-diagram'][1]
+                    updates_dict['is_t_diagram_change'] = True
+                    updates_dict['update_line'] = True
+
+                    if mode_statuses_dict['T-diagram'][1]:
+
+                        mode_statuses_dict['Algorithm mode'][1] = False
+                        mode_statuses_dict['Vertical line'][1] = True
+                        mode_statuses_dict['Derivatives'][1] = False
+                        mode_statuses_dict['Y-intersects'][1] = True
+                        mode_statuses_dict['Line-intersects'][1] = True
                         
-        elif (mods & pygame.KMOD_CTRL) and event.key == pygame.K_t:
-            
-            if not mode_statuses_dict['Algorithm mode'][1]:
-                mode_statuses_dict['T-diagram'][1] = not mode_statuses_dict['T-diagram'][1]
-                updates_dict['is_t_diagram_change'] = True 
 
-                if mode_statuses_dict['T-diagram'][1]:
-                 
-                    mode_statuses_dict['Algorithm mode'][1] = False
-                    mode_statuses_dict['Vertical line'][1] = True
-                    mode_statuses_dict['Derivatives'][1] = False
-                    mode_statuses_dict['Y-intersects'][1] = True
-                    mode_statuses_dict['Line-intersects'][1] = True
+        if not mode_statuses_dict['Algorithm mode'][1] and not mode_statuses_dict['T-diagram'][1]:
+            if (mods & pygame.KMOD_CTRL) and event.key == pygame.K_f:
+                data_processing.switch_mode('Steps change')
+
+                if mode_statuses_dict['Steps change'][1]:
+
+                    mode_statuses_dict['Algorithm mode'][1] = False 
+                    mode_statuses_dict['T-diagram'][1] = False
+
+                else:
+
+                    # Restore the initial state of the dicts
+                    data_processing.reset_dicts()
+                    
 
 
 def handle_algorithm_mode_controls(event, data_processing, t_mth_aproxim_list):
