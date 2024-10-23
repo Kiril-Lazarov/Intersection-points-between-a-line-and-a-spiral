@@ -32,16 +32,17 @@ class Constants(Data):
     half_units = units/2
 
     # Length of one unit along the coordinate axis, calculated as a function of the screen width and the number of    units.
+    accuracy = 5
     length = screen_width/ units
     l_step = 3 # pixels
 
     # The step for changing the values of the spiral and line parameters.
     deg_step = 1
-    t_step = 0.025
-    v_step = 0.025
-    w_step = 0.025
-    k_step = 0.025
-    x_step = 0.03
+    t_step = 0.01
+    v_step = 0.01
+    w_step = 0.01
+    k_step = 0.01
+    x_step = 0.01
     c_step = 10 # pixels
     
     steps_constants_list = ['deg_step', 't_step', 'v_step', 'w_step', 'k_step', 'x_step', 'c_step', 'l_step']

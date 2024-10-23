@@ -14,6 +14,7 @@ class Booleans(Data):
     algorithm_data_mode = True
     parameters_mode = True 
     t_diagram_mode = False
+    steps_change_mode = False
     
     update_screen = False
     update_spiral = False
@@ -35,7 +36,7 @@ class Booleans(Data):
         
         return [self.background_mode, self.algorithm_mode, self.vertical_line_mode, self.derivatives_mode,
                          self.spiral_mode, self.y_axis_intersects_mode, self.line_intersects_mode, self.algorithm_data_mode,
-                         self.parameters_mode, self.t_diagram_mode]
+                         self.parameters_mode, self.t_diagram_mode, self.steps_change_mode]
   
     def create_dict(self, update_dict=True):        
         

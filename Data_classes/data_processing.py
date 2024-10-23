@@ -50,7 +50,6 @@ class DataProcessing(Variables, Constants, Booleans,
             return [self.constants.constants_dict[param][0] + self.variables.variables_dict[param][0],
                     self.constants.constants_dict[param][1] + self.variables.variables_dict[param][1]]
 
-        
         return self.constants.constants_dict[param] + self.variables.variables_dict[param]
     
     def initialize_mode_status_dict(self):
