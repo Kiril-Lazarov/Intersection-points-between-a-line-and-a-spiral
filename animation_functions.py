@@ -257,41 +257,46 @@ def calc_spiral_coord(deg=[0, 0], t=1 ,v=1, w=1, k=0) -> tuple:
 
 def calc_y_intersects_t(data_processing) -> list:
     
-    t = data_processing.get_curr_param('t')
-    w = data_processing.get_curr_param('w')
-    k = data_processing.get_curr_param('k')
+    if not data_processing.mode_statuses_dict['Steps change'][1]:
     
-    is_bigger = False
-    t_list = []
-    
-    
-    if abs(w) == 0:
-        is_bigger = True
-  
-    n = 1
-    
-    while not is_bigger:
-        curr_t = get_nth_intersect(n, k, w)
-        
-        if abs(curr_t) <= abs(t):
-            t_list.append(curr_t)
-            n += 1
-        else:
-            is_bigger = True
-            
-    return t_list
+        t = data_processing.get_curr_param('t')
+        w = data_processing.get_curr_param('w')
+        k = data_processing.get_curr_param('k')
 
+        is_bigger = False
+        t_list = []
+
+
+        if abs(w) == 0:
+            is_bigger = True
+
+        n = 1
+
+        while not is_bigger:
+            curr_t = get_nth_intersect(data_processing, n, k, w)
+
+            if abs(curr_t) <= abs(t):
+                t_list.append(curr_t)
+                n += 1
+            else:
+                is_bigger = True
+
+        return t_list
+    
+    return []
 
 def calc_line_intersections_t(data_processing, t_nth_list,correction_mech=False, f_binary=False) -> list:
     
-    data_processing
+    if not data_processing.mode_statuses_dict['Steps change'][1]:
 
-    t_mth_list = []
-    for t_nth in t_nth_list:
-        curr_t_mth = get_mth_aproximation(data_processing, t_nth)
-        t_mth_list.append(curr_t_mth)
-        
-    return t_mth_list
+        t_mth_list = []
+        for t_nth in t_nth_list:
+            curr_t_mth = get_mth_aproximation(data_processing, t_nth)
+            t_mth_list.append(curr_t_mth)
+
+        return t_mth_list
+    
+    return []
 
 
 def calc_single_t_aproxim(data_processing, mth_t, transform=True):
@@ -540,27 +545,31 @@ def draw_derivatives(data_processing):
         screen_width = data_processing.constants.screen_width
         screen_height = data_processing.constants.screen_width
 
-        x_der_color = 'red'
-        y_der_color = 'blue'
+        dx_dt_color = (255, 0, 0)
+        dy_dt_color = (0, 0, 255)
+        dy_dx_color = (0, 255, 0)
 
         theta = k*np.pi/2 + w*t
     
         # Current point spiral coords 
         x = get_nth_deg_x_derivative(deg_x, t, v, w, k)
         y = get_nth_deg_y_derivative(deg_y, t, v, w, k)
+        
+        # Position of the central point for the dy_dx 
+        y_x = np.sqrt(x**2 + y ** 2)
 
         # Derivatives in this point 
         dx_dt = get_nth_deg_x_derivative(deg_x+1, t, v, w, k)
         dy_dt = get_nth_deg_y_derivative(deg_y+1, t, v, w, k)
         
         # Spiral derivative
-        dx_dy = dy_dt/ dx_dt
+        dy_dx = dy_dt/ dx_dt
         
 
         x_der_angle = np.arctan(dx_dt)
         y_der_angle = np.arctan(dy_dt)
         
-        spiral_der_angle = np.arctan(dx_dy)
+        spiral_der_angle = np.arctan(dy_dx)
         
         data_processing.derivative_slopes['dx_dt'] = x_der_angle * 180/ np.pi
         data_processing.derivative_slopes['dy_dt'] = y_der_angle * 180/ np.pi
@@ -570,27 +579,30 @@ def draw_derivatives(data_processing):
         y = y_transform(y, center_point_height, length)
 
         ll = 3* length
+        
+        colors = iter([dx_dt_color, dy_dt_color, dy_dx_color])
 
         if data_processing.mode_statuses_dict['T-diagram'][1]:
             t_trans = x_transform(t, center_point_width, length)
             x_new = transform_to_t_diagram(x, center_point_width, center_point_height, length)
             
-            colors = iter([x_der_color, y_der_color])
+            y_x = y_transform(y_x, center_point_height, length)
             
-            y_points = iter([x_new, y])
+            y_points = iter([x_new, y, y_x])
             
-            for angle in [x_der_angle, y_der_angle]:
+            for angle in [x_der_angle, y_der_angle, spiral_der_angle]:
 
                 front_xx, front_xy, back_xx, back_xy = get_line_boundary_points(ll, angle, t_trans, next(y_points))
                 pygame.draw.aalines(layer, next(colors),  False, [(back_xx,  back_xy), (front_xx, front_xy)])
 
-            pygame.draw.circle(layer, color=x_der_color, center=(t_trans, x_new), radius=4)
-            pygame.draw.circle(layer, color=y_der_color, center=(t_trans, y), radius=4)
+            pygame.draw.circle(layer, color=dx_dt_color, center=(t_trans, x_new), radius=4)
+            pygame.draw.circle(layer, color=dy_dt_color, center=(t_trans, y), radius=4)
+            pygame.draw.circle(layer, color=dy_dx_color, center=(t_trans, y_x), radius=4)
         
 
 
         else:
-            colors = iter([x_der_color, y_der_color, 'green'])
+            
             
             # Draw derivatives         
             for angle in [x_der_angle, y_der_angle, spiral_der_angle]:
@@ -604,9 +616,8 @@ def draw_derivatives(data_processing):
         
 def show_radius_vector_step(data_processing, t_mth_aproxim_list, m, color, draw_leg_and_hip=False):
     
-    # algorithm_layer = data_processing.mode_statuses_dict['Algorithm mode'][0]
     algorithm_layer = data_processing.animation_layers.layers_dict['algorithm_layer']
-    # algorithm_layer.fill((0, 0, 0, 0))
+  
     
     center_point_width, center_point_height = data_processing.get_curr_param('c')
     
@@ -670,7 +681,7 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
         
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
-            '''t_nth, x_line, v, w, k, i=200, accuracy=5, correction_mech=False, f_binary=False'''
+         
             zero_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, i=1, accuracy=accuracy, correction_mech=False, f_binary=False)
             t_mth_aproxim_list.append(zero_intersect_t)
             
