@@ -1,7 +1,7 @@
 import numpy as np 
 import pygame
 from animation_functions import *
-from variables import *
+
 
 def handle_key_commands(data_processing):
     
@@ -199,7 +199,7 @@ def handle_shift_key_commands(event, data_processing):
                 if event.key == pygame.K_r:
 
                     data_processing.reset_dicts()
-
+              
                     updates_dict['update_spiral'], updates_dict['update_line'], updates_dict['reset_background'] = True, True, True
 
                 keys = pygame.key.get_pressed()
@@ -275,14 +275,15 @@ def handle_ctrl_commands(event, data_processing):
                         mode_statuses_dict['Line-intersects'][1] = True
                         
 
-        if not mode_statuses_dict['Algorithm mode'][1] and not mode_statuses_dict['T-diagram'][1]:
+        # if not mode_statuses_dict['Algorithm mode'][1] and not mode_statuses_dict['T-diagram'][1]:
+        if not mode_statuses_dict['Algorithm mode'][1]:
             if (mods & pygame.KMOD_CTRL) and event.key == pygame.K_f:
                 data_processing.switch_mode('Steps change')
 
                 if mode_statuses_dict['Steps change'][1]:
 
                     mode_statuses_dict['Algorithm mode'][1] = False 
-                    mode_statuses_dict['T-diagram'][1] = False
+                    # mode_statuses_dict['T-diagram'][1] = False
                     
                 else:
                     mode_statuses_dict['Y-intersects'][1] = True
