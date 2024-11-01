@@ -35,6 +35,9 @@ class Constants(Data):
     accuracy = 5
     length = screen_width/ units
     l_step = 3 # pixels
+    
+    max_step = 1000
+    min_step = 0.00001
 
     # The step for changing the values of the spiral and line parameters.
     deg_step = 1
