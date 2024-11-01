@@ -436,12 +436,15 @@ def handle_steps_variables(event, data_processing):
             mode_statuses_dict['Y-intersects'][1] = False
             mode_statuses_dict['Line-intersects'][1] = False
             
+            max_step = data_processing.constants.max_step
+            min_step = data_processing.constants.min_step
+            
             # Increase and decrease `x_step`
             if keys[pygame.K_x]:
                 
                 if keys[pygame.K_UP]:
                 
-                    if factors_dict['x'] < 1000:
+                    if factors_dict['x'] < max_step:
 
                         factors_dict['x'] *= 10
 
@@ -449,7 +452,7 @@ def handle_steps_variables(event, data_processing):
                 
                 elif keys[pygame.K_DOWN]:
 
-                    if 0.001 <factors_dict['x']: 
+                    if min_step <factors_dict['x']: 
 
                         factors_dict['x'] /=10
 
@@ -460,7 +463,7 @@ def handle_steps_variables(event, data_processing):
                 
                 if keys[pygame.K_UP]:
                 
-                    if factors_dict['w'] < 1000:
+                    if factors_dict['w'] < max_step:
 
                         factors_dict['w'] *= 10
 
@@ -468,7 +471,7 @@ def handle_steps_variables(event, data_processing):
                 
                 elif keys[pygame.K_DOWN]:
 
-                    if 0.001 <factors_dict['w']: 
+                    if min_step <factors_dict['w']: 
 
                         factors_dict['w'] /=10
 
@@ -479,7 +482,7 @@ def handle_steps_variables(event, data_processing):
                 
                 if keys[pygame.K_UP]:
                 
-                    if factors_dict['k'] < 100:
+                    if factors_dict['k'] < max_step/10:
 
                         factors_dict['k'] *= 10
 
@@ -487,7 +490,7 @@ def handle_steps_variables(event, data_processing):
                 
                 elif keys[pygame.K_DOWN]:
 
-                    if 0.001 <factors_dict['k']: 
+                    if min_step <factors_dict['k']: 
 
                         factors_dict['k'] /=10
 
@@ -499,7 +502,7 @@ def handle_steps_variables(event, data_processing):
                 
                 if keys[pygame.K_UP]:
                 
-                    if factors_dict['v'] < 1000:
+                    if factors_dict['v'] < max_step:
 
                         factors_dict['v'] *= 10
 
@@ -507,7 +510,7 @@ def handle_steps_variables(event, data_processing):
                 
                 elif keys[pygame.K_DOWN]:
 
-                    if 0.001 <factors_dict['v']: 
+                    if min_step <factors_dict['v']: 
 
                         factors_dict['v'] /=10
 
@@ -519,7 +522,7 @@ def handle_steps_variables(event, data_processing):
                 
                 if keys[pygame.K_UP]:
                 
-                    if factors_dict['t'] < 1000:
+                    if factors_dict['t'] < max_step:
 
                         factors_dict['t'] *= 10
 
@@ -527,7 +530,7 @@ def handle_steps_variables(event, data_processing):
                 
                 elif keys[pygame.K_DOWN]:
 
-                    if 0.001 <factors_dict['t']: 
+                    if min_step <factors_dict['t']: 
 
                         factors_dict['t'] /=10
 
