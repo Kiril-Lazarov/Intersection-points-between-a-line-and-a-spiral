@@ -197,6 +197,9 @@ def y_transform(y, curr_screen_height,length):
     
     return -y * length + curr_screen_height
 
+def y_inverse_transform(y, curr_screen_height,length):
+    
+    return (y - curr_screen_height)/length
 
 def transform_to_t_diagram(x, curr_screen_width, curr_screen_height, length):
     
@@ -242,8 +245,6 @@ def calc_spiral_coord(deg=[0, 0], t=1 ,v=1, w=1, k=0) -> tuple:
     
     deg_x, deg_y = deg
     
-    theta_0 = k * np.pi/2
-
     lin_space = (0, t)
     
     num = 300
@@ -395,10 +396,27 @@ def draw_spiral(data_processing):
         rad_vec_distances = np.sqrt(x_spiral**2 + y_spiral**2)
         rad_vec_distances = [y_transform(y, center_point_height, length) for y in rad_vec_distances]
         
+        
         # Transform the x and y spiral coords into the screen coordinate system
         x_spiral = [x_transform(x, center_point_width, length) for x in x_spiral]
         y_spiral = [y_transform(y, center_point_height, length) for y in y_spiral]
-
+        
+        
+        
+        x_floating_point = w * y_inverse_transform(y_spiral[-1], center_point_height,length) * T[-1]
+        y_floating_point = x_inverse_transform(x_spiral[-1], center_point_width,length)/ (w * T[-1])
+        
+#         print('Before transform')
+#         print('x_floating_point: ',x_floating_point, 'y_floating_point: ', y_floating_point)
+        
+        x_floating_point = x_transform(x_floating_point, center_point_width, length)
+        y_floating_point = y_transform(y_floating_point, center_point_height, length)
+        
+        
+        # print('x_floating_point: ',x_floating_point, 'y_floating_point: ', y_floating_point)
+        
+        pygame.draw.circle(spiral_layer, color='orange', center=(x_floating_point, y_floating_point), radius=4)
+            
         for i in range(len(x_spiral) -1):
 
             curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
@@ -682,8 +700,8 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
          
-            zero_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, i=1, accuracy=accuracy, correction_mech=False, f_binary=False)
-            t_mth_aproxim_list.append(zero_intersect_t)
+            first_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, i=1, accuracy=accuracy, correction_mech=False, f_binary=False)
+            t_mth_aproxim_list.append(first_intersect_t)
             
             # Show current radius-vector
             show_radius_vector_step(data_processing, t_mth_aproxim_list, m, curr_rad_vec_color)
