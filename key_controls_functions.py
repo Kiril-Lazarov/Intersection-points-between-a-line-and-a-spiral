@@ -316,7 +316,7 @@ def handle_algorithm_mode_controls(event, data_processing, t_mth_aproxim_list):
 
         elif keys[pygame.K_n] and keys[pygame.K_DOWN]:
 
-            if n-1 > 0:
+            if n > 0:
                 algorithm_variables_dict['n'] -=1
                 algorithm_variables_dict['m'] = 0
 
