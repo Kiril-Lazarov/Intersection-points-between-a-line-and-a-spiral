@@ -285,18 +285,11 @@ def calc_y_intersects_t(data_processing) -> list:
                     _, deg_y = data_processing.get_curr_param('deg')
                     v = data_processing.get_curr_param('v')
                     x = data_processing.get_curr_param('x')
-                    # print('curr_t: ', curr_t)
-                
-                    
+                 
                     
                     first_y_intersect = get_nth_deg_y_derivative(deg_y, curr_t, v, w, k)
-                    # print('first_y_intersect: ', first_y_intersect)
-                    first_y_intersect /=2
-                    # print('first_y_intersect: ', first_y_intersect)
-                    
-                    half_theta = np.arctan(abs(first_y_intersect)/ abs(x))
-                    # print('half_theta: ', half_theta * np.pi/180)
-                    zero_t = half_theta / abs(w)
+              
+                    zero_t = first_y_intersect/(2 * v)
                     
                     t_list = [zero_t] + t_list
                     
@@ -705,19 +698,21 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
     data_processing.algorithm_vars.algorithm_vars_dict['total_n'] = len(t_nth_list) # Stores how many are the y-intersection points
   
     m = np.copy(data_processing.algorithm_vars.algorithm_vars_dict['m'])
+    n = data_processing.algorithm_vars.algorithm_vars_dict['n']
 
     if t_nth_list:
+    
+        if n> len(t_nth_list)-1:
         
-        if data_processing.algorithm_vars.algorithm_vars_dict['n']  == 0:
-            y_intersect_t = t_nth_list[0]
-            data_processing.algorithm_vars.algorithm_vars_dict['n']+=1
-        else: 
-            y_intersect_t = t_nth_list[data_processing.algorithm_vars.algorithm_vars_dict['n'] -1]
+            n -= 1
+        y_intersect_t = t_nth_list[n]
+    
+        down_direction = True if n == 0 else False
         
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
-         
-            first_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, i=1, accuracy=accuracy, correction_mech=False, f_binary=False)
+           
+            first_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, i=1, down_direction = down_direction, accuracy=accuracy, correction_mech=False, f_binary=False)
             t_mth_aproxim_list.append(first_intersect_t)
             
             # Show current radius-vector
@@ -727,7 +722,7 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
             if m +1 > len(t_mth_aproxim_list):
                 
                 
-                next_t = get_mth_aproximation(data_processing, y_intersect_t,  i=m+1,accuracy=accuracy,  correction_mech=False, f_binary=False)
+                next_t = get_mth_aproximation(data_processing, y_intersect_t,  i=m+1,accuracy=accuracy, down_direction = down_direction, correction_mech=False, f_binary=False)
                 t_mth_aproxim_list.append(next_t)
                 
                 # Show previous radius vector if it exists
