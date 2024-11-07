@@ -712,7 +712,9 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
            
-            first_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, i=1, down_direction = down_direction, accuracy=accuracy, correction_mech=False, f_binary=False)
+            first_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, 
+                                                     i=1, down_direction = down_direction, accuracy=accuracy,
+                                                     correction_mech=False, f_binary=False)
             t_mth_aproxim_list.append(first_intersect_t)
             
             # Show current radius-vector
@@ -722,7 +724,9 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
             if m +1 > len(t_mth_aproxim_list):
                 
                 
-                next_t = get_mth_aproximation(data_processing, y_intersect_t,  i=m+1,accuracy=accuracy, down_direction = down_direction, correction_mech=False, f_binary=False)
+                next_t = get_mth_aproximation(data_processing, y_intersect_t,  
+                                              i=m+1,accuracy=accuracy, down_direction = down_direction,
+                                              correction_mech=False, f_binary=False)
                 t_mth_aproxim_list.append(next_t)
                 
                 # Show previous radius vector if it exists
