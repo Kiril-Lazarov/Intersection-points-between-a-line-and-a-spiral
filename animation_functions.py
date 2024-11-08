@@ -259,40 +259,25 @@ def calc_spiral_coord(deg=[0, 0], t=1 ,v=1, w=1, k=0) -> tuple:
 def calc_y_intersects_t(data_processing) -> list:
     
     if not data_processing.mode_statuses_dict['Steps change'][1]:
-    
-        t = data_processing.get_curr_param('t')
-        w = data_processing.get_curr_param('w')
+   
         k = data_processing.get_curr_param('k')
-       
+        w = data_processing.get_curr_param('w')
+        t = data_processing.get_curr_param('t')
         
         is_bigger = False
         t_list = []
-
-
+      
         if abs(w) == 0:
             is_bigger = True
 
-        n = 1
+        n = 0
  
         while not is_bigger:
-            curr_t = get_nth_intersect(data_processing, n, k, w)
+            curr_t = get_nth_intersect(data_processing, n, w, k, final_solution = True)
 
             if abs(curr_t) <= abs(t):
                 t_list.append(curr_t)
-                
-                if n == 1:
-                    
-                    _, deg_y = data_processing.get_curr_param('deg')
-                    v = data_processing.get_curr_param('v')
-                    x = data_processing.get_curr_param('x')
-                 
-                    
-                    first_y_intersect = get_nth_deg_y_derivative(deg_y, curr_t, v, w, k)
-              
-                    zero_t = first_y_intersect/(2 * v)
-                    
-                    t_list = [zero_t] + t_list
-                    
+  
                     
                 n += 1
             else:
@@ -305,10 +290,20 @@ def calc_y_intersects_t(data_processing) -> list:
 def calc_line_intersections_t(data_processing, t_nth_list,correction_mech=False, f_binary=False) -> list:
     
     if not data_processing.mode_statuses_dict['Steps change'][1]:
+        n = data_processing.algorithm_vars.algorithm_vars_dict['n']
 
         t_mth_list = []
-        for t_nth in t_nth_list:
-            curr_t_mth = get_mth_aproximation(data_processing, t_nth)
+        
+        for index,t_nth in enumerate(t_nth_list):
+            
+            if index == 0:
+
+                curr_t_mth = get_mth_aproximation(data_processing, t_nth, down_direction=True)
+
+            else:
+
+                curr_t_mth = get_mth_aproximation(data_processing, t_nth,down_direction=False)
+                
             t_mth_list.append(curr_t_mth)
 
         return t_mth_list
@@ -416,17 +411,7 @@ def draw_spiral(data_processing):
         # Transform the x and y spiral coords into the screen coordinate system
         x_spiral = [x_transform(x, center_point_width, length) for x in x_spiral]
         y_spiral = [y_transform(y, center_point_height, length) for y in y_spiral]
-        
-        
-        
-#         x_floating_point = w * y_inverse_transform(y_spiral[-1], center_point_height,length) * T[-1]
-#         y_floating_point = x_inverse_transform(x_spiral[-1], center_point_width,length)/ (w * T[-1])
-
-#         x_floating_point = x_transform(x_floating_point, center_point_width, length)
-#         y_floating_point = y_transform(y_floating_point, center_point_height, length)
-
-#         pygame.draw.circle(spiral_layer, color='orange', center=(x_floating_point, y_floating_point), radius=4)
-            
+ 
         for i in range(len(x_spiral) -1):
 
             curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
