@@ -12,6 +12,22 @@ def W_bin(w):
 def B_bin(k):
     return np.ceil(k) - np.floor(k)
 
+def L_bin(x_line, w, v, k):
+    
+    zero_point_t = abs(x_line)/v
+    curr_theta_angle = k * np.pi/2 + w * zero_point_t
+    curr_x = v* zero_point_t * np.cos(curr_theta_angle)
+    
+    curr_x_sign = curr_x / abs(X_bin(curr_x))    
+    curr_x_sign = 1 if curr_x_sign > 0 else -1
+    
+    x_line_sign = x_line/abs(X_bin(x_line))    
+    x_line_sign = 1 if x_line_sign > 0 else -1
+    
+    x_product = curr_x_sign * x_line_sign
+
+    return 0 ** (1 - x_product)
+
 
 def get_delta_theta_plus(k):
     
@@ -94,26 +110,9 @@ def A_coeff(x_line, w, v, k, y):
 
 
 def get_nth_intersect(data_processing, n, k, w):
-    
-    # deg_x, deg_y = data_processing.constants.constants_dict['deg']
-  
-    
-    
+
     delta_theta = get_delta_theta(w, k)
-    
-#     final_t = (delta_theta + (n-1) * np.pi) / abs(w)
-    
-      
-#     t_0 = delta_theta/ abs(w)
-#     v = data_processing.constants.constants_dict['v']
-    
-#     x = get_nth_deg_x_derivative(deg_x, final_t, v, w, k)
-#     y= get_nth_deg_y_derivative(deg_y, final_t, v, w, k)
-#     init_rad_vec = v* np.sqrt(w**(deg_x-1) * x**2 + w**(deg_y-1)*y**2)
-#     print('init_rad_vec: ', init_rad_vec)
-    
-    
-    
+  
     return (delta_theta + (n-1) * np.pi) / abs(w)
 
 
