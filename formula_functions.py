@@ -12,21 +12,41 @@ def W_bin(w):
 def B_bin(k):
     return np.ceil(k) - np.floor(k)
 
-def L_bin(x_line, w, v, k):
-    
-    zero_point_t = abs(x_line)/v
-    curr_theta_angle = k * np.pi/2 + w * zero_point_t
-    curr_x = v* zero_point_t * np.cos(curr_theta_angle)
-    
-    curr_x_sign = curr_x / abs(X_bin(curr_x))    
-    curr_x_sign = 1 if curr_x_sign > 0 else -1
-    
-    x_line_sign = x_line/abs(X_bin(x_line))    
-    x_line_sign = 1 if x_line_sign > 0 else -1
-    
-    x_product = curr_x_sign * x_line_sign
 
-    return 0 ** (1 - x_product)
+def KWX_line(k, w, x_line, v):
+    k_coeff = ((k-1)/X_bin(k-1)) * ((3-k)/X_bin(3-k))
+    k_coeff = 1 if k_coeff > 0 else 0
+
+    k13_coeff = (1 - k_coeff)
+ 
+    
+    w_coeff = w / abs(X_bin(w))
+    if w_coeff > 0:
+        w_coeff = 1
+    elif w_coeff < 0:
+        w_coeff = -1
+    
+    x_line_coeff = x_line/(abs(X_bin(x_line)))
+    if x_line_coeff > 0:
+        x_line_coeff = 1
+    elif x_line_coeff < 0:
+        x_line_coeff = -1
+    return np.floor((1 + k13_coeff *w_coeff*x_line_coeff)/2) 
+
+def K_sign(k, x_line):
+    k_coeff = ((-1)*(k-1)/abs(X_bin(k-1))) * ((3-k)/abs(X_bin(3-k)))
+    if k_coeff > 0:
+        k_coeff = 1
+    elif k_coeff < 0:
+        k_coeff = -1
+
+    x_line_coeff = x_line/abs(X_bin(x_line))
+    if x_line_coeff > 0:
+        x_line_coeff = 1
+    elif x_line_coeff < 0:
+        x_line_coeff = -1
+
+    return np.floor((1 + k_coeff*x_line_coeff)/2)
 
 
 def get_delta_theta_plus(k):
@@ -109,11 +129,23 @@ def A_coeff(x_line, w, v, k, y):
     
 
 
-def get_nth_intersect(data_processing, n, k, w):
+def get_nth_intersect(data_processing, n, w,k, final_solution = False):
 
     delta_theta = get_delta_theta(w, k)
-  
-    return (delta_theta + (n-1) * np.pi) / abs(w)
+    
+    if not final_solution:
+        return (delta_theta + (n-1) * np.pi) / abs(w)
+    
+    
+   
+    v = data_processing.get_curr_param('v')
+    x_line = data_processing.get_curr_param('x')
+    deg_x  =  data_processing.get_curr_param('deg')[0]
+
+    l_bin = L_bin(x_line, w, v, k, deg_x) 
+
+
+    return l_bin*(1 - n/X_bin(n)) * abs(x_line/v) + n/X_bin(n)*(delta_theta + (n-1) * np.pi) / abs(w)
 
 
 
