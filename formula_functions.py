@@ -34,7 +34,7 @@ def KWX_line(k, w, x_line, v):
     return np.floor((1 + k13_coeff *w_coeff*x_line_coeff)/2) 
 
 def K_sign(k, x_line):
-    k_coeff = ((-1)*(k-1)/abs(X_bin(k-1))) * ((3-k)/abs(X_bin(3-k)))
+    k_coeff = ((1-k)/abs(X_bin(k-1))) * ((3-k)/abs(X_bin(3-k)))
     if k_coeff > 0:
         k_coeff = 1
     elif k_coeff < 0:
@@ -117,18 +117,6 @@ def A_coeff(x_line, w, v, k, y):
 
     return (-1) * (x_line/abs(x_coeff)) * (w / abs(w)) * (y/abs(y))
 
-# def rad_vec_magnitude(deg_x, deg_y, w, v, k, t)
-
-#     theta = k * np.pi/2 + w * t 
-    
-#     x = get_nth_deg_x_derivative(deg_x, t_0, v, w, k)
-#     y= get_nth_deg_y_derivative(deg_y, t_0, v, w, k)
-    
-    
-    
-    
-
-
 def get_nth_intersect(data_processing, n, w,k, final_solution = False):
 
     delta_theta = get_delta_theta(w, k)
@@ -148,91 +136,90 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     return (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * abs(x_line/v) + n/X_bin(n)*(delta_theta + (n-1) * np.pi) / abs(w)
 
 
-
-
-
 def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_direction = False, correction_mech=False, f_binary=False):
 
+    if t_nth > 0:
+        deg_x, deg_y = data_processing.get_curr_param('deg')
+        v = data_processing.get_curr_param('v')
+        w = data_processing.get_curr_param('w')
+        k = data_processing.get_curr_param('k')
+        x_line = data_processing.get_curr_param('x')
 
-    deg_x, deg_y = data_processing.get_curr_param('deg')
-    v = data_processing.get_curr_param('v')
-    w = data_processing.get_curr_param('w')
-    k = data_processing.get_curr_param('k')
-    x_line = data_processing.get_curr_param('x')
-    
-    t_0 = np.copy(t_nth)
-    init_theta_angle = k * np.pi/2
+        t_0 = np.copy(t_nth)
+        init_theta_angle = k * np.pi/2
 
-    init_y = get_nth_deg_y_derivative(deg_y, t_0, v, w, k)
+        init_y = get_nth_deg_y_derivative(deg_y, t_0, v, w, k)
 
-    # a_coeff = float(round(A_coeff(x_line, w, v, k, init_y),5))
-    a_coeff = A_coeff(x_line, w, v, k, init_y)
-
-
-    last_t = np.copy(t_0)
+        # a_coeff = float(round(A_coeff(x_line, w, v, k, init_y),5))
+        a_coeff = A_coeff(x_line, w, v, k, init_y)
 
 
-
-    for _ in range(1,i):
-
-        curr_x = get_nth_deg_x_derivative(deg_x, t_0, v, w, k)
-        curr_y= get_nth_deg_y_derivative(deg_y, t_0, v, w, k)
-
-        if not down_direction:
-            c = abs(x_line) - abs(curr_x)
-
-            a = np.sqrt(x_line**2 + curr_y**2)
-
-            # b = v*t_0 # Current radius vector
-            b = np.sqrt(curr_x ** 2 + curr_y**2)
-
-            cos_delta_phi = (a ** 2 + b**2 - c ** 2)/(2 * a * b)
+        last_t = np.copy(t_0)
 
 
 
-            if abs(cos_delta_phi) > 1:
+        for _ in range(1,i):
 
-                cos_delta_phi = 1
+            curr_x = get_nth_deg_x_derivative(deg_x, t_0, v, w, k)
+            curr_y= get_nth_deg_y_derivative(deg_y, t_0, v, w, k)
 
-            delta_phi = np.arccos(cos_delta_phi)
+            if not down_direction:
+                c = abs(x_line) - abs(curr_x)
 
-            curr_t = (a_coeff * delta_phi) / abs(w)
+                a = np.sqrt(x_line**2 + curr_y**2)
 
-            if c == 0:
+                # b = v*t_0 # Current radius vector
+                b = np.sqrt(curr_x ** 2 + curr_y**2)
 
-                t_0 +=curr_t*(-1)
+                cos_delta_phi = (a ** 2 + b**2 - c ** 2)/(2 * a * b)
+
+
+
+                if abs(cos_delta_phi) > 1:
+
+                    cos_delta_phi = 1
+
+                delta_phi = np.arccos(cos_delta_phi)
+
+                curr_t = (a_coeff * delta_phi) / abs(w)
+
+                if c == 0:
+
+                    t_0 +=curr_t*(-1)
+
+                else:
+                    '(x_line/abs(x_line))*'
+                    t_0 += (c/abs(c))*curr_t 
+
+                statement = f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
+
+                if statement:
+
+                    return t_0
+
+                last_t = np.copy(t_0)
 
             else:
-                '(x_line/abs(x_line))*'
-                t_0 += (c/abs(c))*curr_t 
 
-            statement = f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
+                phi_0 = np.arctan(curr_y/curr_x)
 
-            if statement:
 
-                return t_0
+                new_y =  np.tan(phi_0) *x_line
 
-            last_t = np.copy(t_0)
+                new_rad_vec_length = np.sqrt(x_line ** 2 + new_y ** 2)
 
-        else:
-     
-            phi_0 = np.arctan(curr_y/curr_x)
+                t_0 = new_rad_vec_length / v
 
-      
-            new_y =  np.tan(phi_0) *x_line
 
-            new_rad_vec_length = np.sqrt(x_line ** 2 + new_y ** 2)
+                statement = f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
 
-            t_0 = new_rad_vec_length / v
+                if statement:
 
+                    return t_0
+
+                last_t = np.copy(t_0)
+                # curr_x = get_nth_deg_x_derivative(deg_x, t_0, v, w, k)
             
-            statement = f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
-
-            if statement:
-
-                return t_0
-
-            last_t = np.copy(t_0)
-            # curr_x = get_nth_deg_x_derivative(deg_x, t_0, v, w, k)
-            
-    return last_t
+        return last_t
+    
+    return t_nth
