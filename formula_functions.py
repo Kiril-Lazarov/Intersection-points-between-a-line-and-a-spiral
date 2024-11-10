@@ -142,10 +142,10 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     x_line = data_processing.get_curr_param('x')
     deg_x  =  data_processing.get_curr_param('deg')[0]
 
-    l_bin = L_bin(x_line, w, v, k, deg_x) 
+    kwx_coeff = KWX_line(k, w, x_line, v)
+    k_sign = K_sign(k, x_line)
 
-
-    return l_bin*(1 - n/X_bin(n)) * abs(x_line/v) + n/X_bin(n)*(delta_theta + (n-1) * np.pi) / abs(w)
+    return (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * abs(x_line/v) + n/X_bin(n)*(delta_theta + (n-1) * np.pi) / abs(w)
 
 
 
