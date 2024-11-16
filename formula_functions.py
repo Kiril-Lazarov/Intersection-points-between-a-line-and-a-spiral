@@ -100,6 +100,25 @@ def swap_result(value, constant):
 
     return 1- ((v_c_sum)/ X_bin(v_c_sum))
 
+def special_cases_factor(n, k, w):
+    
+    
+    n_koeff = swap_result(n, 1)
+
+    k_1_koeff = swap_result(k, 1)
+
+    w_koeff = swap_result(w, 1) 
+
+    k_3_koeff =swap_result(k, 3)
+
+    neg_w_koeff = swap_result(w, -1)
+
+    factor = (1-n_koeff*k_1_koeff*neg_w_koeff) + (1-n_koeff*k_3_koeff*w_koeff) 
+    
+    factor = np.floor(factor/2)
+
+    return factor
+
 
 def K_sign(k, x_line):
     
