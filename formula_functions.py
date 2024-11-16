@@ -35,35 +35,82 @@ def W_bin(w):
 def B_bin(k):
     return np.ceil(k) - np.floor(k)
 
-
-def KWX_line(k, w, x_line, v):
-    k_coeff = ((k-1)/X_bin(k-1)) * ((3-k)/X_bin(3-k))
-    k_coeff = 1 if k_coeff > 0 else 0
-
-    k13_coeff = (1 - k_coeff)
- 
+def calc_power(k, w):
     
-    w_coeff = w / abs(X_bin(w))
-    if w_coeff > 0:
-        w_coeff = 1
-    elif w_coeff < 0:
-        w_coeff = -1
+    k_1 = (1- (k-1)/(X_bin(k-1)))
+    k_3 = (1- (k-3)/(X_bin(k-3)))
     
-    x_line_coeff = x_line/(abs(X_bin(x_line)))
-    if x_line_coeff > 0:
-        x_line_coeff = 1
-    elif x_line_coeff < 0:
-        x_line_coeff = -1
-    return np.floor((1 + k13_coeff *w_coeff*x_line_coeff)/2) 
+    w_1= (1 - (w)/ abs(X_bin(w)))/2
+    w_neg_1 = (1 + (w)/ abs(X_bin(w)))/2
+    
+    power = k_3*w_1 + k_1 * w_neg_1
+    
+    if power<1:
+        power = 0
+
+    return power
 
 
-
-def K_sign(k, x_line):
-    k_coeff = ((1-k)/abs(X_bin(k-1))) * ((3-k)/abs(X_bin(3-k)))
+def KWX_line(k, w, x_line):
+    
+    # print('k = 0.9999999999999999 : ', k==0.9999999999999999 )
+    
+    # if k==0.9999999999999999:
+    #     k = 1
+    k_coeff = ((k-1)/abs(X_bin(k-1)) * ((3-k)/abs(X_bin(3-k))))                         
+    
     if k_coeff > 0:
         k_coeff = 1
     elif k_coeff < 0:
         k_coeff = -1
+    else:
+        k_coeff = 0
+
+    k13_coeff = (1 - abs(k_coeff))
+
+#     w_coeff = w / abs(X_bin(w))
+    
+#     if w_coeff > 0:
+#         w_coeff = 1
+#     elif w_coeff < 0:
+#         w_coeff = -1
+#     else:
+#         w_coeff = 0
+        
+#     power = calc_power(k, w)
+        
+#     w_special_cases = w_coeff ** (power)
+    
+#     # print('k: ', k, 'w_coeff: ', w_coeff, 'power: ',power, 'w_special_cases: ',w_special_cases)
+#     x_line_coeff = x_line/(abs(X_bin(x_line)))
+    
+#     if x_line_coeff > 0:
+#         x_line_coeff = 1
+#     elif x_line_coeff < 0:
+#         x_line_coeff = -1
+#     else:
+#         x_line_coeff = 0  
+  
+    # return np.floor((1 - k13_coeff *w_special_cases*x_line_coeff)/2)
+    return k13_coeff
+
+def swap_result(value, constant):
+    
+    v_c_sum = value - constant
+
+    return 1- ((v_c_sum)/ X_bin(v_c_sum))
+
+
+def K_sign(k, x_line):
+    
+    k_coeff = ((k-1)/abs(X_bin(k-1))) * ((k-3)/abs(X_bin(k-3)))
+    
+    if k_coeff > 0:
+        k_coeff = 1
+    elif k_coeff < 0:
+        k_coeff = -1
+    else:
+        k_coeff = 0
 
     x_line_coeff = x_line/abs(X_bin(x_line))
     
@@ -71,12 +118,15 @@ def K_sign(k, x_line):
         x_line_coeff = 1
     elif x_line_coeff < 0:
         x_line_coeff = -1
+        
+    else:
+        x_line_coeff = 0
 
     return np.floor((1 + k_coeff*x_line_coeff)/2)
 
 
 
-def point_max_displacement(rad_vec, x_line):
+def x_max_line(rad_vec, x_line):
     
     values_diff = abs(rad_vec) - abs(x_line)
     diff_sign = values_diff/ abs(X_bin(values_diff))
@@ -176,7 +226,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     
     deg_x, deg_y  =  data_processing.get_curr_param('deg')
 
-    kwx_coeff = KWX_line(k, w, x_line, v)
+    kwx_coeff = KWX_line(k, w, x_line)
     k_sign = K_sign(k, x_line)
     
     # The x-derivative at t=0
@@ -191,9 +241,17 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     first_y_t = delta_theta/abs(w)
     first_y_rad_vec = get_nth_deg_y_derivative(deg_y, first_y_t, v, w, k)
     
-    d_max_coeff = point_max_displacement(first_y_rad_vec, x_line)
+    x_max_dist = x_max_line(first_y_rad_vec, x_line)
+    # print()
+    # print('k_sign: ',k_sign)
+    # print('kwx_coeff: ',kwx_coeff)
+    # # print('x_max_dist* is_der_changed* (k_sign + kwx_coeff): ', x_max_dist* is_der_changed* (k_sign + kwx_coeff))
+    # print('(k_sign + kwx_coeff): ', (k_sign + kwx_coeff))
+    # # print('is_der_changed: ', is_der_changed)
+    # # print('x_max_dist: ',x_max_dist)
+    # # print()
 
-    return d_max_coeff* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t+ n/X_bin(n)*(delta_theta + (n-1) * np.pi) / abs(w)
+    return x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t+ n/X_bin(n)*(delta_theta + (n-1) * np.pi) / abs(w)
 
 
 
