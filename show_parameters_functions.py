@@ -53,7 +53,7 @@ def show_parameters(data_processing, font_small):
         y = get_nth_deg_y_derivative(deg_y,t, v,w,k)
         
         rad_vec_length = np.sqrt(x**2 + y**2)
-        curr_spiral_angle = np.arccos(x / rad_vec_length)
+        curr_spiral_angle = np.arccos(x / X_bin(rad_vec_length))
         
         text = font_small.render(f'Spiral angle: {curr_spiral_angle:.5f}', True, (0, 0, 0))
         params_layer.blit(text, (text_x, text_y))
