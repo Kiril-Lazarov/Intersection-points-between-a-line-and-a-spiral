@@ -49,8 +49,9 @@ class DataProcessing(Variables, Constants, Booleans,
         if param == 'c' or param == 'deg':
             return [self.constants.constants_dict[param][0] + self.variables.variables_dict[param][0],
                     self.constants.constants_dict[param][1] + self.variables.variables_dict[param][1]]
-
-        return self.constants.constants_dict[param] + self.variables.variables_dict[param]
+        
+        result = self.constants.constants_dict[param] + self.variables.variables_dict[param]
+        return float(f'{result:.{self.constants.accuracy + 9}f}')
     
     def initialize_mode_status_dict(self):
         
