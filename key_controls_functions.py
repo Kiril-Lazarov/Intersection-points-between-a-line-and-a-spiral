@@ -116,6 +116,8 @@ def handle_key_commands(data_processing):
 
                     if const_params_dict['k'] + var_params_dict['k'] >= 4:         
                         var_params_dict['k'] = 0
+                        
+                    var_params_dict['k'] = round(var_params_dict['k'], 14)
 
                     updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
@@ -127,6 +129,8 @@ def handle_key_commands(data_processing):
 
                     if const_params_dict['k'] + var_params_dict['k'] <= 0:         
                         var_params_dict['k'] = 4
+                        
+                    var_params_dict['k'] = round(var_params_dict['k'], 14)
 
                     updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
