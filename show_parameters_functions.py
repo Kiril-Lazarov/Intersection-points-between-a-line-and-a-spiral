@@ -22,6 +22,11 @@ def show_parameters(data_processing, font_small):
             if param != 'c' and param != 'l':
                 curr_value = data_processing.get_curr_param(param)
                 if param == 'k':
+                    text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
+                    
+                    params_layer.blit(text, (text_x, text_y))
+                    text_y += data_processing.text_unit
+                    
                     theta_0 = (curr_value) * (np.pi /2) * 180 / np.pi 
                     text = font_small.render(f'Start angle: {theta_0:.{accuracy}f} deg', True, (0, 0, 0))
 
@@ -53,9 +58,11 @@ def show_parameters(data_processing, font_small):
         y = get_nth_deg_y_derivative(deg_y,t, v,w,k)
         
         rad_vec_length = np.sqrt(x**2 + y**2)
-        curr_spiral_angle = np.arccos(x / X_bin(rad_vec_length))
+        curr_spiral_angle = np.arccos(x / X_bin(rad_vec_length)) * 180/np.pi
         
-        text = font_small.render(f'Spiral angle: {curr_spiral_angle:.5f}', True, (0, 0, 0))
+        text_y += data_processing.text_unit
+        
+        text = font_small.render(f'Spiral angle: {curr_spiral_angle:.5f} deg', True, (0, 0, 0))
         params_layer.blit(text, (text_x, text_y))
         
         text_y += data_processing.text_unit
@@ -136,7 +143,7 @@ def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
     show_algorithm_data_layer.fill((0, 0, 0, 0))
     
     text_x = data_processing.text_unit
-    text_y = 10 * data_processing.text_unit
+    text_y = 13 * data_processing.text_unit
     
     for param, value in data_processing.algorithm_vars.algorithm_vars_dict.items():
 
