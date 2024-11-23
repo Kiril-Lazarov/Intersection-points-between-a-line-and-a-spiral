@@ -61,7 +61,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     v = data_processing.get_curr_param('v')
     x_line = data_processing.get_curr_param('x')
     
-    zero_y_t =  abs(x_line/v)
+    zero_y_t =  abs(x_line/X_bin(v))
     
     deg_x, deg_y  =  data_processing.get_curr_param('deg')
 
