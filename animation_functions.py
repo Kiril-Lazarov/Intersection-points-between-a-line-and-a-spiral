@@ -263,6 +263,7 @@ def calc_y_intersects_t(data_processing) -> list:
         k = data_processing.get_curr_param('k')
         w = data_processing.get_curr_param('w')
         t = data_processing.get_curr_param('t')
+  
         
         is_bigger = False
         t_list = []
@@ -274,11 +275,10 @@ def calc_y_intersects_t(data_processing) -> list:
  
         while not is_bigger:
             curr_t = get_nth_intersect(data_processing, n, w, k, final_solution = True)
-
+         
             if abs(curr_t) <= abs(t):
                 t_list.append(curr_t)
-  
-                    
+     
                 n += 1
             else:
                 is_bigger = True
@@ -290,19 +290,14 @@ def calc_y_intersects_t(data_processing) -> list:
 def calc_line_intersections_t(data_processing, t_nth_list,correction_mech=False, f_binary=False) -> list:
     
     if not data_processing.mode_statuses_dict['Steps change'][1]:
-        n = data_processing.algorithm_vars.algorithm_vars_dict['n']
+        
 
         t_mth_list = []
         
         for index,t_nth in enumerate(t_nth_list):
-            
-            if index == 0:
-
-                curr_t_mth = get_mth_aproximation(data_processing, t_nth, down_direction=True)
-
-            else:
-
-                curr_t_mth = get_mth_aproximation(data_processing, t_nth,down_direction=False)
+            down_direction=True if index == 0 else False
+       
+            curr_t_mth = get_mth_aproximation(data_processing, t_nth,down_direction=down_direction)
                 
             t_mth_list.append(curr_t_mth)
 
@@ -576,7 +571,7 @@ def draw_derivatives(data_processing):
         dy_dt = get_nth_deg_y_derivative(deg_y+1, t, v, w, k)
         
         # Spiral derivative
-        dy_dx = dy_dt/ dx_dt
+        dy_dx = dy_dt/ X_bin(dx_dt)
         
 
         x_der_angle = np.arctan(dx_dt)
@@ -693,7 +688,7 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
         y_intersect_t = t_nth_list[n]
     
         down_direction = True if n == 0 else False
-        
+    
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
            
