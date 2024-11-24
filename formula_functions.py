@@ -44,7 +44,7 @@ def get_nth_deg_y_derivative(deg, t, v, w, k):
     nth_sin_deriv = trig_derivatives_cycle[prev_nth]
     
     result = v * (X_bin(w) ** (deg-1)) * ( deg *  nth_sin_deriv + w * t * nth_cos_deriv)
-    
+
     return  round(result, 13)
 
 
@@ -82,7 +82,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     first_y_t = delta_theta/abs(w)
     first_y_rad_vec = get_nth_deg_y_derivative(deg_y, first_y_t, v, w, k)
     
-    x_max_dist = x_max_line(first_y_rad_vec, x_line)
+    x_max_dist = x_max_line(delta_theta, x_line,w)
 
     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
                              + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w)
@@ -124,9 +124,9 @@ def K_sign(k, x_line):
 
 
 
-def x_max_line(rad_vec, x_line):
+def x_max_line(delta_theta, x_line, w):
     
-    values_diff = abs(rad_vec) - abs(x_line)
+    values_diff = (abs(delta_theta) - abs(x_line))/abs(X_bin(w))
     diff_sign = values_diff/ abs(X_bin(values_diff))
     
     if diff_sign>0:
