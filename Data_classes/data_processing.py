@@ -46,9 +46,12 @@ class DataProcessing(Variables, Constants, Booleans,
 
     def get_curr_param(self, param):
         
-        if param == 'c' or param == 'deg':
+        if param in ['c', 'deg']:
             return [self.constants.constants_dict[param][0] + self.variables.variables_dict[param][0],
                     self.constants.constants_dict[param][1] + self.variables.variables_dict[param][1]]
+        
+        if param in ['a', 'b']:
+            return self.constants.line_constants_dict[param] + self.variables.variables_dict[param]
         
         result = self.constants.constants_dict[param] + self.variables.variables_dict[param]
         return float(f'{result:.{self.constants.accuracy + 9}f}')
