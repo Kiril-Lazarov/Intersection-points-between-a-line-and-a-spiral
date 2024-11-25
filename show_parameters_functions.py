@@ -16,6 +16,11 @@ def show_parameters(data_processing, font_small):
 
         text_x = data_processing.text_unit
         text_y = 3 * text_x
+        
+        text = font_small.render('Spiral parameters:', True, (0, 0, 0))
+                    
+        params_layer.blit(text, (text_x, text_y))
+        text_y += data_processing.text_unit
 
         for param in data_processing.constants.constants_dict.keys():  
 
@@ -82,7 +87,20 @@ def show_parameters(data_processing, font_small):
                 params_layer.blit(text, (text_x, text_y))
 
                 text_y += data_processing.text_unit
-
+             
+        text_y += data_processing.text_unit
+        
+        text = font_small.render('Line parameters:', True, (0, 0, 0))
+                    
+        params_layer.blit(text, (text_x, text_y))
+        text_y += data_processing.text_unit
+        
+        for param in data_processing.constants.line_constants_dict.keys():
+            curr_value = data_processing.get_curr_param(param)
+            
+            text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
+            params_layer.blit(text, (text_x, text_y))
+            text_y += data_processing.text_unit
 
         if data_processing.mode_statuses_dict['Derivatives'][1]:
 
@@ -143,7 +161,11 @@ def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
     show_algorithm_data_layer.fill((0, 0, 0, 0))
     
     text_x = data_processing.text_unit
-    text_y = 13 * data_processing.text_unit
+    text_y = 18 * data_processing.text_unit
+    
+    text = font_small.render('Algorithm approximations:', True, (0, 0, 0))
+    show_algorithm_data_layer.blit(text, (text_x, text_y))
+    text_y += data_processing.text_unit
     
     for param, value in data_processing.algorithm_vars.algorithm_vars_dict.items():
 
