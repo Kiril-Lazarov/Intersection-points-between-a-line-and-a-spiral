@@ -47,8 +47,10 @@ class Constants(Data):
     k_step = 0.01
     x_step = 0.01
     c_step = 10 # pixels
+    a_step = 0.01
+    b_step = 0.01
     
-    steps_constants_list = ['deg_step', 't_step', 'v_step', 'w_step', 'k_step', 'x_step', 'c_step', 'l_step']
+    steps_constants_list = ['deg_step', 't_step', 'v_step', 'w_step', 'k_step', 'x_step', 'c_step', 'l_step', 'a_step', 'b_step']
     
     
     '''Spiral and line constants. The angular velocity is also constant, even though it can have a value of -1.'''
@@ -64,10 +66,18 @@ class Constants(Data):
     
     params_constants_list = ['deg','t','v', 'w', 'k', 'l', 'x', 'c']
     
+    # line constants
+    a = 1
+    b = 0
+    
+    line_constants_list = ['a', 'b']
+  
+    
     def __init__(self):
         
         super().__init__()
         self.constants_dict = {}
+        self.line_constants_dict = {}
         self.steps_constants_dict = {}
         self.excluded_methods_names = [name[0] for name in inspect.getmembers(Constants, predicate=inspect.isfunction)]\
                                     + ['_abc_impl'] + ['class_init_values']
@@ -86,6 +96,9 @@ class Constants(Data):
                     
                 elif name in self.params_constants_list:    
                     self.constants_dict[name] = value
+                    
+                elif name in self.line_constants_list:
+                    self.line_constants_dict[name] = value
                     
     def reset_dict(self):
         self.constants_dict['w'] = self.w
