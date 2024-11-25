@@ -15,6 +15,8 @@ class Variables(Data):
     x_additional =  0
     k_additional =  0
     l_additional =  0
+    a_additional = 0
+    b_additional = 0
     c_additional = [0, 0] # Center point additional values - [width, height]
 
     t_factor = 1
@@ -23,7 +25,9 @@ class Variables(Data):
     x_factor = 1
     k_factor = 1
     l_factor = 1
-    
+    a_factor = 1
+    b_factor = 1
+
     def __init__(self):
         super().__init__()
         
@@ -37,9 +41,9 @@ class Variables(Data):
         
         return ([self.deg_additional, self.t_additional, self.v_additional, 
                 self.w_additional, self.x_additional, self.k_additional, 
-                self.l_additional, self.c_additional],
+                self.l_additional, self.a_additional, self.b_additional, self.c_additional],
                 
-                [None, self.t_factor, self.v_factor, self.w_factor, self.x_factor, self.k_factor, self.l_factor, None])
+                [None, self.t_factor, self.v_factor, self.w_factor, self.x_factor, self.k_factor, self.l_factor, self.a_factor, self.b_factor, None])
     
     
     def create_dict(self):        
