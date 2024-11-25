@@ -41,18 +41,18 @@ def handle_key_commands(data_processing):
                 updates_dict['update_line'], updates_dict['shift_coords'] = True, True, True, True
 
 
-        elif keys[pygame.K_b]:
+        elif keys[pygame.K_h]:
 
             # Move the screen up along the y-axis.
             if keys[pygame.K_UP]:
-                var_params_dict['c'][1] += steps_dict_constants['c']
+                var_params_dict['c'][1] -= steps_dict_constants['c']
 
                 updates_dict['update_screen'], updates_dict['update_spiral'],\
                 updates_dict['update_line'], updates_dict['shift_coords'] = True, True, True, True
 
             # Move the screen down along the y-axis.    
             elif keys[pygame.K_DOWN]:
-                var_params_dict['c'][1] -= steps_dict_constants['c']
+                var_params_dict['c'][1] += steps_dict_constants['c']
 
                 updates_dict['update_screen'], updates_dict['update_spiral'],\
                 updates_dict['update_line'], updates_dict['shift_coords'] = True, True, True, True
