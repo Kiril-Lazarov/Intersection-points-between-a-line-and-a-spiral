@@ -8,7 +8,8 @@ def handle_key_commands(data_processing):
     if not data_processing.mode_statuses_dict['Steps change'][1]:
       
         updates_dict = data_processing.booleans.update_booleans_dict    
-        const_params_dict = data_processing.constants.constants_dict    
+        const_params_dict = data_processing.constants.constants_dict
+        line_params_dict = data_processing.constants.line_constants_dict
         var_params_dict = data_processing.variables.variables_dict
         steps_dict_constants = data_processing.constants.steps_constants_dict
         factors_dict = data_processing.variables.factors_dict
@@ -174,6 +175,47 @@ def handle_key_commands(data_processing):
                         var_params_dict['t'] -= steps_dict_constants['t'] * factors_dict['t']
 
                         updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
+                        
+            # Line parameters
+            elif keys[pygame.K_a]:
+
+                # Increase slope `a`
+                if keys[pygame.K_UP]:
+                    line_params_dict['a'] += steps_dict_constants['a'] * factors_dict['a']
+                    
+                    line_params_dict['a'] = round(line_params_dict['a'], 14)
+
+                    updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
+
+                # Decrease slope `a`
+                elif keys[pygame.K_DOWN]:  
+
+                    line_params_dict['a'] -= steps_dict_constants['a'] * factors_dict['a']  
+
+                    line_params_dict['a'] = round(line_params_dict['a'], 14)
+
+
+                    updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
+                    
+            elif keys[pygame.K_b]:
+
+                # Increase line constant `b`
+                if keys[pygame.K_UP]:
+                    line_params_dict['b'] += steps_dict_constants['b'] * factors_dict['b']
+                    
+                    line_params_dict['b'] = round(line_params_dict['b'], 14)
+
+                    updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
+
+                # Decrease line constant `b`
+                elif keys[pygame.K_DOWN]:  
+
+                    line_params_dict['b'] -= steps_dict_constants['b'] * factors_dict['b']  
+
+                    line_params_dict['b'] = round(line_params_dict['b'], 14)
+
+
+                    updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
 
 def handle_shift_key_commands(event, data_processing):
