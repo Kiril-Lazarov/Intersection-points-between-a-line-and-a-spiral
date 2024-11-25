@@ -581,3 +581,41 @@ def handle_steps_variables(event, data_processing):
                         factors_dict['t'] /=10
 
                         factors_dict['t'] = get_factor_length(factors_dict['t'])
+                        
+            # Increase and decrease `a_step`
+            elif keys[pygame.K_a]:
+                
+                if keys[pygame.K_UP]:
+                
+                    if factors_dict['a'] < max_step:
+
+                        factors_dict['a'] *= 10
+
+                        factors_dict['a'] = get_factor_length(factors_dict['a'])
+                
+                elif keys[pygame.K_DOWN]:
+
+                    if min_step <factors_dict['a']: 
+
+                        factors_dict['a'] /=10
+
+                        factors_dict['a'] = get_factor_length(factors_dict['a'])
+                        
+            # Increase and decrease `b_step`
+            elif keys[pygame.K_b]:
+                
+                if keys[pygame.K_UP]:
+                
+                    if factors_dict['b'] < max_step:
+
+                        factors_dict['b'] *= 10
+
+                        factors_dict['b'] = get_factor_length(factors_dict['b'])
+                
+                elif keys[pygame.K_DOWN]:
+
+                    if min_step <factors_dict['b']: 
+
+                        factors_dict['b'] /=10
+
+                        factors_dict['b'] = get_factor_length(factors_dict['b'])
