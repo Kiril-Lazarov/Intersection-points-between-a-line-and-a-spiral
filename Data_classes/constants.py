@@ -1,4 +1,4 @@
-from numpy import copy
+from numpy import copy, pi
 import inspect
 from Data_classes.data_abstract import Data
 
@@ -47,7 +47,7 @@ class Constants(Data):
     k_step = 0.01
     x_step = 0.01
     c_step = 10 # pixels
-    a_step = 0.01
+    a_step = 1
     b_step = 0.01
     
     steps_constants_list = ['deg_step', 't_step', 'v_step', 'w_step', 'k_step', 'x_step', 'c_step', 'l_step', 'a_step', 'b_step']
@@ -67,7 +67,7 @@ class Constants(Data):
     params_constants_list = ['deg','t','v', 'w', 'k', 'l', 'x', 'c']
     
     # line constants
-    a = 1
+    a = 45
     b = 0
     
     line_constants_list = ['a', 'b']
