@@ -2,6 +2,25 @@ import numpy as np
 import pygame
 from animation_functions import *
 
+def handle_line_param_a(a_param):
+    if a_param > 0:
+        if a_param > 90:
+            diff = a_param - 90
+            a_param = 90 - diff
+            a_param *= -1
+        elif a_param < 0:
+            a_param *= -1
+            
+    elif a_param <0:
+        if a_param < -90:
+            diff = - 90 - a_param 
+            a_param = 90 - diff
+            
+        elif a_param > 0:
+            a_param *= -1
+            
+    return a_param
+
 
 def handle_key_commands(data_processing):
     
@@ -181,18 +200,27 @@ def handle_key_commands(data_processing):
 
                 # Increase slope `a`
                 if keys[pygame.K_UP]:
+                    
+                    
                     line_params_dict['a'] += steps_dict_constants['a'] * factors_dict['a']
                     
-                    line_params_dict['a'] = round(line_params_dict['a'], 14)
+                    line_params_dict['a'] = round(line_params_dict['a'], 13)
+                    
+                    line_params_dict['a'] = handle_line_param_a(line_params_dict['a'])
+                    
+                    
 
                     updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
                 # Decrease slope `a`
                 elif keys[pygame.K_DOWN]:  
 
-                    line_params_dict['a'] -= steps_dict_constants['a'] * factors_dict['a']  
+                    line_params_dict['a'] -= steps_dict_constants['a'] * factors_dict['a']
+                    
+                    line_params_dict['a'] = round(line_params_dict['a'], 13)
+                    
+                    line_params_dict['a'] = handle_line_param_a(line_params_dict['a'])
 
-                    line_params_dict['a'] = round(line_params_dict['a'], 14)
 
 
                     updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
@@ -587,7 +615,7 @@ def handle_steps_variables(event, data_processing):
                 
                 if keys[pygame.K_UP]:
                 
-                    if factors_dict['a'] < max_step:
+                    if factors_dict['a'] < max_step/100:
 
                         factors_dict['a'] *= 10
 
