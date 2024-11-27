@@ -1,4 +1,5 @@
 import pygame 
+from numpy import tan, pi
 
 from Data_classes.variables import Variables
 from Data_classes.constants import Constants
@@ -102,4 +103,12 @@ class DataProcessing(Variables, Constants, Booleans,
            
     def switch_mode(self, mode):
         self.mode_statuses_dict[mode][1] = not self.mode_statuses_dict[mode][1]
+        
+    @property
+    def slope(self):
+        
+        current_a_param = self.get_curr_param('a')
+        slope = tan(current_a_param*pi/180)
+        
+        return round(slope, 14)
   
