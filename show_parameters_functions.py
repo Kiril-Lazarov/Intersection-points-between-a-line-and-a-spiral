@@ -97,8 +97,19 @@ def show_parameters(data_processing, font_small):
         
         for param in data_processing.constants.line_constants_dict.keys():
             curr_value = data_processing.get_curr_param(param)
-            
-            text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
+            if param == 'a':
+                # curr_value = np.arctan(curr_value) * 180/np.pi
+                
+                text = font_small.render(f'Line angle: {curr_value} deg', True, (0, 0, 0))
+                params_layer.blit(text, (text_x, text_y))
+                text_y += data_processing.text_unit
+           
+                a_param = data_processing.slope
+      
+                text = font_small.render(f'{param}: {a_param}', True, (0, 0, 0))
+                
+            else:
+                text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
             params_layer.blit(text, (text_x, text_y))
             text_y += data_processing.text_unit
 
