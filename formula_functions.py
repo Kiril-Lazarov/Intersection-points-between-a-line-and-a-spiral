@@ -79,15 +79,17 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     is_der_changed = derivative_change(x_der_t0, x_der_y_zero)
     
     # The length of the first y-intersection point radius vector
-    first_y_t = delta_theta/abs(w)
-    first_y_rad_vec = get_nth_deg_y_derivative(deg_y, first_y_t, v, w, k)
-    
     x_max_dist = x_max_line(delta_theta, x_line,w)
+    
+    a = data_processing.get_curr_param('a')
+    
+    angle = a * np.pi/180
+    
+    angle_add_coeff = (a/abs(X_bin(a)))*(w/abs(X_bin(w))) 
 
     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
-                             + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w)
-
-
+                             + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w) + (np.pi/2 + angle_add_coeff * abs(angle)) / abs(X_bin(w))
+ 
     return  result
 
 
