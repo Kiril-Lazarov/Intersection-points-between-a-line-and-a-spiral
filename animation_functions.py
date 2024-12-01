@@ -364,13 +364,22 @@ def draw_vertical_line(data_processing):
         b_y = y_transform(b, center_point_height, length)
    
         pygame.draw.circle(line_layer, color='orange', center=(b_x, b_y), radius=4)
+    
+        if slope_a != 0:            
         
-        x_up_gen_line = center_point_width + b_y / slope_a
-        x_down_gen_line = center_point_width  + (screen_height - b_y)/ -slope_a
+            x_up_gen_line = center_point_width + b_y / slope_a
+            x_down_gen_line = center_point_width  + (screen_height - b_y)/ -slope_a
+            
+            pygame.draw.aalines(line_layer, 'red',  False, [(x_up_gen_line, 0), (x_down_gen_line, screen_height)])
+            
+        else:
+            # x_up_gen_line, x_down_gen_line = center_point_height, center_point_height
+            
+            pygame.draw.aalines(line_layer, 'red',  False, [(0, b_y), (screen_width, b_y)])
+            
+        # y_up_gen_line = y_transform(0, center_point_height, length)
 
-        y_up_gen_line = y_transform(0, center_point_height, length)
-
-        pygame.draw.aalines(line_layer, 'red',  False, [(x_up_gen_line, 0), (x_down_gen_line, screen_height)])
+        
  
         
     else:
