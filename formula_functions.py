@@ -178,12 +178,14 @@ def get_x_coord(v, w, k, prev_t):
 
     
 
-def A_coeff(x_line, w):
+def A_coeff(x_line, w, a, y):
 
     x_coeff = X_bin(x_line)
     w_coeff = X_bin(w)
+    a_coeff = X_bin(a)
+    y_coeff = X_bin(y)
     
-    return (x_line/abs(x_coeff)) * (w / abs(w_coeff))
+    return (x_line/abs(x_coeff)) * (w / abs(w_coeff)) * (y/abs(y_coeff)) * (a/abs(a_coeff)) * (-1)
 
 
 
@@ -198,6 +200,8 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
         w = data_processing.get_curr_param('w')
         k = data_processing.get_curr_param('k')
         x_line = data_processing.get_curr_param('x')
+        # b_line = data_processing.get_curr_param('b')
+        a_line = data_processing.get_curr_param('a')
         print('x_line: ', x_line)
         
         n = data_processing.algorithm_vars.algorithm_vars_dict['n']
@@ -210,7 +214,7 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
         
         init_x_derivative = get_nth_deg_x_derivative(deg_x+1, t_0, v, w, k)
         
-        a_coeff = A_coeff(x_line, w)
+        a_coeff = A_coeff(x_line, w, a_line, init_y)
         print('a_coeff: ', a_coeff)
 
 
