@@ -180,12 +180,9 @@ def get_x_coord(v, w, k, prev_t):
 
 def A_coeff(x_line, w, a, y):
 
-    x_coeff = X_bin(x_line)
-    w_coeff = X_bin(w)
-    a_coeff = X_bin(a)
-    y_coeff = X_bin(y)
+    product = x_line * w * a * y * (-1)
     
-    return (x_line/abs(x_coeff)) * (w / abs(w_coeff)) * (y/abs(y_coeff)) * (a/abs(a_coeff)) * (-1)
+    return product/abs(X_bin(product))
 
 
 
