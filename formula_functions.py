@@ -1,5 +1,6 @@
 import numpy as np
 # from Data_classes.data_processing import DataProcessing
+# from animation_functions import 
 
 
 
@@ -47,10 +48,31 @@ def get_nth_deg_y_derivative(deg, t, v, w, k):
 
     return  round(result, 13)
 
+def get_rotation_coeff(a, b, x):
+    product = -a * a * b * x
+    
+    return product/abs(X_bin(product))
 
+def get_delta_k_rotated(a, b, x):
+    
+    delta_k_rotated_angle = get_rotation_coeff(a, b, x)
+    
+    return delta_k_rotated_angle * 2 * (np.pi/2 - abs(np.arctan(a)))/np.pi
 
 def get_nth_intersect(data_processing, n, w,k, final_solution = False):
+    
+    a = data_processing.slope
+    b = data_processing.get_curr_param('b')
+    v = data_processing.get_curr_param('v')
+    x_line = data_processing.get_curr_param('x')
+    
+    k = np.copy(k)
+    delta_k_rotated_angle = get_delta_k_rotated(a, b, x_line)
+    
+    k += delta_k_rotated_angle
 
+    # delta_theta = get_delta_theta(w, k)
+    
     delta_theta = get_delta_theta(w, k)
     
     if not final_solution:
@@ -58,8 +80,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     
     
    
-    v = data_processing.get_curr_param('v')
-    x_line = data_processing.get_curr_param('x')
+
     
     zero_y_t =  abs(x_line/X_bin(v))
     
@@ -81,14 +102,17 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     # The length of the first y-intersection point radius vector
     x_max_dist = x_max_line(delta_theta, x_line,w)
     
-    a = data_processing.get_curr_param('a')
+#     a = data_processing.get_curr_param('a')
     
-    angle = a * np.pi/180
+#     angle = a * np.pi/180
     
-    angle_add_coeff = (a/abs(X_bin(a)))*(w/abs(X_bin(w))) 
+#     angle_add_coeff = (a/abs(X_bin(a)))*(w/abs(X_bin(w))) 
 
+#     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
+#                              + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w) + (np.pi/2 + angle_add_coeff * abs(angle)) / abs(X_bin(w))
+    
     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
-                             + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w) + (np.pi/2 + angle_add_coeff * abs(angle)) / abs(X_bin(w))
+                             + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w)
  
     return  result
 
@@ -178,15 +202,161 @@ def get_x_coord(v, w, k, prev_t):
 
     
 
-def A_coeff(x_line, w, a, y):
+# def A_coeff(x_line, w, a, y):
 
-    product = x_line * w * a * y * (-1)
+#     product = x_line * w * a * y * (-1)
     
-    return product/abs(X_bin(product))
+#     return product/abs(X_bin(product))
+
+def A_coeff(x_line, w, v, k, y):
+
+    x_coeff = X_bin(x_line)
+    w_coeff = X_bin(w)
+    y_coeff = X_bin(y)
+
+    return (-1) * (x_line/abs(x_coeff)) * (w / abs(w_coeff)) * (y/abs(y_coeff))
 
 
 
 
+
+# def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_direction = False, correction_mech=False, f_binary=False):
+
+#     if t_nth > 0:
+        
+#         deg_x, deg_y = data_processing.get_curr_param('deg')
+#         v = data_processing.get_curr_param('v')
+#         w = data_processing.get_curr_param('w')
+#         k = data_processing.get_curr_param('k')
+#         x_line = data_processing.get_curr_param('x')
+#         b_line = data_processing.get_curr_param('b')
+#         a_line = data_processing.slope
+#         # print('x_line: ', x_line)
+        
+#         n = data_processing.algorithm_vars.algorithm_vars_dict['n']
+
+#         t_0 = np.copy(t_nth)
+
+#         init_y = get_nth_deg_y_derivative(deg_y, t_0, v, w, k)
+#         init_x = get_nth_deg_x_derivative(deg_x, t_0, v, w, k)
+#         # print('init_y:' , init_y)
+        
+#         init_x_derivative = get_nth_deg_x_derivative(deg_x+1, t_0, v, w, k)
+        
+#         a_coeff = A_coeff(x_line, w, a_line, init_y)
+#         # print('a_coeff: ', a_coeff)
+
+
+#         last_t = np.copy(t_0)
+
+
+#         for _ in range(1,i):
+
+#             curr_x = get_nth_deg_x_derivative(deg_x, t_0, v, w, k)
+#             curr_y= get_nth_deg_y_derivative(deg_y, t_0, v, w, k)
+
+#             if not down_direction:
+# #                 c = abs(x_line) - abs(curr_x)
+
+# #                 a = np.sqrt(x_line**2 + curr_y**2)
+
+# #                 # b = v*t_0 # Current radius vector
+# #                 b = np.sqrt(curr_x ** 2 + curr_y**2)
+
+# #                 cos_delta_phi = (a ** 2 + b**2 - c ** 2)/X_bin((2 * a * b))
+
+#                 curr_rad_vec = np.sqrt(curr_y**2 + curr_x**2)
+    
+#                 a_slope = data_processing.slope
+        
+#                 rad_vec_to_x_dist = abs((curr_y - b_line)/ X_bin(a_slope)) - abs(curr_x)
+        
+#                 # print('a_slope: ',a_slope)
+            
+#                 # print('rad_vec_to_x_dist: ', rad_vec_to_x_dist)
+    
+#                 x_leg = rad_vec_to_x_dist * np.cos(np.pi/2 - np.arctan(abs(a_slope)))
+        
+#                 # print('x_leg: ', x_leg, 'x_line ', x_line)
+    
+#                 hipotenuse = np.sqrt(curr_rad_vec**2 + x_leg**2)
+          
+        
+#                 cos_delta_phi = (curr_rad_vec**2 + hipotenuse**2 - x_leg**2)/ X_bin(2 * curr_rad_vec * hipotenuse)
+
+#                 if abs(cos_delta_phi) > 1:
+
+#                     cos_delta_phi = 1
+
+#                 delta_phi = np.arccos(cos_delta_phi)
+                
+#                 a_coeff = A_coeff(x_line, w, a_line, curr_y)
+
+#                 curr_t = (delta_phi) / abs(w)
+
+#                 if x_leg == 0:
+
+#                     t_0 +=curr_t*(-1)
+
+#                 else:
+#                     '(x_line/abs(x_line))*'
+#                     y_line = a_line * curr_x + b_line
+#                     # y_line = y_tr
+#                     y_diff = abs(y_line) - abs(curr_y)
+                    
+#                     y_diff_coeff = y_diff/abs(X_bin(y_diff))
+#                     curr_x_coeff = curr_x/abs(X_bin(curr_x))
+#                     a_line_coeff = a_line/abs(X_bin(a_line))
+#                     b_line_coeff = b_line/abs(X_bin(b_line))
+#                     # print('a_coeff: ',a_coeff)
+#                     # print('a_line: ',a_line, 'b_line: ', b_line, 'curr_x: ',curr_x)
+#                     # print('y_line: ', y_line, 'curr_y: ',curr_y)
+#                     # print('n:', data_processing.algorithm_vars.algorithm_vars_dict['n'])
+#                     # print('m:',data_processing.algorithm_vars.algorithm_vars_dict['m'], 'y_diff: ',y_diff, '--> y_coeff: ', y_coeff)
+#                     # print('****')
+#                     # print()
+                    
+#                     t_0 += y_diff_coeff*curr_x_coeff* a_line_coeff*b_line_coeff*curr_t 
+
+#                 statement = f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
+
+#                 if statement:
+
+#                     return t_0
+
+#                 last_t = np.copy(t_0)
+                
+                
+
+#             else:
+
+#                 phi_0 = np.arctan(curr_y/X_bin(curr_x))
+
+#                 new_y =  np.tan(phi_0) *x_line
+
+#                 new_rad_vec_length = np.sqrt(x_line ** 2 + new_y ** 2)
+
+#                 t_0 = new_rad_vec_length / v
+
+
+#                 statement = f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
+
+#                 if statement:
+
+#                     return t_0
+
+#                 last_t = np.copy(t_0)
+                
+#             last_x_derivative = get_nth_deg_x_derivative(deg_x+1, last_t, v, w, k)
+#             derivative_change_coeff = derivative_change(init_x_derivative, last_x_derivative)
+
+#             last_t *= derivative_change_coeff
+#             if last_t == 0:
+#                 return last_t
+            
+#         return last_t
+    
+#     return t_nth
 
 def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_direction = False, correction_mech=False, f_binary=False):
 
@@ -195,27 +365,31 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
         deg_x, deg_y = data_processing.get_curr_param('deg')
         v = data_processing.get_curr_param('v')
         w = data_processing.get_curr_param('w')
-        k = data_processing.get_curr_param('k')
+        k = np.copy(data_processing.get_curr_param('k'))
         x_line = data_processing.get_curr_param('x')
-        # b_line = data_processing.get_curr_param('b')
-        a_line = data_processing.get_curr_param('a')
-        print('x_line: ', x_line)
+        a_line = data_processing.slope
+        b_line = data_processing.get_curr_param('b')
         
         n = data_processing.algorithm_vars.algorithm_vars_dict['n']
+        
+        
+        delta_k_rotated_angle = get_delta_k_rotated(a_line, b_line, x_line)
+    
+        k += delta_k_rotated_angle
 
         t_0 = np.copy(t_nth)
+        init_theta_angle = k * np.pi/2
 
         init_y = get_nth_deg_y_derivative(deg_y, t_0, v, w, k)
-        init_x = get_nth_deg_x_derivative(deg_x, t_0, v, w, k)
-        print('init_y:' , init_y)
         
         init_x_derivative = get_nth_deg_x_derivative(deg_x+1, t_0, v, w, k)
         
-        a_coeff = A_coeff(x_line, w, a_line, init_y)
-        print('a_coeff: ', a_coeff)
+        a_coeff = A_coeff(x_line, w, v, k, init_y)
 
 
         last_t = np.copy(t_0)
+        
+        # additional_t = (1.5*(np.pi/2))/w
 
 
         for _ in range(1,i):
@@ -255,7 +429,7 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
 
                 if statement:
 
-                    return t_0
+                    return t_0  
 
                 last_t = np.copy(t_0)
                 
@@ -263,7 +437,7 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
 
             else:
 
-                phi_0 = np.arctan(curr_y/curr_x)
+                phi_0 = np.arctan(curr_y/X_bin(curr_x))
 
                 new_y =  np.tan(phi_0) *x_line
 
@@ -287,6 +461,6 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
             if last_t == 0:
                 return last_t
             
-        return last_t
+        return last_t 
     
     return t_nth
