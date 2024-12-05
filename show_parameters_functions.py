@@ -15,8 +15,8 @@ def show_parameters(data_processing, font_small):
         accuracy = data_processing.constants.accuracy
 
         text_x = data_processing.text_unit
-        text_y = 3 * text_x
-        
+        text_y = 4*data_processing.text_unit
+
         text = font_small.render('Spiral parameters:', True, (0, 0, 0))
                     
         params_layer.blit(text, (text_x, text_y))
@@ -98,15 +98,22 @@ def show_parameters(data_processing, font_small):
         for param in data_processing.constants.line_constants_dict.keys():
             curr_value = data_processing.get_curr_param(param)
             if param == 'a':
-                # curr_value = np.arctan(curr_value) * 180/np.pi
-                
-                text = font_small.render(f'Line angle: {curr_value} deg', True, (0, 0, 0))
+            
+                text = font_small.render(f'line angle: {curr_value} deg', True, (0, 0, 0))
                 params_layer.blit(text, (text_x, text_y))
-                text_y += data_processing.text_unit
+                # text_y += data_processing.text_unit
            
                 a_param = data_processing.slope
       
                 text = font_small.render(f'{param}: {a_param}', True, (0, 0, 0))
+        
+                text_y += data_processing.text_unit
+            
+#                 angle = curr_value * np.pi/180
+                
+#                 text = font_small.render(f'Ang: {angle}', True, (0, 0, 0))
+                
+#                 text_y += data_processing.text_unit
                 
             else:
                 text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
@@ -164,6 +171,10 @@ def show_mode_statuses(data_processing, font_small):
                 x_text_displacement = len(mode) * 12 + 25
 
                 text_x += x_text_displacement
+                
+                if mode == 'Derivatives':
+                    text_x = data_processing.text_unit
+                    text_y = 2*data_processing.text_unit
         
 
 def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
@@ -172,7 +183,7 @@ def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
     show_algorithm_data_layer.fill((0, 0, 0, 0))
     
     text_x = data_processing.text_unit
-    text_y = 18 * data_processing.text_unit
+    text_y = 22 * data_processing.text_unit
     
     text = font_small.render('Algorithm approximations:', True, (0, 0, 0))
     show_algorithm_data_layer.blit(text, (text_x, text_y))
@@ -211,7 +222,7 @@ def show_steps_variables(data_processing, font_small):
         steps_const_params_dict = data_processing.constants.steps_constants_dict 
 
         text_x = data_processing.text_unit
-        text_y = 3 * text_x
+        text_y = 4 * text_x
 
         for param, value in data_processing.variables.factors_dict.items():
             
