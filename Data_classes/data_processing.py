@@ -1,11 +1,13 @@
 import pygame 
-from numpy import tan, pi
+from numpy import tan, arctan, cos, pi
 
 from Data_classes.variables import Variables
 from Data_classes.constants import Constants
 from Data_classes.booleans import Booleans
 from Data_classes.algorithm_variables import AlgorithmVariables
 from Animation_layers.animation_layers import AnimationLayers
+
+from formula_functions import X_bin
 
 
 class DataProcessing(Variables, Constants, Booleans, 
@@ -51,8 +53,18 @@ class DataProcessing(Variables, Constants, Booleans,
             return [self.constants.constants_dict[param][0] + self.variables.variables_dict[param][0],
                     self.constants.constants_dict[param][1] + self.variables.variables_dict[param][1]]
         
-        if param in ['a', 'b']:
+        elif param in ['a', 'b']:
+            
             return self.constants.line_constants_dict[param] + self.variables.variables_dict[param]
+        
+        elif param == 'x':
+            a = self.slope
+            b = self.constants.line_constants_dict['b'] + self.variables.variables_dict['b']
+            
+            a_turn_on = a/X_bin(a)
+        
+            return (1- a_turn_on)* b + a_turn_on * cos(pi/2 - arctan(a)) * (X_bin(-b))/X_bin(a)
+            # return cos(pi/2 - arctan(a)) * (X_bin(-b))/X_bin(a)
         
         result = self.constants.constants_dict[param] + self.variables.variables_dict[param]
         return float(f'{result:.{self.constants.accuracy + 9}f}')
@@ -91,7 +103,9 @@ class DataProcessing(Variables, Constants, Booleans,
                                     'Derivatives': [self.animation_layers.layers_dict['derivatives_layer'],
                                                  self.booleans.booleans_dict['derivatives_mode']],
                                     
-                                    'Steps change': [None, self.booleans.booleans_dict['steps_change_mode']]
+                                    'Steps change': [None, self.booleans.booleans_dict['steps_change_mode']],
+                                    
+                                    'General solution': [None, self.booleans.booleans_dict['general_solution_mode']] 
                                    }
 
     def reset_dicts(self):
@@ -108,7 +122,9 @@ class DataProcessing(Variables, Constants, Booleans,
     def slope(self):
         
         current_a_param = self.get_curr_param('a')
-        slope = tan(current_a_param*pi/180)
+        current_a_param = current_a_param * pi/180
+        slope = tan(current_a_param)
         
         return round(slope, 14)
+
   
