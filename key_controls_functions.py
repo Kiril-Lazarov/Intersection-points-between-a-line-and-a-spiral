@@ -210,7 +210,7 @@ def handle_key_commands(data_processing):
                     
                     
 
-                    updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
+                    updates_dict['update_screen'], updates_dict['update_line'] = True, True
 
                 # Decrease slope `a`
                 elif keys[pygame.K_DOWN]:  
@@ -223,7 +223,7 @@ def handle_key_commands(data_processing):
 
 
 
-                    updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
+                    updates_dict['update_screen'], updates_dict['update_line'] = True, True
                     
             elif keys[pygame.K_b]:
 
@@ -233,7 +233,7 @@ def handle_key_commands(data_processing):
                     
                     line_params_dict['b'] = round(line_params_dict['b'], 14)
 
-                    updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
+                    updates_dict['update_screen'], updates_dict['update_line'] = True, True
 
                 # Decrease line constant `b`
                 elif keys[pygame.K_DOWN]:  
@@ -243,7 +243,7 @@ def handle_key_commands(data_processing):
                     line_params_dict['b'] = round(line_params_dict['b'], 14)
 
 
-                    updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
+                    updates_dict['update_screen'], updates_dict['update_line'] = True, True
 
 
 def handle_shift_key_commands(event, data_processing):
@@ -457,6 +457,11 @@ def handle_switch_commands(event, data_processing):
                         mode_statuses_dict['Y-intersects'][1] = True
                         mode_statuses_dict['Line-intersects'][1] = True
                         
+                elif event.key == pygame.K_g:
+                    data_processing.switch_mode('General solution')
+                    # mode_statuses_dict['Vertical line'][1] = True
+                    data_processing.booleans.update_booleans_dict['update_line'] = True
+                        
                         
 def get_factor_length(value):
 
@@ -615,7 +620,7 @@ def handle_steps_variables(event, data_processing):
                 
                 if keys[pygame.K_UP]:
                 
-                    if factors_dict['a'] < max_step/100:
+                    if factors_dict['a'] < max_step:
 
                         factors_dict['a'] *= 10
 
