@@ -59,10 +59,12 @@ def get_delta_k_rotated(a, b, x):
     a_coeff = a/abs(X_bin(a))
     b_coeff = b/abs(X_bin(b))
     a_turn_on = a/X_bin(a)
+    b_turn_on = b/X_bin(b)
     slope_angle = abs(np.arctan(a))
     expr = delta_k_coeff * 2 * (np.pi/2 - a_coeff*delta_k_coeff*slope_angle)/np.pi
     
-    return (1-a_turn_on)*(-1) + a_turn_on*expr
+    return (1-a_turn_on)*(-1) + a_turn_on*b_turn_on*expr + (1-b_turn_on)* 2 * (np.pi/2 - a_coeff*slope_angle)/np.pi\
+            + (1-a_turn_on) * (1-b_turn_on)
 
 def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     
@@ -82,6 +84,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     delta_theta = get_delta_theta(w, k)
     
     if not final_solution:
+        # print('Tuk')
         return (delta_theta + (n-1) * np.pi) / abs(w)
     
     
@@ -187,6 +190,14 @@ def get_delta_theta(w, k):
 
     final = k_1*k_3*(function + addition_term) + (1-k_1*k_3) *w/X_bin(w)* 2
     return final * np.pi/2 
+#     W_coeff = W_bin(w)
+#     B_coeff = B_bin(k)
+
+
+#     delta_plus = get_delta_theta_plus(k)
+#     D_coeff = (1 + (-1) ** np.floor(k+1))/2
+    
+#     return W_coeff * B_coeff * (np.pi - 2 * delta_plus) + delta_plus
 
     
     
@@ -195,13 +206,15 @@ def X_bin(x):
 
     return x ** (1 - 0**abs(x))
 
-def get_y_coord(v, w, k, prev_t):
-    return v * prev_t * np.sin(k*np.pi/2 + w*prev_t)
 
 
+def get_delta_theta_plus(k):
+    
+    D_coeff =(1 + (-1) ** np.floor(k+1))/2
+    
+    return (np.pi/2) * (np.floor(k+1) - k + D_coeff)
+    
 
-def get_x_coord(v, w, k, prev_t):
-    return v * prev_t * np.cos(k*np.pi/2 + w*prev_t)
 
 
 def A_coeff(x_line, w, y):
@@ -209,6 +222,13 @@ def A_coeff(x_line, w, y):
     product = x_line * w  * y * (-1)
     
     return product/abs(X_bin(product))
+
+
+def A_coeff_not_general(x_line, w, y):
+
+    x_coeff = X_bin(x_line)
+
+    return (-1) * (x_line/abs(x_coeff)) * (w / abs(w)) * (y/abs(y))
 
 
 
@@ -241,7 +261,8 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
         
         init_x_derivative = get_nth_deg_x_derivative(deg_x+1, t_0, v, w, k)
         
-        a_coeff = A_coeff(x_line, w, init_y)
+        # a_coeff = A_coeff(x_line, w, init_y)
+        # a_coeff = A_coeff_not_general(x_line, w, init_y)
 
 
         last_t = np.copy(t_0)
@@ -269,6 +290,10 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
                     cos_delta_phi = 1
 
                 delta_phi = np.arccos(cos_delta_phi)
+                
+                a_coeff = A_coeff(x_line, w, curr_y)
+                
+
 
                 curr_t = (a_coeff * delta_phi) / abs(w)
 
