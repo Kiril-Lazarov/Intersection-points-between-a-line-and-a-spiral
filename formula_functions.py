@@ -110,16 +110,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     
     # The length of the first y-intersection point radius vector
     x_max_dist = x_max_line(delta_theta, x_line,w)
-    
-#     a = data_processing.get_curr_param('a')
-    
-#     angle = a * np.pi/180
-    
-#     angle_add_coeff = (a/abs(X_bin(a)))*(w/abs(X_bin(w))) 
 
-#     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
-#                              + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w) + (np.pi/2 + angle_add_coeff * abs(angle)) / abs(X_bin(w))
-    
     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
                              + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w)
  
@@ -297,13 +288,7 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
 
                 curr_t = (a_coeff * delta_phi) / abs(w)
 
-                if c == 0:
-
-                    t_0 +=curr_t*(-1)
-
-                else:
-                    '(x_line/abs(x_line))*'
-                    t_0 += (c/abs(c))*curr_t 
+                t_0 += (c/abs(X_bin(c)))*curr_t 
 
                 statement = f'{t_0:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
 
