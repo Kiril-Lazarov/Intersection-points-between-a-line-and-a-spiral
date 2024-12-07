@@ -57,14 +57,14 @@ class DataProcessing(Variables, Constants, Booleans,
             
             return self.constants.line_constants_dict[param] + self.variables.variables_dict[param]
         
-        elif param == 'x':
+        elif self.mode_statuses_dict['General solution'][1] and param == 'x':
             a = self.slope
             b = self.constants.line_constants_dict['b'] + self.variables.variables_dict['b']
             
             a_turn_on = a/X_bin(a)
+            b_turn_on = b/X_bin(b)
         
-            return (1- a_turn_on)* b + a_turn_on * cos(pi/2 - arctan(a)) * (X_bin(-b))/X_bin(a)
-            # return cos(pi/2 - arctan(a)) * (X_bin(-b))/X_bin(a)
+            return (1- a_turn_on)* b + a_turn_on *b_turn_on* cos(pi/2 - arctan(a)) * (X_bin(-b))/X_bin(a)
         
         result = self.constants.constants_dict[param] + self.variables.variables_dict[param]
         return float(f'{result:.{self.constants.accuracy + 9}f}')
