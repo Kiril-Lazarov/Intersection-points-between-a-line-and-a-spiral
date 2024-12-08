@@ -105,7 +105,9 @@ class DataProcessing(Variables, Constants, Booleans,
                                     
                                     'Steps change': [None, self.booleans.booleans_dict['steps_change_mode']],
                                     
-                                    'General solution': [None, self.booleans.booleans_dict['general_solution_mode']] 
+                                    'General solution': [None, self.booleans.booleans_dict['general_solution_mode']],
+                                    
+                                    'Rotated background': [None, self.booleans.booleans_dict['rotated_background_mode']]
                                    }
 
     def reset_dicts(self):
