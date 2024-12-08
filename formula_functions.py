@@ -109,7 +109,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     is_der_changed = derivative_change(x_der_t0, x_der_y_zero)
     
     # The length of the first y-intersection point radius vector
-    x_max_dist = x_max_line(delta_theta, x_line,w)
+    x_max_dist = x_max_line(deg_y, delta_theta, x_line,v, w, k)
 
     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
                              + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w)
@@ -150,19 +150,24 @@ def K_sign(k, x_line):
 
 
 
-def x_max_line(delta_theta, x_line, w):
+def x_max_line(deg_y, delta_theta, x_line, v,w, k):
     
-    values_diff = (abs(delta_theta) - abs(x_line))/abs(X_bin(w))
+    t = delta_theta/abs(X_bin(w))
+    
+    first_rad_vec_length = get_nth_deg_y_derivative(deg_y, t, v, w, k)
+    
+    # values_diff = (abs(delta_theta) - abs(x_line))/abs(X_bin(w))
+    values_diff = abs(first_rad_vec_length) - abs(x_line)
     diff_sign = values_diff/ abs(X_bin(values_diff))
     
-    if diff_sign>0:
-        diff_sign = 1
-    elif diff_sign < 0:
-        diff_sign = -1
+#     if diff_sign>0:
+#         diff_sign = 1
+#     elif diff_sign < 0:
+#         diff_sign = -1
         
-    else:
-        diff_sign= 0
-        
+#     else:
+#         diff_sign= 0
+
     return np.floor((1+diff_sign)/2)
 
     
@@ -223,7 +228,7 @@ def A_coeff_not_general(x_line, w, y):
 
 
 
-def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_direction = False, correction_mech=False, f_binary=False):
+def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_direction=False):
 
     if t_nth > 0:
         
@@ -264,12 +269,14 @@ def get_mth_aproximation(data_processing, t_nth, i=200, accuracy=5, down_directi
             curr_x = get_nth_deg_x_derivative(deg_x, t_0, v, w, k)
             curr_y= get_nth_deg_y_derivative(deg_y, t_0, v, w, k)
 
-            if not down_direction:
+            if down_direction:
+                # The difference between the x-coordinate of the vertical line 
+                # and the x-coordinate of the current spiral radius vector
                 c = abs(x_line) - abs(curr_x)
 
                 a = np.sqrt(x_line**2 + curr_y**2)
 
-                # b = v*t_0 # Current radius vector
+                # Current radius vector
                 b = np.sqrt(curr_x ** 2 + curr_y**2)
 
                 cos_delta_phi = (a ** 2 + b**2 - c ** 2)/X_bin((2 * a * b))
