@@ -328,7 +328,7 @@ def handle_ctrl_commands(event, data_processing):
 
                     # Set the layers to True
                     for mode, (_, boolean) in mode_statuses_dict.items():
-                        if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode','Modes layer', 'Steps change']:
+                        if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode','Modes layer', 'Steps change', 'General solution']:
                             if not boolean:
                                 mode_statuses_dict[mode][1] = True 
 
@@ -459,7 +459,10 @@ def handle_switch_commands(event, data_processing):
                         
                 elif event.key == pygame.K_g:
                     data_processing.switch_mode('General solution')
-                    # mode_statuses_dict['Vertical line'][1] = True
+                    data_processing.booleans.update_booleans_dict['update_line'] = True
+                    
+                elif event.key == pygame.K_j:
+                    data_processing.switch_mode('Rotated background')
                     data_processing.booleans.update_booleans_dict['update_line'] = True
                         
                         
