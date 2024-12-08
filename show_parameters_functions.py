@@ -87,38 +87,40 @@ def show_parameters(data_processing, font_small):
                 params_layer.blit(text, (text_x, text_y))
 
                 text_y += data_processing.text_unit
+                
+        if data_processing.mode_statuses_dict['General solution'][1]:
              
-        text_y += data_processing.text_unit
-        
-        text = font_small.render('Line parameters:', True, (0, 0, 0))
-                    
-        params_layer.blit(text, (text_x, text_y))
-        text_y += data_processing.text_unit
-        
-        for param in data_processing.constants.line_constants_dict.keys():
-            curr_value = data_processing.get_curr_param(param)
-            if param == 'a':
-            
-                text = font_small.render(f'line angle: {curr_value} deg', True, (0, 0, 0))
-                params_layer.blit(text, (text_x, text_y))
-                # text_y += data_processing.text_unit
-           
-                a_param = data_processing.slope
-      
-                text = font_small.render(f'{param}: {a_param}', True, (0, 0, 0))
-        
-                text_y += data_processing.text_unit
-            
-#                 angle = curr_value * np.pi/180
-                
-#                 text = font_small.render(f'Ang: {angle}', True, (0, 0, 0))
-                
-#                 text_y += data_processing.text_unit
-                
-            else:
-                text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
+            text_y += data_processing.text_unit
+
+            text = font_small.render('Line parameters:', True, (0, 0, 0))
+
             params_layer.blit(text, (text_x, text_y))
             text_y += data_processing.text_unit
+
+            for param in data_processing.constants.line_constants_dict.keys():
+                curr_value = data_processing.get_curr_param(param)
+                if param == 'a':
+
+                    text = font_small.render(f'line angle: {curr_value} deg', True, (0, 0, 0))
+                    params_layer.blit(text, (text_x, text_y))
+                    # text_y += data_processing.text_unit
+
+                    a_param = data_processing.slope
+
+                    text = font_small.render(f'{param}: {a_param}', True, (0, 0, 0))
+
+                    text_y += data_processing.text_unit
+
+    #                 angle = curr_value * np.pi/180
+
+    #                 text = font_small.render(f'Ang: {angle}', True, (0, 0, 0))
+
+    #                 text_y += data_processing.text_unit
+
+                else:
+                    text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
+                params_layer.blit(text, (text_x, text_y))
+                text_y += data_processing.text_unit
 
         if data_processing.mode_statuses_dict['Derivatives'][1]:
 
