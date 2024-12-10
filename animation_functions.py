@@ -328,19 +328,17 @@ def calc_single_t_aproxim(data_processing, mth_t, transform=True):
 
     return x, y
 
-def draw_rotated_coord_system(data_processing):
-    if data_processing.mode_statuses_dict['Rotated background'][1]:
-        print(data_processing.mode_statuses_dict['Rotated background'][1])
-        
-        
+def get_orthogonal_slope(slope):
+    slope += 90
+    slope *= np.pi/180
+    return np.tan(slope)
+
         
 def draw_inclined_line(layer, slope_a, b, center_point_width, center_point_height, 
                      screen_width, screen_height, length, color):
     
     b_x = x_transform(0, center_point_width, length)
     b_y = y_transform(b, center_point_height, length)
-
-    # pygame.draw.circle(layer, color=(64, 64, 191), center=(b_x, b_y), radius=4)
 
     if slope_a != 0:            
 
@@ -352,6 +350,7 @@ def draw_inclined_line(layer, slope_a, b, center_point_width, center_point_heigh
     else:
 
         pygame.draw.aalines(layer, color,  False, [(0, b_y), (screen_width, b_y)])
+        
         
 def draw_vertical_line(layer, x_axis_value, center_point_width, screen_height, length, color):
 
@@ -365,18 +364,13 @@ def draw_vertical_line(layer, x_axis_value, center_point_width, screen_height, l
         
         
 def draw_line(data_processing):
-    
-    # if data_processing.mode_statuses_dict['Rotated background'][1]:
-    #     print(data_processing.mode_statuses_dict['Rotated background'][1])
-    
+
     line_layer = data_processing.animation_layers.layers_dict['vertical_line_layer']
     screen_height = data_processing.constants.screen_height
     screen_width = data_processing.constants.screen_width
     half_screen_width = data_processing.constants.half_screen_width
     half_screen_height = data_processing.constants.half_screen_height
     length = data_processing.get_curr_param('l')
-    
-    x_axis_value = data_processing.get_curr_param('x')
         
     line_layer.fill((0, 0, 0, 0))
     
@@ -387,6 +381,8 @@ def draw_line(data_processing):
         
         # Draw a vertical line if not general solution mode
         if not data_processing.mode_statuses_dict['General solution'][1]:
+            
+            x_axis_value = data_processing.get_curr_param('x')
             color = 'blue'
             draw_vertical_line(line_layer, x_axis_value, center_point_width, screen_height, length, color)
 
@@ -404,15 +400,14 @@ def draw_line(data_processing):
                 draw_inclined_line(line_layer, slope_a, b, center_point_width, center_point_height, 
                      screen_width, screen_height, length, color)
                 
-                # Calculate the rotated x-axis
-                a = data_processing.get_curr_param('a') + 90
-                a *= np.pi/180
-                rotated_x_axis_slope = np.tan(a)
-   
-                draw_inclined_line(line_layer, rotated_x_axis_slope, b, center_point_width, center_point_height, 
+                # Calculate the rotated x-axis                
+                orthogonal_slope = get_orthogonal_slope(data_processing.get_curr_param('a'))
+
+                draw_inclined_line(line_layer, orthogonal_slope, b, center_point_width, center_point_height, 
                      screen_width, screen_height, length, color)
             
             
+            # Draw the line
             b = data_processing.get_curr_param('b')
             
             draw_inclined_line(line_layer, slope_a, b, center_point_width, center_point_height, 
