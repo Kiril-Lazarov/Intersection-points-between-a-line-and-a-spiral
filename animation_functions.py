@@ -287,7 +287,7 @@ def calc_y_intersects_t(data_processing) -> list:
     
     return []
 
-def calc_line_intersections_t(data_processing, t_nth_list,correction_mech=False, f_binary=False) -> list:
+def calc_line_intersections_t(data_processing, t_nth_list) -> list:
     
     if not data_processing.mode_statuses_dict['Steps change'][1]:
         
@@ -295,8 +295,8 @@ def calc_line_intersections_t(data_processing, t_nth_list,correction_mech=False,
         t_mth_list = []
         
         for index,t_nth in enumerate(t_nth_list):
-            down_direction=True if index == 0 else False
-       
+            down_direction=False if index == 0 else True
+            # down_direction = False
             curr_t_mth = get_mth_aproximation(data_processing, t_nth,down_direction=down_direction)
                 
             t_mth_list.append(curr_t_mth)
@@ -328,8 +328,38 @@ def calc_single_t_aproxim(data_processing, mth_t, transform=True):
 
     return x, y
 
+def draw_rotated_coord_system(data_processing):
+    if data_processing.mode_statuses_dict['Rotated background'][1]:
+        print(data_processing.mode_statuses_dict['Rotated background'][1])
+        
+        
+        
+def draw_inclined_line(layer, slope_a, b, center_point_width, center_point_height, 
+                     screen_width, screen_height, length, color):
+    
+    b_x = x_transform(0, center_point_width, length)
+    b_y = y_transform(b, center_point_height, length)
 
+    pygame.draw.circle(layer, color=(64, 64, 191), center=(b_x, b_y), radius=4)
+
+    if slope_a != 0:            
+
+        x_up_gen_line = center_point_width + b_y / slope_a
+        x_down_gen_line = center_point_width  + (screen_height - b_y)/ -slope_a
+
+        pygame.draw.aalines(layer, color,  False, [(x_up_gen_line, 0), (x_down_gen_line, screen_height)])
+
+    else:
+
+        pygame.draw.aalines(layer, color,  False, [(0, b_y), (screen_width, b_y)])
+
+
+        
+        
 def draw_vertical_line(data_processing):
+    
+    # if data_processing.mode_statuses_dict['Rotated background'][1]:
+    #     print(data_processing.mode_statuses_dict['Rotated background'][1])
     
     line_layer = data_processing.animation_layers.layers_dict['vertical_line_layer']
     screen_height = data_processing.constants.screen_height
@@ -347,41 +377,46 @@ def draw_vertical_line(data_processing):
     
     if not data_processing.mode_statuses_dict['T-diagram'][1]:
         
-        x_up  = x_down = x_transform(x_axis_value, center_point_width, length)
+        # Draw a vertical line if not general solution mode
+        if not data_processing.mode_statuses_dict['General solution'][1]:
+        
+            x_up  = x_down = x_transform(x_axis_value, center_point_width, length)
 
-        y_up  = y_transform(0, screen_height, length)
-        y_down = y_transform(screen_height, 0, length)      
-        
+            y_up  = y_transform(0, screen_height, length)
+            y_down = y_transform(screen_height, 0, length)      
 
-        pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
-        
-        # Draw general line with a slope and a constant
-       
-        slope_a = data_processing.slope
-        b = data_processing.get_curr_param('b')
-  
-        b_x = x_transform(0, center_point_width, length)
-        b_y = y_transform(b, center_point_height, length)
-   
-        pygame.draw.circle(line_layer, color='orange', center=(b_x, b_y), radius=4)
-    
-        if slope_a != 0:            
-        
-            x_up_gen_line = center_point_width + b_y / slope_a
-            x_down_gen_line = center_point_width  + (screen_height - b_y)/ -slope_a
-            
-            pygame.draw.aalines(line_layer, 'red',  False, [(x_up_gen_line, 0), (x_down_gen_line, screen_height)])
-            
+
+            pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
+
+        # Draw line with a slope and a constant
         else:
-            # x_up_gen_line, x_down_gen_line = center_point_height, center_point_height
+  
+            slope_a = data_processing.slope
+    
             
-            pygame.draw.aalines(line_layer, 'red',  False, [(0, b_y), (screen_width, b_y)])
+            if data_processing.mode_statuses_dict['Rotated background'][1]:
+                
+                # Draw rotated y-axis 
+                b = 0
+                color = (255, 255, 154) # Light yellow
+                draw_inclined_line(line_layer, slope_a, b, center_point_width, center_point_height, 
+                     screen_width, screen_height, length, color)
+                
+                # Calculate the rotated x-axis
+                a = data_processing.get_curr_param('a') + 90
+                a *= np.pi/180
+                rotated_x_axis_slope = np.tan(a)
+   
+                draw_inclined_line(line_layer, rotated_x_axis_slope, b, center_point_width, center_point_height, 
+                     screen_width, screen_height, length, color)
             
-        # y_up_gen_line = y_transform(0, center_point_height, length)
+            
+            b = data_processing.get_curr_param('b')
+            
+            draw_inclined_line(line_layer, slope_a, b, center_point_width, center_point_height, 
+                         screen_width, screen_height, length, 'blue')
 
-        
- 
-        
+
     else:
    
         y_left = y_right = y_transform(x_axis_value, center_point_height, length)
@@ -717,14 +752,13 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
             n -= 1
         y_intersect_t = t_nth_list[n]
     
-        down_direction = True if n == 0 else False
+        down_direction = False if n == 0 else True
     
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
            
             first_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, 
-                                                     i=1, down_direction = down_direction, accuracy=accuracy,
-                                                     correction_mech=False, f_binary=False)
+                                                     i=1, down_direction = down_direction, accuracy=accuracy)
             t_mth_aproxim_list.append(first_intersect_t)
             
             # Show current radius-vector
@@ -735,8 +769,7 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
                 
                 
                 next_t = get_mth_aproximation(data_processing, y_intersect_t,  
-                                              i=m+1,accuracy=accuracy, down_direction = down_direction,
-                                              correction_mech=False, f_binary=False)
+                                              i=m+1,accuracy=accuracy, down_direction = down_direction)
                 t_mth_aproxim_list.append(next_t)
                 
                 # Show previous radius vector if it exists
