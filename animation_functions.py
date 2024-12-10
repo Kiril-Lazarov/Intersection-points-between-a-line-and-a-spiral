@@ -340,7 +340,7 @@ def draw_inclined_line(layer, slope_a, b, center_point_width, center_point_heigh
     b_x = x_transform(0, center_point_width, length)
     b_y = y_transform(b, center_point_height, length)
 
-    pygame.draw.circle(layer, color=(64, 64, 191), center=(b_x, b_y), radius=4)
+    # pygame.draw.circle(layer, color=(64, 64, 191), center=(b_x, b_y), radius=4)
 
     if slope_a != 0:            
 
@@ -352,11 +352,19 @@ def draw_inclined_line(layer, slope_a, b, center_point_width, center_point_heigh
     else:
 
         pygame.draw.aalines(layer, color,  False, [(0, b_y), (screen_width, b_y)])
+        
+def draw_vertical_line(layer, x_axis_value, center_point_width, screen_height, length, color):
+
+    x_up  = x_down = x_transform(x_axis_value, center_point_width, length)
+
+    y_up  = y_transform(0, screen_height, length)
+    y_down = y_transform(screen_height, 0, length)      
 
 
+    pygame.draw.aalines(layer, color,  False, [(x_up, y_up), (x_down, y_down)])
         
         
-def draw_vertical_line(data_processing):
+def draw_line(data_processing):
     
     # if data_processing.mode_statuses_dict['Rotated background'][1]:
     #     print(data_processing.mode_statuses_dict['Rotated background'][1])
@@ -379,14 +387,8 @@ def draw_vertical_line(data_processing):
         
         # Draw a vertical line if not general solution mode
         if not data_processing.mode_statuses_dict['General solution'][1]:
-        
-            x_up  = x_down = x_transform(x_axis_value, center_point_width, length)
-
-            y_up  = y_transform(0, screen_height, length)
-            y_down = y_transform(screen_height, 0, length)      
-
-
-            pygame.draw.aalines(line_layer, 'blue',  False, [(x_up, y_up), (x_down, y_down)])
+            color = 'blue'
+            draw_vertical_line(line_layer, x_axis_value, center_point_width, screen_height, length, color)
 
         # Draw line with a slope and a constant
         else:
