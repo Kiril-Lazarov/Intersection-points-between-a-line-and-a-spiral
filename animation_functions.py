@@ -297,7 +297,7 @@ def calc_line_intersections_t(data_processing, t_nth_list) -> list:
         for index,t_nth in enumerate(t_nth_list):
             down_direction=False if index == 0 else True
             # down_direction = False
-            curr_t_mth = get_mth_aproximation(data_processing, t_nth,down_direction=down_direction)
+            curr_t_mth = get_mth_aproximation(data_processing, t_nth, index, down_direction=down_direction)
                 
             t_mth_list.append(curr_t_mth)
 
@@ -789,7 +789,7 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
            
-            first_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, 
+            first_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, 0,
                                                      i=1, down_direction = down_direction, accuracy=accuracy)
             t_mth_aproxim_list.append(first_intersect_t)
             
@@ -800,7 +800,7 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
             if m +1 > len(t_mth_aproxim_list):
                 
                 
-                next_t = get_mth_aproximation(data_processing, y_intersect_t,  
+                next_t = get_mth_aproximation(data_processing, y_intersect_t, m, 
                                               i=m+1,accuracy=accuracy, down_direction = down_direction)
                 t_mth_aproxim_list.append(next_t)
                 
