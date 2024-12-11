@@ -331,8 +331,8 @@ def calc_single_t_aproxim(data_processing, mth_t, transform=True):
 def get_orthogonal_slope(slope):
     slope += 90
     slope *= np.pi/180
+    # return round(np.tan(slope), 13)
     return np.tan(slope)
-
         
 def draw_inclined_line(layer, slope_a, b, center_point_width, center_point_height, 
                      screen_width, screen_height, length, color):
@@ -690,7 +690,8 @@ def show_radius_vector_step(data_processing, t_mth_aproxim_list, m, color, draw_
   
     
     center_point_width, center_point_height = data_processing.get_curr_param('c')
-    
+    screen_width = data_processing.constants.screen_width
+    screen_height = data_processing.constants.screen_height
     length = data_processing.get_curr_param('l')
     
     deg = data_processing.get_curr_param('deg')
@@ -711,23 +712,57 @@ def show_radius_vector_step(data_processing, t_mth_aproxim_list, m, color, draw_
     # Shows the step to construct the current radius vector based on the previous radius vector
     if draw_leg_and_hip:
         
+        next_t = t_mth_aproxim_list[m+1]
+        next_x, next_y = calc_single_t_aproxim(data_processing, next_t)
+  
         if m+1 <= len(t_mth_aproxim_list):
+          
+
+            if not data_processing.mode_statuses_dict['General solution'][1]:
+           
+                x_line = x_transform(x_line, center_point_width, length)
+                
+
+                # Draw horizontal leg
+                pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(x, y), (x_line, y)])
+
+                # Draw a part of the hipotenuse
+                pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(next_x, next_y), (x_line, y)])
+
+                # A point on the spiral curve
+                pygame.draw.circle(algorithm_layer, color='red', center=(next_x, next_y), radius=4)
+
+                # A crosspoint between horizontal leg and the hipotenuse 
+                pygame.draw.circle(algorithm_layer, color='blue', center=(x_line, y), radius=4)
+                
+            else:
+                
+                x, y = calc_single_t_aproxim(data_processing, curr_t, transform=False)
+                next_x, next_y = calc_single_t_aproxim(data_processing, next_t, transform=False)
+                a = data_processing.slope
+                b = data_processing.get_curr_param('b')
+                
+                curr_vec_slope = next_y/X_bin(next_x)
+                
+                x_intersect = -b/X_bin(a- curr_vec_slope)
+                y_intersect = curr_vec_slope * x_intersect
             
-            x_line = x_transform(x_line, center_point_width, length)
-            next_t = t_mth_aproxim_list[m+1]
-            next_x, next_y = calc_single_t_aproxim(data_processing, next_t)
- 
-            # Draw horizontal leg
-            pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(x, y), (x_line, y)])
+                x, x_intersect = x_transform(x, center_point_width,length), x_transform(x_intersect, center_point_width,length)
+                y, y_intersect = y_transform(y, center_point_height,length), y_transform(y_intersect, center_point_height,length)
+                next_x, next_y = x_transform(next_x, center_point_width,length), y_transform(next_y, center_point_height,length)
+      
+                
+                # Draw horizontal leg
+                pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(x, y), (x_intersect, y_intersect)])
+                
+                # Draw a part of the hipotenuse
+                pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(next_x, next_y), (x_intersect, y_intersect)])
 
-            # Draw a part of the hipotenuse
-            pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(next_x, next_y), (x_line, y)])
-
-            # A point on the spiral curve
-            pygame.draw.circle(algorithm_layer, color='red', center=(next_x, next_y), radius=4)
-
-            # A crosspoint between horizontal leg and the hipotenuse 
-            pygame.draw.circle(algorithm_layer, color='blue', center=(x_line, y), radius=4)
+                # A point on the spiral curve
+                pygame.draw.circle(algorithm_layer, color='red', center=(next_x, next_y), radius=4)
+                
+                # A crosspoint between horizontal leg and the hipotenuse 
+                pygame.draw.circle(algorithm_layer, color='blue', center=(x_intersect, y_intersect), radius=4)
         
         
 def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
