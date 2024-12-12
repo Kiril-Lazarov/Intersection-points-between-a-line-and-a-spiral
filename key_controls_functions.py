@@ -117,6 +117,8 @@ def handle_key_commands(data_processing):
                     var_params_dict['w'] += steps_dict_constants['w'] * factors_dict['w']
 
                     updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
+                    
+                    var_params_dict['w'] = round(var_params_dict['w'], 14)
 
                 # Decrease angular velocity `w`  
                 elif keys[pygame.K_w] and keys[pygame.K_DOWN]:
@@ -125,7 +127,8 @@ def handle_key_commands(data_processing):
 
                     updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
 
-
+                    var_params_dict['w'] = round(var_params_dict['w'], 14)
+                    
             elif keys[pygame.K_k]:
 
                 # Increase initial spiral angle coefficient `k`
@@ -204,7 +207,7 @@ def handle_key_commands(data_processing):
                     
                     line_params_dict['a'] += steps_dict_constants['a'] * factors_dict['a']
                     
-                    line_params_dict['a'] = round(line_params_dict['a'], 13)
+                    line_params_dict['a'] = round(line_params_dict['a'], 14)
                     
                     line_params_dict['a'] = handle_line_param_a(line_params_dict['a'])
                     
@@ -217,7 +220,7 @@ def handle_key_commands(data_processing):
 
                     line_params_dict['a'] -= steps_dict_constants['a'] * factors_dict['a']
                     
-                    line_params_dict['a'] = round(line_params_dict['a'], 13)
+                    line_params_dict['a'] = round(line_params_dict['a'], 14)
                     
                     line_params_dict['a'] = handle_line_param_a(line_params_dict['a'])
 
@@ -464,6 +467,12 @@ def handle_switch_commands(event, data_processing):
                 elif event.key == pygame.K_j:
                     data_processing.switch_mode('Rotated background')
                     data_processing.booleans.update_booleans_dict['update_line'] = True
+                    
+                elif event.key == pygame.K_y:
+                    data_processing.switch_mode('Missing point')
+                    data_processing.booleans.update_booleans_dict['update_screen'] = True
+                    data_processing.booleans.update_booleans_dict['update_line'] = True
+
                         
                         
 def get_factor_length(value):
