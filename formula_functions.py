@@ -76,6 +76,8 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     v = data_processing.get_curr_param('v')
     x_line = data_processing.get_curr_param('x')
     
+    missing_point_mode = data_processing.mode_statuses_dict['Missing point'][1]
+    
    
     if data_processing.mode_statuses_dict['General solution'][1]:
         k = np.copy(k)
@@ -84,11 +86,13 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
 
         k += delta_k_rotated_angle
 
-    delta_theta = get_delta_theta(w, k)
+    delta_theta = get_delta_theta(w, k, missing_point=missing_point_mode)
     
-    if not final_solution:
-        # print('Tuk')
-        return (delta_theta + (n-1) * np.pi) / abs(w)
+    if missing_point_mode:
+        if n == 0:
+            n+=1
+  
+        return (delta_theta + (n-1) * np.pi) / abs(X_bin(w))
     
     
     zero_y_t =  abs(x_line/X_bin(v))
@@ -110,6 +114,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     
     # The length of the first y-intersection point radius vector
     x_max_dist = x_max_line(deg_y, delta_theta, x_line,v, w, k)
+ 
 
     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
                              + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w)
@@ -162,30 +167,39 @@ def x_max_line(deg_y, delta_theta, x_line, v,w, k):
     
     return np.floor((1+diff_sign)/2)
 
+def get_delta_theta_plus(k):
+    
+    D_coeff = (1 + (-1) ** np.floor(k+1))/2
+    
+    return (np.pi/2) * (np.floor(k+1) - k + D_coeff)
+
     
 
-def get_delta_theta(w, k):
+def get_delta_theta(w, k, missing_point=False):
 
-    b_bin = B_bin(np.floor(k)/2)
-    w_bin= w/abs(X_bin(w))
+    if not missing_point:
+        b_bin = B_bin(np.floor(k)/2)
+        w_bin= w/abs(X_bin(w))
 
-    k_1 = (k-1)/ X_bin(k-1)
-    k_3 = (k-3)/ X_bin(k-3)
-
-
-    function = w_bin*(np.floor(k+ (1 + w_bin)/2) - k)
-    addition_term = b_bin * np.floor((1 + w_bin)/2) + (1 - b_bin) * np.floor((1 - w_bin)/2)
-
-    final = k_1*k_3*(function + addition_term) + (1-k_1*k_3) *w/X_bin(w)* 2
-    return final * np.pi/2 
-#     W_coeff = W_bin(w)
-#     B_coeff = B_bin(k)
+        k_1 = (k-1)/ X_bin(k-1)
+        k_3 = (k-3)/ X_bin(k-3)
 
 
-#     delta_plus = get_delta_theta_plus(k)
-#     D_coeff = (1 + (-1) ** np.floor(k+1))/2
+        function = w_bin*(np.floor(k+ (1 + w_bin)/2) - k)
+        addition_term = b_bin * np.floor((1 + w_bin)/2) + (1 - b_bin) * np.floor((1 - w_bin)/2)
+
+        final = k_1*k_3*(function + addition_term) + (1-k_1*k_3) *w/X_bin(w)* 2
+        return final * np.pi/2 
     
-#     return W_coeff * B_coeff * (np.pi - 2 * delta_plus) + delta_plus
+    # Delta angle with missing zero point
+    W_coeff = W_bin(w)
+    B_coeff = B_bin(k)
+
+
+    delta_plus = get_delta_theta_plus(k)
+
+    
+    return W_coeff * B_coeff * (np.pi - 2 * delta_plus) + delta_plus
 
     
     
@@ -220,9 +234,11 @@ def A_coeff_not_general(x_line, w, y):
 
 
 
-def get_mth_aproximation(data_processing, t_nth, index, i=400, accuracy=5, down_direction=False):
+def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
 
     if t_nth > 0:
+        
+        missing_point_mode = data_processing.mode_statuses_dict['Missing point'][1] 
         
         deg_x, deg_y = data_processing.get_curr_param('deg')
         v = data_processing.get_curr_param('v')
@@ -238,7 +254,6 @@ def get_mth_aproximation(data_processing, t_nth, index, i=400, accuracy=5, down_
         if data_processing.mode_statuses_dict['General solution'][1]:
             a_slope = data_processing.slope
 
-
             delta_k_rotated_angle = get_delta_k_rotated(a_slope, b_line, x_line)
 
             k += delta_k_rotated_angle
@@ -249,10 +264,6 @@ def get_mth_aproximation(data_processing, t_nth, index, i=400, accuracy=5, down_
         init_y = get_nth_deg_y_derivative(deg_y, combined_t, v, w, k)
         
         init_x_derivative = get_nth_deg_x_derivative(deg_x+1, combined_t, v, w, k)
-        
-        # a_coeff = A_coeff(x_line, w, init_y)
-        # a_coeff = A_coeff_not_general(x_line, w, init_y)
-
 
         last_t = np.copy(combined_t)
 
@@ -262,73 +273,8 @@ def get_mth_aproximation(data_processing, t_nth, index, i=400, accuracy=5, down_
             curr_x = get_nth_deg_x_derivative(deg_x, combined_t, v, w, k)
             curr_y= get_nth_deg_y_derivative(deg_y, combined_t, v, w, k)
 
-#             if down_direction:
-#                 # The difference between the x-coordinate of the vertical line 
-#                 # and the x-coordinate of the current spiral radius vector
-#                 c = abs(x_line) - abs(curr_x)
-
-#                 a = np.sqrt(x_line**2 + curr_y**2)
-
-#                 # Current radius vector
-#                 b = np.sqrt(curr_x ** 2 + curr_y**2)
-
-#                 cos_delta_phi = (a ** 2 + b**2 - c ** 2)/X_bin((2 * a * b))
-
-
-
-#                 if abs(cos_delta_phi) > 1:
-
-#                     cos_delta_phi = 1
-
-#                 delta_phi = np.arccos(cos_delta_phi)
-                
-#                 a_coeff = A_coeff(x_line, w, curr_y)
-                
-
-
-#                 curr_t = (a_coeff * delta_phi) / abs(w)
-
-#                 combined_t += (c/abs(X_bin(c)))*curr_t 
-
-#                 statement = f'{combined_t:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
-
-#                 if statement:
-
-#                     return combined_t  
-
-#                 last_t = np.copy(combined_t)
-                
-                
-
-#             else:
-
-#                 phi_0 = np.arctan(curr_y/X_bin(curr_x))
-
-#                 new_y =  np.tan(phi_0) *x_line
-
-#                 new_rad_vec_length = np.sqrt(x_line ** 2 + new_y ** 2)
-
-#                 combined_t = new_rad_vec_length / v
-
-
-#                 statement = f'{combined_t:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
-
-#                 if statement:
-
-#                     return combined_t
-
-#                 last_t = np.copy(combined_t)
-                
-#             last_x_derivative = get_nth_deg_x_derivative(deg_x+1, last_t, v, w, k)
-#             derivative_change_coeff = derivative_change(init_x_derivative, last_x_derivative)
-
-#             last_t *= derivative_change_coeff
-#             if last_t == 0:
-#                 return last_t
-            
-#         return last_t 
         
-            # Main algorithm
+            ''' Main algorithm '''
             # The difference between the x-coordinate of the vertical line 
             # and the x-coordinate of the current spiral radius vector
             c = abs(x_line) - abs(curr_x)
@@ -356,32 +302,38 @@ def get_mth_aproximation(data_processing, t_nth, index, i=400, accuracy=5, down_
 
             t_0_main += (c/abs(X_bin(c)))*curr_t    
             
-            
-            # Zero point algorithm
-            phi_0 = np.arctan(curr_y/X_bin(curr_x))
+            if not missing_point_mode:
+                ''' Zero point algorithm '''
+                phi_0 = np.arctan(curr_y/X_bin(curr_x))
 
-            new_y =  np.tan(phi_0) *x_line
+                new_y =  np.tan(phi_0) *x_line
 
-            new_rad_vec_length = np.sqrt(x_line ** 2 + new_y ** 2)
+                new_rad_vec_length = np.sqrt(x_line ** 2 + new_y ** 2)
 
-            t_0_zero_alg = new_rad_vec_length / v
-            
-            combined_t = (1-n_coeff) * t_0_zero_alg + n_coeff * t_0_main
+                t_0_zero_alg = new_rad_vec_length / v
+
+                combined_t = (1-n_coeff) * t_0_zero_alg + n_coeff * t_0_main
+                
+            else:
+                combined_t = np.copy(t_0_main)
 
 
             statement = f'{combined_t:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
             
             if statement:
                 return combined_t
+            
             last_t = np.copy(combined_t)
             
-            last_x_derivative = get_nth_deg_x_derivative(deg_x+1, last_t, v, w, k)
-            derivative_change_coeff = derivative_change(init_x_derivative, last_x_derivative)
-
-            last_t *= derivative_change_coeff
+            if not missing_point_mode:
             
-            if last_t == 0:
-                return last_t
+                last_x_derivative = get_nth_deg_x_derivative(deg_x+1, last_t, v, w, k)
+                derivative_change_coeff = derivative_change(init_x_derivative, last_x_derivative)
+
+                last_t *= derivative_change_coeff
+
+                if last_t == 0:
+                    return last_t
             
         return last_t
     
