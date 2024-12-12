@@ -107,7 +107,9 @@ class DataProcessing(Variables, Constants, Booleans,
                                     
                                     'General solution': [None, self.booleans.booleans_dict['general_solution_mode']],
                                     
-                                    'Rotated background': [None, self.booleans.booleans_dict['rotated_background_mode']]
+                                    'Rotated background': [None, self.booleans.booleans_dict['rotated_background_mode']],
+                                    
+                                    'Missing point': [None, self.booleans.booleans_dict['missing_point_mode']]
                                    }
 
     def reset_dicts(self):
