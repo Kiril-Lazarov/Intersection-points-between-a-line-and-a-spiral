@@ -17,6 +17,7 @@ class Booleans(Data):
     steps_change_mode = False
     general_solution_mode = False
     rotated_background_mode = False
+    missing_point_mode = False
     
     update_screen = False
     update_spiral = False
