@@ -274,7 +274,7 @@ def calc_y_intersects_t(data_processing) -> list:
         n = 0
  
         while not is_bigger:
-            curr_t = get_nth_intersect(data_processing, n, w, k, final_solution = True)
+            curr_t = get_nth_intersect(data_processing, n, w, k)
          
             if abs(curr_t) <= abs(t):
                 t_list.append(curr_t)
@@ -295,9 +295,8 @@ def calc_line_intersections_t(data_processing, t_nth_list) -> list:
         t_mth_list = []
         
         for index,t_nth in enumerate(t_nth_list):
-            down_direction=False if index == 0 else True
-            # down_direction = False
-            curr_t_mth = get_mth_aproximation(data_processing, t_nth, index, down_direction=down_direction)
+   
+            curr_t_mth = get_mth_approximation(data_processing, t_nth, index)
                 
             t_mth_list.append(curr_t_mth)
 
@@ -331,8 +330,8 @@ def calc_single_t_aproxim(data_processing, mth_t, transform=True):
 def get_orthogonal_slope(slope):
     slope += 90
     slope *= np.pi/180
-    # return round(np.tan(slope), 13)
-    return np.tan(slope)
+    return round(np.tan(slope), 13)
+
         
 def draw_inclined_line(layer, slope_a, b, center_point_width, center_point_height, 
                      screen_width, screen_height, length, color):
@@ -784,13 +783,12 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
             n -= 1
         y_intersect_t = t_nth_list[n]
     
-        down_direction = False if n == 0 else True
     
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
            
-            first_intersect_t = get_mth_aproximation(data_processing, y_intersect_t, 0,
-                                                     i=1, down_direction = down_direction, accuracy=accuracy)
+            first_intersect_t = get_mth_approximation(data_processing, y_intersect_t, 0,
+                                                     i=1, accuracy=accuracy)
             t_mth_aproxim_list.append(first_intersect_t)
             
             # Show current radius-vector
@@ -800,8 +798,8 @@ def draw_algorithm_steps(data_processing,  t_nth_list, t_mth_aproxim_list,
             if m +1 > len(t_mth_aproxim_list):
                 
                 
-                next_t = get_mth_aproximation(data_processing, y_intersect_t, m, 
-                                              i=m+1,accuracy=accuracy, down_direction = down_direction)
+                next_t = get_mth_approximation(data_processing, y_intersect_t, n, 
+                                              i=m+1,accuracy=accuracy)
                 t_mth_aproxim_list.append(next_t)
                 
                 # Show previous radius vector if it exists
