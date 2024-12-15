@@ -28,7 +28,7 @@ def get_nth_deg_x_derivative(deg,t, v,w,k):
     nth_sin_deriv = trig_derivatives_cycle[next_nth]
     
     result = v * (X_bin(w) ** (deg-1)) * (deg * nth_cos_deriv + w*t * nth_sin_deriv)
-    
+
     return round(result, 13)
 
 
@@ -261,7 +261,7 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
         t_0_main, t_0_zero_alg, combined_t = np.copy(t_nth), np.copy(t_nth), np.copy(t_nth)
         init_theta_angle = k * np.pi/2
 
-        init_y = get_nth_deg_y_derivative(deg_y, combined_t, v, w, k)
+        # init_y = get_nth_deg_y_derivative(deg_y, combined_t, v, w, k)
         
         init_x_derivative = get_nth_deg_x_derivative(deg_x+1, combined_t, v, w, k)
 
@@ -272,8 +272,7 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
 
             curr_x = get_nth_deg_x_derivative(deg_x, combined_t, v, w, k)
             curr_y= get_nth_deg_y_derivative(deg_y, combined_t, v, w, k)
-
-        
+            
             ''' Main algorithm '''
             # The difference between the x-coordinate of the vertical line 
             # and the x-coordinate of the current spiral radius vector
@@ -298,19 +297,14 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
 
 
 
-            curr_t = (a_coeff * delta_phi) / abs(w)
+            curr_t = (a_coeff * delta_phi) / abs(X_bin(w))
 
             t_0_main += (c/abs(X_bin(c)))*curr_t    
             
             if not missing_point_mode:
                 ''' Zero point algorithm '''
-                phi_0 = np.arctan(curr_y/X_bin(curr_x))
 
-                new_y =  np.tan(phi_0) *x_line
-
-                new_rad_vec_length = np.sqrt(x_line ** 2 + new_y ** 2)
-
-                t_0_zero_alg = new_rad_vec_length / v
+                t_0_zero_alg = abs(x_line) * np.sqrt(1 + (curr_y/X_bin(curr_x))**2)
 
                 combined_t = (1-n_coeff) * t_0_zero_alg + n_coeff * t_0_main
                 
