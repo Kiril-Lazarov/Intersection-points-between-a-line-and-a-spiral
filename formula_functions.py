@@ -76,7 +76,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     v = data_processing.get_curr_param('v')
     x_line = data_processing.get_curr_param('x')
     
-    missing_point_mode = data_processing.mode_statuses_dict['Missing point'][1]
+    zero_missing_point_mode = data_processing.mode_statuses_dict['Zero missing point'][1]
     
    
     if data_processing.mode_statuses_dict['General solution'][1]:
@@ -86,9 +86,9 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
 
         k += delta_k_rotated_angle
 
-    delta_theta = get_delta_theta(w, k, missing_point=missing_point_mode)
+    delta_theta = get_delta_theta(w, k, zero_missing_point=zero_missing_point_mode)
     
-    if missing_point_mode:
+    if zero_missing_point_mode:
         if n == 0:
             n+=1
   
@@ -175,9 +175,9 @@ def get_delta_theta_plus(k):
 
     
 
-def get_delta_theta(w, k, missing_point=False):
+def get_delta_theta(w, k, zero_missing_point=False):
 
-    if not missing_point:
+    if not zero_missing_point:
         b_bin = B_bin(np.floor(k)/2)
         w_bin= w/abs(X_bin(w))
 
@@ -238,7 +238,7 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
 
     if t_nth > 0:
         
-        missing_point_mode = data_processing.mode_statuses_dict['Missing point'][1] 
+        zero_missing_point_mode = data_processing.mode_statuses_dict['Zero missing point'][1] 
         
         deg_x, deg_y = data_processing.get_curr_param('deg')
         v = data_processing.get_curr_param('v')
@@ -301,7 +301,7 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
 
             t_0_main += (c/abs(X_bin(c)))*curr_t    
             
-            if not missing_point_mode:
+            if not zero_missing_point_mode:
                 ''' Zero point algorithm '''
 
                 t_0_zero_alg = abs(x_line) * np.sqrt(1 + (curr_y/X_bin(curr_x))**2)
@@ -319,7 +319,7 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
             
             last_t = np.copy(combined_t)
             
-            if not missing_point_mode:
+            if not zero_missing_point_mode:
             
                 last_x_derivative = get_nth_deg_x_derivative(deg_x+1, last_t, v, w, k)
                 derivative_change_coeff = derivative_change(init_x_derivative, last_x_derivative)
