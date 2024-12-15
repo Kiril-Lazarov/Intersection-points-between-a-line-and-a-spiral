@@ -331,7 +331,8 @@ def handle_ctrl_commands(event, data_processing):
 
                     # Set the layers to True
                     for mode, (_, boolean) in mode_statuses_dict.items():
-                        if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode','Modes layer', 'Steps change', 'General solution']:
+                        if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode',
+                                        'Modes layer', 'Steps change', 'General solution', 'Zero missing point']:
                             if not boolean:
                                 mode_statuses_dict[mode][1] = True 
 
@@ -469,7 +470,7 @@ def handle_switch_commands(event, data_processing):
                     data_processing.booleans.update_booleans_dict['update_line'] = True
                     
                 elif event.key == pygame.K_y:
-                    data_processing.switch_mode('Missing point')
+                    data_processing.switch_mode('Zero missing point')
                     data_processing.booleans.update_booleans_dict['update_screen'] = True
                     data_processing.booleans.update_booleans_dict['update_line'] = True
 
