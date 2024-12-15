@@ -453,63 +453,63 @@ def draw_spiral(data_processing):
     # Curr initial spiral angle
     k = data_processing.get_curr_param('k')
 
-    if w != 0:
-        x_spiral, y_spiral, T = calc_spiral_coord(deg=deg,t=t ,v=v, w=w, k=k)
-        
-        data_processing.spiral_coordinates['x'] = x_spiral[-1]
-        data_processing.spiral_coordinates['y'] = y_spiral[-1]
-       
-        # Euclidеan distances list
-        rad_vec_distances = np.sqrt(x_spiral**2 + y_spiral**2)
-        rad_vec_distances = [y_transform(y, center_point_height, length) for y in rad_vec_distances]
-        
-        
-        # Transform the x and y spiral coords into the screen coordinate system
-        x_spiral = [x_transform(x, center_point_width, length) for x in x_spiral]
-        y_spiral = [y_transform(y, center_point_height, length) for y in y_spiral]
- 
-        for i in range(len(x_spiral) -1):
+    # if w != 0:
+    x_spiral, y_spiral, T = calc_spiral_coord(deg=deg,t=t ,v=v, w=w, k=k)
 
-            curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
-            next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
-            
+    data_processing.spiral_coordinates['x'] = x_spiral[-1]
+    data_processing.spiral_coordinates['y'] = y_spiral[-1]
+
+    # Euclidеan distances list
+    rad_vec_distances = np.sqrt(x_spiral**2 + y_spiral**2)
+    rad_vec_distances = [y_transform(y, center_point_height, length) for y in rad_vec_distances]
+
+
+    # Transform the x and y spiral coords into the screen coordinate system
+    x_spiral = [x_transform(x, center_point_width, length) for x in x_spiral]
+    y_spiral = [y_transform(y, center_point_height, length) for y in y_spiral]
+
+    for i in range(len(x_spiral) -1):
+
+        curr_sp_point_x, curr_sp_point_y = x_spiral[i], y_spiral[i]
+        next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
+
+        # Check if the points are within the screen boundaries.
+        if not data_processing.mode_statuses_dict['T-diagram'][1]:
+            if (0 <=abs(curr_sp_point_x)<=half_screen_width * 2) and \
+               (0 <=abs(curr_sp_point_y)<=half_screen_height * 2):
+
+                pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), \
+                                                                  (next_sp_point_x, next_sp_point_y)])
+        else:
+
+            curr_t_point = T[i]
+            curr_t_point = x_transform(curr_t_point, center_point_width, length)
+
+            next_t_point = T[i+1]
+            next_t_point= x_transform(next_t_point, center_point_width, length)
+
+            backward_curr_sp_x = transform_to_t_diagram(curr_sp_point_x, center_point_width, center_point_height, length)
+            backward_next_sp_x = transform_to_t_diagram(next_sp_point_x, center_point_width, center_point_height, length)
+
+            # Euclidean distances 
+            curr_rad_vec_dist = rad_vec_distances[i]
+            next_rad_vec_dist = rad_vec_distances[i+1]
+
             # Check if the points are within the screen boundaries.
-            if not data_processing.mode_statuses_dict['T-diagram'][1]:
-                if (0 <=abs(curr_sp_point_x)<=half_screen_width * 2) and \
-                   (0 <=abs(curr_sp_point_y)<=half_screen_height * 2):
-
-                    pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_sp_point_x, curr_sp_point_y), \
-                                                                      (next_sp_point_x, next_sp_point_y)])
-            else:
-
-                curr_t_point = T[i]
-                curr_t_point = x_transform(curr_t_point, center_point_width, length)
-                
-                next_t_point = T[i+1]
-                next_t_point= x_transform(next_t_point, center_point_width, length)
-
-                backward_curr_sp_x = transform_to_t_diagram(curr_sp_point_x, center_point_width, center_point_height, length)
-                backward_next_sp_x = transform_to_t_diagram(next_sp_point_x, center_point_width, center_point_height, length)
-            
-                # Euclidean distances 
-                curr_rad_vec_dist = rad_vec_distances[i]
-                next_rad_vec_dist = rad_vec_distances[i+1]
-       
-                # Check if the points are within the screen boundaries.
-                if (0 <=abs(curr_t_point)<=half_screen_width * 2) and \
-                   (0 <=abs(curr_sp_point_y) <=half_screen_height * 2 or \
-                    0 <=abs(backward_next_sp_x) <= half_screen_height * 2 or \
-                    0 <= abs(next_rad_vec_dist) <= half_screen_height * 2): 
+            if (0 <=abs(curr_t_point)<=half_screen_width * 2) and \
+               (0 <=abs(curr_sp_point_y) <=half_screen_height * 2 or \
+                0 <=abs(backward_next_sp_x) <= half_screen_height * 2 or \
+                0 <= abs(next_rad_vec_dist) <= half_screen_height * 2): 
 
 
-                    pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_t_point, backward_curr_sp_x), \
-                                                                      (next_t_point, backward_next_sp_x)])
+                pygame.draw.aalines(spiral_layer, 'red',  False, [(curr_t_point, backward_curr_sp_x), \
+                                                                  (next_t_point, backward_next_sp_x)])
 
-                    pygame.draw.aalines(spiral_layer, 'blue',  False, [(curr_t_point, curr_sp_point_y), \
-                                                                      (next_t_point, next_sp_point_y)])
-                    
-                    pygame.draw.aalines(spiral_layer, 'green',  False, [(curr_t_point, curr_rad_vec_dist), \
-                                                                       (next_t_point, next_rad_vec_dist)])
+                pygame.draw.aalines(spiral_layer, 'blue',  False, [(curr_t_point, curr_sp_point_y), \
+                                                                  (next_t_point, next_sp_point_y)])
+
+                pygame.draw.aalines(spiral_layer, 'green',  False, [(curr_t_point, curr_rad_vec_dist), \
+                                                                   (next_t_point, next_rad_vec_dist)])
                     
                     
         if data_processing.mode_statuses_dict['T-diagram'][1]:
