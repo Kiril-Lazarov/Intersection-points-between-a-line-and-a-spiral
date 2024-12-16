@@ -114,14 +114,44 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     
     # The length of the first y-intersection point radius vector
     x_max_dist = x_max_line(deg_y, delta_theta, x_line,v, w, k)
- 
-
+    
+    # The length of the nth y-component if the radius vector + pi/2 rotation
+    XLN_coeff = XLN(data_processing, n, k)
+    # print('XLN_coeff: ', XLN_coeff)
+    # result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
+    #                          + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w)
+    
     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
-                             + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w)
+                             + (n/X_bin(n)) * XLN_coeff * (delta_theta + (n-1) * np.pi + np.pi/2) / abs(w)\
+                             + (n/X_bin(n))*(1 - XLN_coeff)*(delta_theta + (n-1) * np.pi) / abs(w)
  
     return  result
 
+def XLN(data_processing, n, k):
+    x_line = data_processing.get_curr_param('x')
+    
+    w = data_processing.get_curr_param('w')
+    # k = data_processing.get_curr_param('k')
+    v = data_processing.get_curr_param('v')
+    deg_x, _ = data_processing.get_curr_param('deg')
+    
+    delta_theta = get_delta_theta(w, k)
+    delta_plus_pi_0_5_t = (delta_theta + (n-1) * np.pi + np.pi/2)/ abs(w)
+    diff = abs(x_line)/abs(v) - abs(delta_plus_pi_0_5_t) 
+    
+    x_line_sign = x_line/abs(X_bin(x_line))
+    x_coord_nth_intersect = get_nth_deg_x_derivative(deg_x,delta_plus_pi_0_5_t, v,w,k)
+    
+    x_coord_nth_intersect_sign = x_coord_nth_intersect/abs(X_bin(x_coord_nth_intersect))
 
+    sign_product = x_line_sign*x_coord_nth_intersect_sign
+
+    x_l_nth_coeff = np.floor((1 + sign_product/abs(X_bin(sign_product)))/2)
+    
+    return np.floor((1 +(diff)/abs(X_bin(diff)))/2) * x_l_nth_coeff
+
+
+    
 
 
 def W_bin(w):
@@ -303,10 +333,12 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
             
             if not zero_missing_point_mode:
                 ''' Zero point algorithm '''
+                
+                XLN_coeff = XLN(data_processing, index,k)
 
-                t_0_zero_alg = abs(x_line) * np.sqrt(1 + (curr_y/X_bin(curr_x))**2)
+                t_0_zero_alg = (abs(x_line) * np.sqrt(1 + (curr_y/X_bin(curr_x))**2))/X_bin(v)
 
-                combined_t = (1-n_coeff) * t_0_zero_alg + n_coeff * t_0_main
+                combined_t = (1-n_coeff) * t_0_zero_alg + (1 - XLN_coeff)*n_coeff * t_0_main + n_coeff * XLN_coeff * t_0_zero_alg
                 
             else:
                 combined_t = np.copy(t_0_main)
