@@ -136,7 +136,16 @@ def XLN(data_processing, n, k):
     deg_x, _ = data_processing.get_curr_param('deg')
     
     delta_theta = get_delta_theta(w, k)
+    
     delta_plus_pi_0_5_t = (delta_theta + (n-1) * np.pi + np.pi/2)/ abs(w)
+    delta_plus_pi_1_t = (delta_theta + (n-1) * np.pi + np.pi)/ abs(w)
+    
+    diff_1_pi_x_line = abs(delta_plus_pi_1_t) - abs(x_line)/abs(v)
+    diff_x_line_0_5_pi = abs(x_line)/abs(v) - abs(delta_plus_pi_0_5_t)
+    
+    is_x_line_between = np.floor((1 +(diff_1_pi_x_line)/abs(X_bin(diff_1_pi_x_line)))/2)\
+                      * np.floor((1 +(diff_x_line_0_5_pi)/abs(X_bin(diff_x_line_0_5_pi)))/2)
+    
     diff = abs(x_line)/abs(v) - abs(delta_plus_pi_0_5_t) 
     
     x_line_sign = x_line/abs(X_bin(x_line))
@@ -148,8 +157,8 @@ def XLN(data_processing, n, k):
 
     x_l_nth_coeff = np.floor((1 + sign_product/abs(X_bin(sign_product)))/2)
     
-    return np.floor((1 +(diff)/abs(X_bin(diff)))/2) * x_l_nth_coeff
-
+    # return np.floor((1 +(diff)/abs(X_bin(diff)))/2) * x_l_nth_coeff
+    return is_x_line_between * x_l_nth_coeff
 
     
 
