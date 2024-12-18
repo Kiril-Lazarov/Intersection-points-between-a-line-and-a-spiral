@@ -10,8 +10,9 @@ def derivative_change(x_der_t0, x_der_y_zero):
 
     x_t_sign = x_der_y_zero/abs(X_bin(x_der_y_zero))
 
+    sum_signs = x_0_sign + x_t_sign
 
-    return (x_0_sign + x_t_sign)/X_bin(x_0_sign + x_t_sign)
+    return (sum_signs)/X_bin(sum_signs)
 
 
 
@@ -117,10 +118,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     
     # The length of the nth y-component if the radius vector + pi/2 rotation
     XLN_coeff = XLN(data_processing, n, k)
-    # print('XLN_coeff: ', XLN_coeff)
-    # result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
-    #                          + (n/X_bin(n))*(delta_theta + (n-1) * np.pi) / abs(w)
-    
+
     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
                              + (n/X_bin(n)) * XLN_coeff * (delta_theta + (n-1) * np.pi + np.pi/2) / abs(w)\
                              + (n/X_bin(n))*(1 - XLN_coeff)*(delta_theta + (n-1) * np.pi) / abs(w)
@@ -131,7 +129,7 @@ def XLN(data_processing, n, k):
     x_line = data_processing.get_curr_param('x')
     
     w = data_processing.get_curr_param('w')
-    # k = data_processing.get_curr_param('k')
+
     v = data_processing.get_curr_param('v')
     deg_x, _ = data_processing.get_curr_param('deg')
     
@@ -145,9 +143,7 @@ def XLN(data_processing, n, k):
     
     is_x_line_between = np.floor((1 +(diff_1_pi_x_line)/abs(X_bin(diff_1_pi_x_line)))/2)\
                       * np.floor((1 +(diff_x_line_0_5_pi)/abs(X_bin(diff_x_line_0_5_pi)))/2)
-    
-    diff = abs(x_line)/abs(v) - abs(delta_plus_pi_0_5_t) 
-    
+
     x_line_sign = x_line/abs(X_bin(x_line))
     x_coord_nth_intersect = get_nth_deg_x_derivative(deg_x,delta_plus_pi_0_5_t, v,w,k)
     
@@ -156,8 +152,7 @@ def XLN(data_processing, n, k):
     sign_product = x_line_sign*x_coord_nth_intersect_sign
 
     x_l_nth_coeff = np.floor((1 + sign_product/abs(X_bin(sign_product)))/2)
-    
-    # return np.floor((1 +(diff)/abs(X_bin(diff)))/2) * x_l_nth_coeff
+
     return is_x_line_between * x_l_nth_coeff
 
     
@@ -205,6 +200,8 @@ def x_max_line(deg_y, delta_theta, x_line, v,w, k):
     diff_sign = values_diff/ abs(X_bin(values_diff))
     
     return np.floor((1+diff_sign)/2)
+
+
 
 def get_delta_theta_plus(k):
     
@@ -273,7 +270,32 @@ def A_coeff_not_general(x_line, w, y):
 
 
 
-def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
+
+def get_hide_coeff(deg_x, deg_y, t_nth, w, v,k, x_line):
+    
+    curr_y = get_nth_deg_y_derivative(deg_y,t_nth, v,w,k)
+
+    WYX_coeff = curr_y/abs(X_bin(curr_y)) * w/abs(X_bin(w)) * x_line/abs(X_bin(x_line)) * (-1)
+
+    curr_rad_vec_t = abs(curr_y)/v
+
+    
+    rotated_rad_vec_t = curr_rad_vec_t + WYX_coeff * (np.pi/2)/abs(w) 
+
+    
+    rot_rad_vec_x = abs(get_nth_deg_x_derivative(deg_x,rotated_rad_vec_t, v,w,k)) + v* np.pi/4/abs(w)
+    
+    # x_der_at_rotated_rad_vec_t = get_nth_deg_x_derivative(deg_x+1,rotated_rad_vec_t, v,w,k)
+
+    diff = abs(rot_rad_vec_x) - abs(x_line)
+
+    result = np.floor((1 +(diff)/abs(X_bin(diff)))/2)
+
+    
+    return result
+
+
+def get_mth_approximation(data_processing, t_nth , index, i=200, accuracy=5):
 
     if t_nth > 0:
         
@@ -288,6 +310,7 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
         b_line = data_processing.get_curr_param('b')
         
         n_coeff = get_n_coeff(index)
+   
 
         
         if data_processing.mode_statuses_dict['General solution'][1]:
@@ -297,6 +320,7 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
 
             k += delta_k_rotated_angle
 
+        hide_short_dist_points = get_hide_coeff(deg_x, deg_y, t_nth, w, v,k, x_line)
         t_0_main, t_0_zero_alg, combined_t = np.copy(t_nth), np.copy(t_nth), np.copy(t_nth)
         init_theta_angle = k * np.pi/2
 
@@ -334,7 +358,7 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
 
             a_coeff = A_coeff(x_line, w, curr_y)
 
-
+        
 
             curr_t = (a_coeff * delta_phi) / abs(X_bin(w))
 
@@ -347,7 +371,8 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
 
                 t_0_zero_alg = (abs(x_line) * np.sqrt(1 + (curr_y/X_bin(curr_x))**2))/X_bin(v)
 
-                combined_t = (1-n_coeff) * t_0_zero_alg + (1 - XLN_coeff)*n_coeff * t_0_main + n_coeff * XLN_coeff * t_0_zero_alg
+                combined_t = (1-n_coeff) * t_0_zero_alg + (1 - XLN_coeff)*n_coeff * hide_short_dist_points*t_0_main + \
+                                n_coeff * XLN_coeff * t_0_zero_alg
                 
             else:
                 combined_t = np.copy(t_0_main)
@@ -364,6 +389,7 @@ def get_mth_approximation(data_processing, t_nth, index, i=200, accuracy=5):
             
                 last_x_derivative = get_nth_deg_x_derivative(deg_x+1, last_t, v, w, k)
                 derivative_change_coeff = derivative_change(init_x_derivative, last_x_derivative)
+             
 
                 last_t *= derivative_change_coeff
 
