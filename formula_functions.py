@@ -103,6 +103,9 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     kwx_coeff = KWX_line(k, w, x_line)
     k_sign = K_sign(k, x_line)
     
+    n_coeff = get_n_coeff(n)
+    opp_n_coeff = 1 - n_coeff
+    
     # The x-derivative at t=0
     x_der_t0 = get_nth_deg_x_derivative(deg_x+1, 0, v, w, k)
     
@@ -118,10 +121,10 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     
     # The length of the nth y-component if the radius vector + pi/2 rotation
     XLN_coeff = XLN(data_processing, n, k)
+    opp_XLN_coeff = 1 - XLN_coeff
 
-    result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*(1 - n/X_bin(n)) * zero_y_t\
-                             + (n/X_bin(n)) * XLN_coeff * (delta_theta + (n-1) * np.pi + np.pi/2) / abs(w)\
-                             + (n/X_bin(n))*(1 - XLN_coeff)*(delta_theta + (n-1) * np.pi) / abs(w)
+    result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*opp_n_coeff * zero_y_t\
+                             + n_coeff * ( (delta_theta + (n-1) * np.pi + XLN_coeff *np.pi/2) )/ abs(w)
  
     return  result
 
@@ -145,6 +148,7 @@ def XLN(data_processing, n, k):
                       * np.floor((1 +(diff_x_line_0_5_pi)/abs(X_bin(diff_x_line_0_5_pi)))/2)
 
     x_line_sign = x_line/abs(X_bin(x_line))
+    
     x_coord_nth_intersect = get_nth_deg_x_derivative(deg_x,delta_plus_pi_0_5_t, v,w,k)
     
     x_coord_nth_intersect_sign = x_coord_nth_intersect/abs(X_bin(x_coord_nth_intersect))
