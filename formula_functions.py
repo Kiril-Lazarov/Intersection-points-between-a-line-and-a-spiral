@@ -255,27 +255,19 @@ def get_delta_theta_plus(k):
 
 
 
-def A_coeff(x_line, w, y):
+def WYX(x_line, w, y):
     
     product = x_line * w  * y * (-1)
     
     return product/abs(X_bin(product))
 
 
-def A_coeff_not_general(x_line, w, y):
-
-    x_coeff = X_bin(x_line)
-
-    return (-1) * (x_line/abs(x_coeff)) * (w / abs(w)) * (y/abs(y))
-
-
-
-
 def get_hide_coeff(deg_x, deg_y, t_nth, w, v,k, x_line):
     
     curr_y = get_nth_deg_y_derivative(deg_y,t_nth, v,w,k)
 
-    WYX_coeff = curr_y/abs(X_bin(curr_y)) * w/abs(X_bin(w)) * x_line/abs(X_bin(x_line)) * (-1)
+    # WYX_coeff = curr_y/abs(X_bin(curr_y)) * w/abs(X_bin(w)) * x_line/abs(X_bin(x_line)) * (-1)
+    WYX_coeff = WYX(x_line, w, curr_y)
 
     curr_rad_vec_t = abs(curr_y)/v
 
@@ -356,11 +348,11 @@ def get_mth_approximation(data_processing, t_nth , index, i=200, accuracy=5):
 
             delta_phi = np.arccos(cos_delta_phi)
 
-            a_coeff = A_coeff(x_line, w, curr_y)
+            WYX_coeff = WYX(x_line, w, curr_y)
 
         
 
-            curr_t = (a_coeff * delta_phi) / abs(X_bin(w))
+            curr_t = (WYX_coeff * delta_phi) / abs(X_bin(w))
 
             t_0_main += (c/abs(X_bin(c)))*curr_t    
             
