@@ -48,7 +48,7 @@ class Constants(Data):
     x_step = 0.01
     c_step = 10 # pixels
     a_step = 1
-    b_step = 0.01
+    b_step = 0.1
     
     steps_constants_list = ['deg_step', 't_step', 'v_step', 'w_step', 'k_step', 'x_step', 'c_step', 'l_step', 'a_step', 'b_step']
     
@@ -102,4 +102,7 @@ class Constants(Data):
                     
     def reset_dict(self):
         self.constants_dict['w'] = self.w
+        self.line_constants_dict['a'] = self.a
+        self.line_constants_dict['b'] = self.b
+        
                 
