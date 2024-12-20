@@ -270,18 +270,13 @@ def get_hide_coeff(deg_x, deg_y, t_nth, w, v,k, x_line):
     
     curr_y = get_nth_deg_y_derivative(deg_y,t_nth, v,w,k)
 
-    # WYX_coeff = curr_y/abs(X_bin(curr_y)) * w/abs(X_bin(w)) * x_line/abs(X_bin(x_line)) * (-1)
     WYX_coeff = WYX(x_line, w, curr_y)
 
-    curr_rad_vec_t = abs(curr_y)/v
-
-    
-    rotated_rad_vec_t = curr_rad_vec_t + WYX_coeff * (np.pi/2)/abs(w) 
+    rotated_rad_vec_t = t_nth + WYX_coeff * (np.pi/2)/abs(w) 
 
     
     rot_rad_vec_x = abs(get_nth_deg_x_derivative(deg_x,rotated_rad_vec_t, v,w,k)) + v* np.pi/4/abs(w)
     
-    # x_der_at_rotated_rad_vec_t = get_nth_deg_x_derivative(deg_x+1,rotated_rad_vec_t, v,w,k)
 
     diff = abs(rot_rad_vec_x) - abs(x_line)
 
@@ -306,7 +301,7 @@ def get_mth_approximation(data_processing, t_nth , index, i=200, accuracy=5):
         b_line = data_processing.get_curr_param('b')
         
         n_coeff = get_n_coeff(index)
-   
+        opp_n_coeff = 1 - n_coeff
 
         
         if data_processing.mode_statuses_dict['General solution'][1]:
@@ -316,7 +311,9 @@ def get_mth_approximation(data_processing, t_nth , index, i=200, accuracy=5):
 
             k += delta_k_rotated_angle
 
-        hide_short_dist_points = get_hide_coeff(deg_x, deg_y, t_nth, w, v,k, x_line)
+        turn_on_angular_alg = get_hide_coeff(deg_x, deg_y, t_nth, w, v,k, x_line)
+        
+        
         t_0_main, t_0_zero_alg, combined_t = np.copy(t_nth), np.copy(t_nth), np.copy(t_nth)
         init_theta_angle = k * np.pi/2
 
@@ -332,7 +329,7 @@ def get_mth_approximation(data_processing, t_nth , index, i=200, accuracy=5):
             curr_x = get_nth_deg_x_derivative(deg_x, combined_t, v, w, k)
             curr_y= get_nth_deg_y_derivative(deg_y, combined_t, v, w, k)
             
-            ''' Main algorithm '''
+            ''' Angular Algorithm '''
             # The difference between the x-coordinate of the vertical line 
             # and the x-coordinate of the current spiral radius vector
             c = abs(x_line) - abs(curr_x)
@@ -361,15 +358,16 @@ def get_mth_approximation(data_processing, t_nth , index, i=200, accuracy=5):
             t_0_main += (c/abs(X_bin(c)))*curr_t    
             
             if not zero_missing_point_mode:
-                ''' Zero point algorithm '''
+                ''' Vector-Length Algorithm '''
                 
                 XLN_coeff = XLN(data_processing, index,k)
+                opp_XLN_coeff = 1 - XLN_coeff
 
-                t_0_zero_alg = (abs(x_line) * np.sqrt(1 + (curr_y/X_bin(curr_x))**2))/X_bin(v)
+                VL = (abs(x_line) * np.sqrt(1 + (curr_y/X_bin(curr_x))**2))/X_bin(v)
 
-                combined_t = (1-n_coeff) * t_0_zero_alg + (1 - XLN_coeff)*n_coeff * hide_short_dist_points*t_0_main + \
-                                n_coeff * XLN_coeff * t_0_zero_alg
-                
+                combined_t = opp_n_coeff * VL + opp_XLN_coeff*n_coeff * turn_on_angular_alg*t_0_main + \
+                                n_coeff * XLN_coeff * VL
+
             else:
                 combined_t = np.copy(t_0_main)
 

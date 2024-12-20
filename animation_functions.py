@@ -453,7 +453,7 @@ def draw_spiral(data_processing):
     # Curr initial spiral angle
     k = data_processing.get_curr_param('k')
 
-    # if w != 0:
+
     x_spiral, y_spiral, T = calc_spiral_coord(deg=deg,t=t ,v=v, w=w, k=k)
 
     data_processing.spiral_coordinates['x'] = x_spiral[-1]

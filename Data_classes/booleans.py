@@ -40,7 +40,7 @@ class Booleans(Data):
         return [self.background_mode, self.algorithm_mode, self.vertical_line_mode, self.derivatives_mode,
                 self.spiral_mode, self.y_axis_intersects_mode, self.line_intersects_mode, self.algorithm_data_mode,
                 self.parameters_mode, self.t_diagram_mode, self.steps_change_mode, self.general_solution_mode,
-                self.rotated_background_mode]
+                self.rotated_background_mode, self.zero_missing_point_mode]
   
     def create_dict(self, update_dict=True):        
         

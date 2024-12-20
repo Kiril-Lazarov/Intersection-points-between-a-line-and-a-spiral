@@ -111,12 +111,6 @@ def show_parameters(data_processing, font_small):
 
                     text_y += data_processing.text_unit
 
-    #                 angle = curr_value * np.pi/180
-
-    #                 text = font_small.render(f'Ang: {angle}', True, (0, 0, 0))
-
-    #                 text_y += data_processing.text_unit
-
                 else:
                     text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
                 params_layer.blit(text, (text_x, text_y))

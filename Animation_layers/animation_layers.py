@@ -2,10 +2,10 @@ import pygame
 import inspect
 
 from Data_classes.data_abstract import Data
-from Data_classes.variables import Variables
+from Data_classes.constants import Constants
 
-screen_width = Variables.screen_width
-screen_height = Variables.screen_height
+screen_width = Constants.screen_width
+screen_height = Constants.screen_height
 
 class AnimationLayers(Data):
 
@@ -48,3 +48,5 @@ class AnimationLayers(Data):
             if not name.startswith('__') and name not in self.excluded_methods_names:
                 
                 self.layers_dict[name] = value
+
+        
