@@ -14,13 +14,13 @@ def show_parameters(data_processing, font_small):
         var_params_dict = data_processing.variables.variables_dict
         accuracy = data_processing.constants.accuracy
 
-        text_x = data_processing.text_unit
-        text_y = 4*data_processing.text_unit
+        text_x = data_processing.constants.text_unit
+        text_y = 4*data_processing.constants.text_unit
 
         text = font_small.render('Spiral parameters:', True, (0, 0, 0))
                     
         params_layer.blit(text, (text_x, text_y))
-        text_y += data_processing.text_unit
+        text_y += data_processing.constants.text_unit
 
         for param in data_processing.constants.constants_dict.keys():  
 
@@ -30,7 +30,7 @@ def show_parameters(data_processing, font_small):
                     text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
                     
                     params_layer.blit(text, (text_x, text_y))
-                    text_y += data_processing.text_unit
+                    text_y += data_processing.constants.text_unit
                     
                     theta_0 = (curr_value) * (np.pi /2) * 180 / np.pi 
                     text = font_small.render(f'Start angle: {theta_0:.{accuracy}f} deg', True, (0, 0, 0))
@@ -43,7 +43,7 @@ def show_parameters(data_processing, font_small):
                         text = font_small.render(f'{param}: {curr_value:.{accuracy}f}', True, (0, 0, 0))
 
                 params_layer.blit(text, (text_x, text_y))
-                text_y += data_processing.text_unit
+                text_y += data_processing.constants.text_unit
                 
          # Curr time
         t = data_processing.get_curr_param('t')
@@ -65,15 +65,15 @@ def show_parameters(data_processing, font_small):
         rad_vec_length = np.sqrt(x**2 + y**2)
         curr_spiral_angle = np.arccos(x / X_bin(rad_vec_length)) * 180/np.pi
         
-        text_y += data_processing.text_unit
+        text_y += data_processing.constants.text_unit
         
         text = font_small.render(f'Spiral angle: {curr_spiral_angle:.5f} deg', True, (0, 0, 0))
         params_layer.blit(text, (text_x, text_y))
         
-        text_y += data_processing.text_unit
+        text_y += data_processing.constants.text_unit
  
         if not data_processing.mode_statuses_dict['Algorithm mode'][1]:
-            text_y += data_processing.text_unit
+            text_y += data_processing.constants.text_unit
 
             x = data_processing.spiral_coordinates['x']
             y = data_processing.spiral_coordinates['y']
@@ -86,16 +86,16 @@ def show_parameters(data_processing, font_small):
                 text = font_small.render(f'Spiral {name}: {coord:.{accuracy}f}', True, (0, 0, 0))
                 params_layer.blit(text, (text_x, text_y))
 
-                text_y += data_processing.text_unit
+                text_y += data_processing.constants.text_unit
                 
         if data_processing.mode_statuses_dict['General solution'][1]:
              
-            text_y += data_processing.text_unit
+            text_y += data_processing.constants.text_unit
 
             text = font_small.render('Line parameters:', True, (0, 0, 0))
 
             params_layer.blit(text, (text_x, text_y))
-            text_y += data_processing.text_unit
+            text_y += data_processing.constants.text_unit
 
             for param in data_processing.constants.line_constants_dict.keys():
                 curr_value = data_processing.get_curr_param(param)
@@ -109,19 +109,19 @@ def show_parameters(data_processing, font_small):
 
                     text = font_small.render(f'{param}: {a_param}', True, (0, 0, 0))
 
-                    text_y += data_processing.text_unit
+                    text_y += data_processing.constants.text_unit
 
                 else:
                     text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
                 params_layer.blit(text, (text_x, text_y))
-                text_y += data_processing.text_unit
+                text_y += data_processing.constants.text_unit
 
         if data_processing.mode_statuses_dict['Derivatives'][1]:
 
 
             colors = iter([(255, 0, 0),  (0, 0,255), (0, 255, 0)])
 
-            text_y += data_processing.text_unit
+            text_y += data_processing.constants.text_unit
 
             dx_dt = data_processing.derivative_slopes['dx_dt'] * np.pi/180
             dy_dt = data_processing.derivative_slopes['dy_dt'] * np.pi/180
@@ -137,7 +137,7 @@ def show_parameters(data_processing, font_small):
                 text = font_small.render(f'{name}: {slope:.6f} deg', True, next(colors))
                 params_layer.blit(text, (text_x, text_y))
 
-                text_y += data_processing.text_unit
+                text_y += data_processing.constants.text_unit
 
 
 
@@ -149,8 +149,8 @@ def show_mode_statuses(data_processing, font_small):
         show_modes_layer = data_processing.mode_statuses_dict['Modes layer'][0]
         show_modes_layer.fill((0, 0, 0, 0))
 
-        text_x = data_processing.text_unit
-        text_y = data_processing.text_unit
+        text_x = data_processing.constants.text_unit
+        text_y = data_processing.constants.text_unit
 
         for mode, status in data_processing.mode_statuses_dict.items():
 
@@ -169,8 +169,8 @@ def show_mode_statuses(data_processing, font_small):
                 text_x += x_text_displacement
                 
                 if mode == 'Derivatives':
-                    text_x = data_processing.text_unit
-                    text_y = 2*data_processing.text_unit
+                    text_x = data_processing.constants.text_unit
+                    text_y = 2*data_processing.constants.text_unit
         
 
 def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
@@ -178,12 +178,12 @@ def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
     show_algorithm_data_layer = data_processing.mode_statuses_dict['Algorithm data mode'][0]
     show_algorithm_data_layer.fill((0, 0, 0, 0))
     
-    text_x = data_processing.text_unit
-    text_y = 22 * data_processing.text_unit
+    text_x = data_processing.constants.text_unit
+    text_y = 22 * data_processing.constants.text_unit
     
     text = font_small.render('Algorithm approximations:', True, (0, 0, 0))
     show_algorithm_data_layer.blit(text, (text_x, text_y))
-    text_y += data_processing.text_unit
+    text_y += data_processing.constants.text_unit
     
     for param, value in data_processing.algorithm_vars.algorithm_vars_dict.items():
 
@@ -191,14 +191,14 @@ def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
         
         show_algorithm_data_layer.blit(text, (text_x, text_y))
         
-        text_y += data_processing.text_unit
+        text_y += data_processing.constants.text_unit
     
-    text_y += data_processing.text_unit
+    text_y += data_processing.constants.text_unit
     
     text = font_small.render(f'Spiral x: {x}', True, (0, 0, 0))
     show_algorithm_data_layer.blit(text, (text_x, text_y))
     
-    text_y += data_processing.text_unit
+    text_y += data_processing.constants.text_unit
     
     text = font_small.render(f'Spiral y: {y}', True, (0, 0, 0))
     
@@ -217,7 +217,7 @@ def show_steps_variables(data_processing, font_small):
         var_params_dict = data_processing.variables.variables_dict
         steps_const_params_dict = data_processing.constants.steps_constants_dict 
 
-        text_x = data_processing.text_unit
+        text_x = data_processing.constants.text_unit
         text_y = 4 * text_x
 
         for param, value in data_processing.variables.factors_dict.items():
@@ -229,4 +229,4 @@ def show_steps_variables(data_processing, font_small):
             text = font_small.render(f'{param_name}: {total_value}', True, (0, 0, 0))
 
             params_layer.blit(text, (text_x, text_y))
-            text_y += data_processing.text_unit
+            text_y += data_processing.constants.text_unit
