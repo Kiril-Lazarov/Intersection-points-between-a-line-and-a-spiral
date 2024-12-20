@@ -116,8 +116,14 @@ class DataProcessing(Variables, Constants, Booleans,
         
         for obj in self.variable_dict_objects:
             obj.reset_dict()
-        
+            
+        '''
+        Logic for retaining the 'general solution' in its current state despite the reinitialization of mode_statuses_dict.
+        '''
+        curr_status_gen_solution = self.mode_statuses_dict['General solution'][1]
         self.initialize_mode_status_dict()
+        self.mode_statuses_dict['General solution'][1] = curr_status_gen_solution
+        
            
     def switch_mode(self, mode):
         self.mode_statuses_dict[mode][1] = not self.mode_statuses_dict[mode][1]
