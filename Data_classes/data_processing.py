@@ -10,34 +10,32 @@ from Animation_layers.animation_layers import AnimationLayers
 from formula_functions import X_bin
 
 
-class DataProcessing(Variables, Constants, Booleans, 
-                     AlgorithmVariables, AnimationLayers):
-    
+class DataProcessing():
+
     bg_color = (255, 255, 255)
     
-    variables = Variables()
-    variables.create_dict()
-  
-    constants = Constants()
-    constants.create_dict()
-    
-    booleans = Booleans()
-    booleans.create_dict()
-
-    algorithm_vars = AlgorithmVariables()
-    algorithm_vars.create_dict()
-    
-    animation_layers = AnimationLayers()
-    animation_layers.create_dict()
-    
-    variable_dict_objects = [variables, booleans, constants, algorithm_vars]
 
     def __init__(self):
+        self.variables = Variables()
+        self.variables.create_dict()
+        
+        self.constants = Constants()
+        self.constants.create_dict()
+        
+        self.booleans = Booleans()
+        self.booleans.create_dict()
+        
+        self.algorithm_vars = AlgorithmVariables()
+        self.algorithm_vars.create_dict()
+        
+        self.animation_layers = AnimationLayers()
+        self.animation_layers.create_dict()
         
         self.derivative_slopes = {'dx_dt': 0, 'dy_dt': 0, 'dy_dx': 0}
         self.spiral_coordinates = {'x': 0, 'y': 0}
         self.initialize_mode_status_dict()
-    
+         
+        self.variable_dict_objects = [self.variables, self.booleans, self.constants, self.algorithm_vars]
 
     def blit_layers(self, win):
 
@@ -70,6 +68,8 @@ class DataProcessing(Variables, Constants, Booleans,
         return float(f'{result:.{self.constants.accuracy + 9}f}')
     
     def initialize_mode_status_dict(self):
+        
+         print(self.variables.variables_dict)
         
          self.mode_statuses_dict = {'Coordinates':[self.animation_layers.layers_dict['background_surface'],
                                          self.booleans.booleans_dict['background_mode']],
