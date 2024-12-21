@@ -170,4 +170,33 @@ class DataProcessing():
         return [line_layer, screen_height, screen_width, half_screen_width, half_screen_height, 
                 a, b, x, length, center_point_width, center_point_height, slope_a,
                 t_diagram, general_solution, rotated_background]
+    
+    @property
+    def derivatives_params(self):
+        
+        layer, derivative = self.mode_statuses_dict['Derivatives']
+    
+        center_point_width, center_point_height = self.get_curr_param('c')
+
+        length = self.get_curr_param('l')
+
+        deg_x, deg_y = self.get_curr_param('deg')
+        t = self.get_curr_param('t')
+        v = self.get_curr_param('v')
+        w = self.get_curr_param('w')
+        k = self.get_curr_param('k')
+        
+        screen_width = self.constants.screen_width
+        screen_height = self.constants.screen_width
+        
+        derivative_slopes = self.derivative_slopes
+        
+        t_diagram = self.mode_statuses_dict['T-diagram'][1]
+        
+        return [layer, center_point_width, center_point_height, 
+                length, deg_x, deg_y, t, v, w, k,
+                screen_width, screen_height, t_diagram,
+                derivative, derivative_slopes]
+        
+   
   
