@@ -70,17 +70,9 @@ def get_delta_k_rotated(a, b, x):
 def get_n_coeff(n):
     return n/X_bin(n)
 
-def get_nth_intersect(data_processing, n, w,k, final_solution = False):
-    
-    a = data_processing.slope
-    b = data_processing.get_curr_param('b')
-    v = data_processing.get_curr_param('v')
-    x_line = data_processing.get_curr_param('x')
-    
-    zero_missing_point_mode = data_processing.mode_statuses_dict['Zero missing point'][1]
-    
-   
-    if data_processing.mode_statuses_dict['General solution'][1]:
+def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point_mode, general_solution):
+
+    if general_solution:
         k = np.copy(k)
 
         delta_k_rotated_angle = get_delta_k_rotated(a, b, x_line)
@@ -98,7 +90,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     
     zero_y_t =  abs(x_line/X_bin(v))
     
-    deg_x, deg_y  =  data_processing.get_curr_param('deg')
+    # deg_x, deg_y  =  data_processing.get_curr_param('deg')
 
     kwx_coeff = KWX_line(k, w, x_line)
     k_sign = K_sign(k, x_line)
@@ -120,7 +112,7 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
     x_max_dist = x_max_line(deg_y, delta_theta, x_line,v, w, k)
     
     # The length of the nth y-component if the radius vector + pi/2 rotation
-    XLN_coeff = XLN(data_processing, n, k)
+    XLN_coeff = XLN(n, k, x_line, w, v, deg_x)
     opp_XLN_coeff = 1 - XLN_coeff
 
     result = x_max_dist* is_der_changed* (k_sign + kwx_coeff)*opp_n_coeff * zero_y_t\
@@ -128,14 +120,8 @@ def get_nth_intersect(data_processing, n, w,k, final_solution = False):
  
     return  result
 
-def XLN(data_processing, n, k):
-    x_line = data_processing.get_curr_param('x')
-    
-    w = data_processing.get_curr_param('w')
+def XLN(n, k, x_line, w, v, deg_x):
 
-    v = data_processing.get_curr_param('v')
-    deg_x, _ = data_processing.get_curr_param('deg')
-    
     delta_theta = get_delta_theta(w, k)
     
     delta_plus_pi_0_5_t = (delta_theta + (n-1) * np.pi + np.pi/2)/ abs(w)
@@ -286,7 +272,7 @@ def get_hide_coeff(deg_x, deg_y, t_nth, w, v,k, x_line):
     return result
 
 
-def get_mth_approximation(data_processing, t_nth , index, i=200, accuracy=5):
+def get_mth_approximation(data_processing, t_nth , n, i=200, accuracy=5):
 
     if t_nth > 0:
         
@@ -300,7 +286,7 @@ def get_mth_approximation(data_processing, t_nth , index, i=200, accuracy=5):
         # a_line = data_processing.slope
         b_line = data_processing.get_curr_param('b')
         
-        n_coeff = get_n_coeff(index)
+        n_coeff = get_n_coeff(n)
         opp_n_coeff = 1 - n_coeff
 
         
@@ -360,7 +346,7 @@ def get_mth_approximation(data_processing, t_nth , index, i=200, accuracy=5):
             if not zero_missing_point_mode:
                 ''' Vector-Length Algorithm '''
                 
-                XLN_coeff = XLN(data_processing, index,k)
+                XLN_coeff = XLN(n, k, x_line, w, v, deg_x)
                 opp_XLN_coeff = 1 - XLN_coeff
 
                 VL = (abs(x_line) * np.sqrt(1 + (curr_y/X_bin(curr_x))**2))/X_bin(v)
