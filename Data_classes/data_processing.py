@@ -146,5 +146,28 @@ class DataProcessing():
         center_point = self.get_curr_param('c')
         
         return [background_surface, screen_width, screen_height, length, center_point, self.bg_color]
-
+    
+    @property
+    def line_params(self):
+        
+        line_layer = self.animation_layers.layers_dict['vertical_line_layer']
+        screen_height = self.constants.screen_height
+        screen_width = self.constants.screen_width
+        half_screen_width = self.constants.half_screen_width
+        half_screen_height = self.constants.half_screen_height
+        
+        a = self.get_curr_param('a')
+        b = self.get_curr_param('b')
+        x = self.get_curr_param('x')
+        length = self.get_curr_param('l')
+        center_point_width, center_point_height = self.get_curr_param('c')
+        slope_a = self.slope
+        
+        t_diagram = self.mode_statuses_dict['T-diagram'][1]
+        general_solution = self.mode_statuses_dict['General solution'][1]
+        rotated_background = self.mode_statuses_dict['Rotated background'][1]
+        
+        return [line_layer, screen_height, screen_width, half_screen_width, half_screen_height, 
+                a, b, x, length, center_point_width, center_point_height, slope_a,
+                t_diagram, general_solution, rotated_background]
   
