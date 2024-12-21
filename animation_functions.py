@@ -5,18 +5,16 @@ from scipy.integrate import quad
 from formula_functions import *
 
 
-def create_background(data_processing, font_small):
+def create_background(background_surface, screen_width, screen_height, length, center_point, bg_color, font_small):
     
-    background_surface = data_processing.animation_layers.layers_dict['background_surface']
-    screen_width = data_processing.constants.screen_width
-    screen_height = data_processing.constants.screen_height
-    length = data_processing.get_curr_param('l')
+    '''
+    Creates and visualizes the coordinate system.
+    '''
     
-    background_surface.fill(data_processing.bg_color)
+    background_surface.fill(bg_color)
 
     line_color = (200,200,200)
-    center_point = data_processing.get_curr_param('c')
-
+ 
     # Coordinate x-line parameters
     x_line_start = 0
     x_line_end = screen_width
