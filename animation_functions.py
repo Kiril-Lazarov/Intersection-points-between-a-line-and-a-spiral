@@ -360,62 +360,48 @@ def draw_vertical_line(layer, x_axis_value, center_point_width, screen_height, l
     pygame.draw.aalines(layer, color,  False, [(x_up, y_up), (x_down, y_down)])
         
         
-def draw_line(data_processing):
+def draw_line(line_layer, screen_height, screen_width, half_screen_width, half_screen_height, 
+                a, b, x, length, center_point_width, center_point_height, slope_a,
+                t_diagram, general_solution, rotated_background):
 
-    line_layer = data_processing.animation_layers.layers_dict['vertical_line_layer']
-    screen_height = data_processing.constants.screen_height
-    screen_width = data_processing.constants.screen_width
-    half_screen_width = data_processing.constants.half_screen_width
-    half_screen_height = data_processing.constants.half_screen_height
-    length = data_processing.get_curr_param('l')
-        
     line_layer.fill((0, 0, 0, 0))
-    
 
-    center_point_width, center_point_height = data_processing.get_curr_param('c')
-    
-    if not data_processing.mode_statuses_dict['T-diagram'][1]:
+    if not t_diagram:
         
         # Draw a vertical line if not general solution mode
-        if not data_processing.mode_statuses_dict['General solution'][1]:
-            
-            x_axis_value = data_processing.get_curr_param('x')
+        if not general_solution:
+
             color = 'blue'
-            draw_vertical_line(line_layer, x_axis_value, center_point_width, screen_height, length, color)
+            draw_vertical_line(line_layer, x, center_point_width, screen_height, length, color)
 
         # Draw line with a slope and a constant
         else:
-  
-            slope_a = data_processing.slope
-    
-            
-            if data_processing.mode_statuses_dict['Rotated background'][1]:
+
+            if rotated_background:
                 
                 # Draw rotated y-axis 
-                b = 0
+
                 color = (255, 255, 154) # Light yellow
-                draw_inclined_line(line_layer, slope_a, b, center_point_width, center_point_height, 
+                draw_inclined_line(line_layer, slope_a, 0, center_point_width, center_point_height, 
                      screen_width, screen_height, length, color)
                 
                 # Calculate the rotated x-axis                
-                orthogonal_slope = get_orthogonal_slope(data_processing.get_curr_param('a'))
+                orthogonal_slope = get_orthogonal_slope(a)
 
-                draw_inclined_line(line_layer, orthogonal_slope, b, center_point_width, center_point_height, 
+                draw_inclined_line(line_layer, orthogonal_slope, 0, center_point_width, center_point_height, 
                      screen_width, screen_height, length, color)
             
             
-            # Draw the line
-            b = data_processing.get_curr_param('b')
-            
+            # Draw the line            
             draw_inclined_line(line_layer, slope_a, b, center_point_width, center_point_height, 
                          screen_width, screen_height, length, 'blue')
 
 
     else:
    
-        y_left = y_right = y_transform(x_axis_value, center_point_height, length)
+        y_left = y_right = y_transform(x, center_point_height, length)
         
-        x_left, x_right =0, screen_width
+        x_left, x_right = 0, screen_width
      
  
         pygame.draw.aalines(line_layer, 'blue',  False, [(x_left, y_left), (x_right, y_right)])
