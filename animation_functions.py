@@ -254,15 +254,12 @@ def calc_spiral_coord(deg=[0, 0], t=1 ,v=1, w=1, k=0) -> tuple:
     
     return x, y, T 
 
-def calc_y_intersects_t(data_processing) -> list:
+def calc_y_intersects_t(deg_x, deg_y , t, v, w, k, x_line, a, b, 
+                        steps_change, zero_missing_point_mode,
+                        general_solution) -> list:
     
-    if not data_processing.mode_statuses_dict['Steps change'][1]:
-   
-        k = data_processing.get_curr_param('k')
-        w = data_processing.get_curr_param('w')
-        t = data_processing.get_curr_param('t')
+    if not steps_change:
   
-        
         is_bigger = False
         t_list = []
       
@@ -272,7 +269,8 @@ def calc_y_intersects_t(data_processing) -> list:
         n = 0
  
         while not is_bigger:
-            curr_t = get_nth_intersect(data_processing, n, w, k)
+            curr_t = get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, 
+                                       zero_missing_point_mode, general_solution)
          
             if abs(curr_t) <= abs(t):
                 t_list.append(curr_t)
