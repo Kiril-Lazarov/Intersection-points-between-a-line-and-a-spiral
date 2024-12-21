@@ -578,25 +578,15 @@ def get_line_boundary_points(length, angle, x, y):
     return front_xx, front_xy, back_xx, back_xy    
     
                 
-def draw_derivatives(data_processing):  
+def draw_derivatives(layer, center_point_width, center_point_height, 
+                    length, deg_x, deg_y, t, v, w, k,
+                    screen_width, screen_height, t_diagram,
+                    derivative, derivative_slopes):  
 
-    if data_processing.mode_statuses_dict['Derivatives'][1]:
-        
-        layer = data_processing.mode_statuses_dict['Derivatives'][0]
+    if derivative:
+
         layer.fill((0, 0, 0, 0))
-    
-        center_point_width, center_point_height = data_processing.get_curr_param('c')
 
-        length = data_processing.get_curr_param('l')
-
-        deg_x, deg_y = data_processing.get_curr_param('deg')
-        t = data_processing.get_curr_param('t')
-        v = data_processing.get_curr_param('v')
-        w = data_processing.get_curr_param('w')
-        k = data_processing.get_curr_param('k')
-        
-        screen_width = data_processing.constants.screen_width
-        screen_height = data_processing.constants.screen_width
 
         dx_dt_color = (255, 0, 0)
         dy_dt_color = (0, 0, 255)
@@ -624,9 +614,9 @@ def draw_derivatives(data_processing):
         
         spiral_der_angle = np.arctan(dy_dx)
         
-        data_processing.derivative_slopes['dx_dt'] = x_der_angle * 180/ np.pi
-        data_processing.derivative_slopes['dy_dt'] = y_der_angle * 180/ np.pi
-        data_processing.derivative_slopes['dy_dx'] = spiral_der_angle * 180/ np.pi
+        derivative_slopes['dx_dt'] = x_der_angle * 180/ np.pi
+        derivative_slopes['dy_dt'] = y_der_angle * 180/ np.pi
+        derivative_slopes['dy_dx'] = spiral_der_angle * 180/ np.pi
 
         x = x_transform(x, center_point_width, length)
         y = y_transform(y, center_point_height, length)
@@ -635,7 +625,7 @@ def draw_derivatives(data_processing):
         
         colors = iter([dx_dt_color, dy_dt_color, dy_dx_color])
 
-        if data_processing.mode_statuses_dict['T-diagram'][1]:
+        if t_diagram:
             t_trans = x_transform(t, center_point_width, length)
             x_new = transform_to_t_diagram(x, center_point_width, center_point_height, length)
             
@@ -654,8 +644,7 @@ def draw_derivatives(data_processing):
         
 
 
-        else:
-            
+        else:            
             
             # Draw derivatives         
             for angle in [x_der_angle, y_der_angle, spiral_der_angle]:
