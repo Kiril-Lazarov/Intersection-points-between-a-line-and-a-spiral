@@ -68,9 +68,7 @@ class DataProcessing():
         return float(f'{result:.{self.constants.accuracy + 9}f}')
     
     def initialize_mode_status_dict(self):
-        
-         print(self.variables.variables_dict)
-        
+
          self.mode_statuses_dict = {'Coordinates':[self.animation_layers.layers_dict['background_surface'],
                                          self.booleans.booleans_dict['background_mode']],
                           
@@ -136,5 +134,17 @@ class DataProcessing():
         slope = tan(current_a_param)
         
         return round(slope, 14)
+    
+    @property
+    def background_params(self):
+        
+        background_surface = self.animation_layers.layers_dict['background_surface']
+        screen_width = self.constants.screen_width
+        screen_height = self.constants.screen_height
+        length = self.get_curr_param('l')
+
+        center_point = self.get_curr_param('c')
+        
+        return [background_surface, screen_width, screen_height, length, center_point, self.bg_color]
 
   
