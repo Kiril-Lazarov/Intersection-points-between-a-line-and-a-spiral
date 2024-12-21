@@ -408,40 +408,17 @@ def draw_line(line_layer, screen_height, screen_width, half_screen_width, half_s
     
     
 
-def draw_spiral(data_processing):
-    
-    spiral_layer = data_processing.animation_layers.layers_dict['spiral_layer']
+def draw_spiral(spiral_layer, half_screen_width, half_screen_height, 
+                center_point_width, center_point_height, length,
+                deg, t, v, w, k, spiral_coordinates, t_diagram):
+
     spiral_layer.fill((0, 0, 0, 0))
-    
-    # Get current coordinate center point position on the screen    
-    center_point_width, center_point_height = data_processing.get_curr_param('c')
-    
-    half_screen_width, half_screen_height = data_processing.constants.half_screen_width, data_processing.constants.half_screen_height
-    
-    
-    # Current unit length of the coordinate system
-    length = data_processing.get_curr_param('l')
-    
-    # Current spiral degrees
-    deg = data_processing.get_curr_param('deg')
-    
-    # Curr time
-    t = data_processing.get_curr_param('t')
-    
-    # Curr vector velocity
-    v = data_processing.get_curr_param('v')
-    
-    # Curr angular velocity
-    w = data_processing.get_curr_param('w')
-    
-    # Curr initial spiral angle
-    k = data_processing.get_curr_param('k')
 
 
     x_spiral, y_spiral, T = calc_spiral_coord(deg=deg,t=t ,v=v, w=w, k=k)
 
-    data_processing.spiral_coordinates['x'] = x_spiral[-1]
-    data_processing.spiral_coordinates['y'] = y_spiral[-1]
+    spiral_coordinates['x'] = x_spiral[-1]
+    spiral_coordinates['y'] = y_spiral[-1]
 
     # Euclidеan distances list
     rad_vec_distances = np.sqrt(x_spiral**2 + y_spiral**2)
@@ -458,7 +435,7 @@ def draw_spiral(data_processing):
         next_sp_point_x, next_sp_point_y = x_spiral[i+1], y_spiral[i+1]
 
         # Check if the points are within the screen boundaries.
-        if not data_processing.mode_statuses_dict['T-diagram'][1]:
+        if not t_diagram:
             if (0 <=abs(curr_sp_point_x)<=half_screen_width * 2) and \
                (0 <=abs(curr_sp_point_y)<=half_screen_height * 2):
 
@@ -496,7 +473,7 @@ def draw_spiral(data_processing):
                                                                    (next_t_point, next_rad_vec_dist)])
                     
                     
-        if data_processing.mode_statuses_dict['T-diagram'][1]:
+        if t_diagram:
             
             deg_x, deg_y = deg
 
