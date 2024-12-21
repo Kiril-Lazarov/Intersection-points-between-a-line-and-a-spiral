@@ -57,12 +57,12 @@ class DataProcessing():
         
         elif self.mode_statuses_dict['General solution'][1] and param == 'x':
             a = self.slope
-            b = self.constants.line_constants_dict['b'] + self.variables.variables_dict['b']
+            b = self.get_curr_param('b')
             
             a_turn_on = a/X_bin(a)
             b_turn_on = b/X_bin(b)
         
-            return (1- a_turn_on)* b + a_turn_on *b_turn_on* cos(pi/2 - arctan(a)) * (X_bin(-b))/X_bin(a)
+            return (1- a_turn_on)* b + a_turn_on *b_turn_on* cos(pi/2 - abs(arctan(a))) * (X_bin(-b))/X_bin(a)
         
         result = self.constants.constants_dict[param] + self.variables.variables_dict[param]
         return float(f'{result:.{self.constants.accuracy + 9}f}')
@@ -221,6 +221,28 @@ class DataProcessing():
         return [spiral_layer, half_screen_width, half_screen_height, 
                 center_point_width, center_point_height, length,
                 deg, t, v, w, k, spiral_coordinates, t_diagram] 
+    
+    @property
+    def y_intersects_t(self):
+        
+        deg_x, deg_y  =  self.get_curr_param('deg')
+        
+        k = self.get_curr_param('k')
+        w = self.get_curr_param('w')
+        t = self.get_curr_param('t')
+        v = self.get_curr_param('v')
+        x_line = self.get_curr_param('x')
+
+        a = self.slope
+        b = self.get_curr_param('b')
+        
+        steps_change = self.mode_statuses_dict['Steps change'][1]
+        zero_missing_point_mode = self.mode_statuses_dict['Zero missing point'][1]
+        general_solution = self.mode_statuses_dict['General solution'][1]
+        
+        return [deg_x, deg_y , t, v, w, k, x_line, a, b, 
+                steps_change, zero_missing_point_mode,
+                general_solution]
         
    
   
