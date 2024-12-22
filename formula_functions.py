@@ -272,26 +272,16 @@ def get_hide_coeff(deg_x, deg_y, t_nth, w, v,k, x_line):
     return result
 
 
-def get_mth_approximation(data_processing, t_nth , n, i=200, accuracy=5):
+def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                          zero_missing_point_mode, general_solution, t_nth , n, i=200):
 
     if t_nth > 0:
-        
-        zero_missing_point_mode = data_processing.mode_statuses_dict['Zero missing point'][1] 
-        
-        deg_x, deg_y = data_processing.get_curr_param('deg')
-        v = data_processing.get_curr_param('v')
-        w = data_processing.get_curr_param('w')
-        k = np.copy(data_processing.get_curr_param('k'))
-        x_line = data_processing.get_curr_param('x')
-        # a_line = data_processing.slope
-        b_line = data_processing.get_curr_param('b')
         
         n_coeff = get_n_coeff(n)
         opp_n_coeff = 1 - n_coeff
 
         
-        if data_processing.mode_statuses_dict['General solution'][1]:
-            a_slope = data_processing.slope
+        if general_solution:
 
             delta_k_rotated_angle = get_delta_k_rotated(a_slope, b_line, x_line)
 
@@ -303,8 +293,6 @@ def get_mth_approximation(data_processing, t_nth , n, i=200, accuracy=5):
         t_0_main, t_0_zero_alg, combined_t = np.copy(t_nth), np.copy(t_nth), np.copy(t_nth)
         init_theta_angle = k * np.pi/2
 
-        # init_y = get_nth_deg_y_derivative(deg_y, combined_t, v, w, k)
-        
         init_x_derivative = get_nth_deg_x_derivative(deg_x+1, combined_t, v, w, k)
 
         last_t = np.copy(combined_t)
@@ -327,8 +315,6 @@ def get_mth_approximation(data_processing, t_nth , n, i=200, accuracy=5):
 
             cos_delta_phi = (a ** 2 + b**2 - c ** 2)/X_bin((2 * a * b))
 
-
-
             if abs(cos_delta_phi) > 1:
 
                 cos_delta_phi = 1
@@ -336,8 +322,6 @@ def get_mth_approximation(data_processing, t_nth , n, i=200, accuracy=5):
             delta_phi = np.arccos(cos_delta_phi)
 
             WYX_coeff = WYX(x_line, w, curr_y)
-
-        
 
             curr_t = (WYX_coeff * delta_phi) / abs(X_bin(w))
 
