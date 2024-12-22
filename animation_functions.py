@@ -283,16 +283,17 @@ def calc_y_intersects_t(deg_x, deg_y , t, v, w, k, x_line, a, b,
     
     return []
 
-def calc_line_intersections_t(data_processing, t_nth_list) -> list:
+def calc_line_intersections_t(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                              steps_change, zero_missing_point_mode, general_solution, t_nth_list) -> list:
     
-    if not data_processing.mode_statuses_dict['Steps change'][1]:
+    if not steps_change:
         
-
         t_mth_list = []
         
         for index,t_nth in enumerate(t_nth_list):
    
-            curr_t_mth = get_mth_approximation(data_processing, t_nth, index)
+            curr_t_mth = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                                               zero_missing_point_mode, general_solution,t_nth, index)
                 
             t_mth_list.append(curr_t_mth)
 
