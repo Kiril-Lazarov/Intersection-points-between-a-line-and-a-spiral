@@ -223,7 +223,7 @@ class DataProcessing():
                 deg, t, v, w, k, spiral_coordinates, t_diagram] 
     
     @property
-    def y_intersects_t(self):
+    def y_intersects_t_params(self):
         
         deg_x, deg_y  =  self.get_curr_param('deg')
         
@@ -243,6 +243,27 @@ class DataProcessing():
         return [deg_x, deg_y , t, v, w, k, x_line, a, b, 
                 steps_change, zero_missing_point_mode,
                 general_solution]
+    
+    @property
+    def draw_dots_params(self):
+        
+        const_center_point = self.constants.constants_dict['c']
+        var_center_point = self.variables.variables_dict['c']
+
+        length = self.get_curr_param('l')
+
+        deg_x, deg_y = self.get_curr_param('deg')
+        v = self.get_curr_param('v')
+        w = self.get_curr_param('w')
+        k = self.get_curr_param('k')
+
+        t_diagram = self.mode_statuses_dict['T-diagram'][1]
+        
+        mode_statuses_dict = self.mode_statuses_dict
+        
+        return [deg_x, deg_y, v, w, k, length,
+                const_center_point, var_center_point,
+                t_diagram, mode_statuses_dict]
         
    
   
