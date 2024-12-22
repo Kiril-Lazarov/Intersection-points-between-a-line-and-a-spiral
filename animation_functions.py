@@ -494,24 +494,14 @@ def draw_spiral(spiral_layer, half_screen_width, half_screen_height,
                 
                 
                 
-def draw_dots(data_processing, t_list, layer):
+def draw_dots(deg_x, deg_y, v, w, k, length,
+              const_center_point, var_center_point,
+              t_diagram, mode_statuses_dict, t_list, layer):
     
     color = 'black' if layer == 'Y-intersects' else 'purple'
     
-    layer = data_processing.mode_statuses_dict[layer][0]
+    layer = mode_statuses_dict[layer][0]
     layer.fill((0, 0, 0, 0))
-
-    const_center_point = data_processing.constants.constants_dict['c']
-    var_center_point = data_processing.variables.variables_dict['c']
-    
-    length = data_processing.get_curr_param('l')
-    
-    deg_x, deg_y = data_processing.get_curr_param('deg')
-    v = data_processing.get_curr_param('v')
-    w = data_processing.get_curr_param('w')
-    k = data_processing.get_curr_param('k')
-    
-    t_diagram = data_processing.mode_statuses_dict['T-diagram'][1]
     
     center_point_width = const_center_point[0] + var_center_point[0]
     center_point_height = const_center_point[1] + var_center_point[1]
