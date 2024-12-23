@@ -1,5 +1,5 @@
 import pygame 
-from numpy import tan, arctan, cos, pi
+from numpy import tan, arctan, cos, pi, copy
 
 from Data_classes.variables import Variables
 from Data_classes.constants import Constants
@@ -264,6 +264,80 @@ class DataProcessing():
         return [deg_x, deg_y, v, w, k, length,
                 const_center_point, var_center_point,
                 t_diagram, mode_statuses_dict]
+    
+    @property
+    def line_intersections_t_params(self):
+
+        deg_x, deg_y = self.get_curr_param('deg')
+        v = self.get_curr_param('v')
+        w = self.get_curr_param('w')
+        k = self.get_curr_param('k')
+        x_line = self.get_curr_param('x')
+        b_line = self.get_curr_param('b')
         
-   
+        a_slope = self.slope
+        
+        accuracy = self.constants.accuracy
+        
+        steps_change = self.mode_statuses_dict['Steps change'][1]
+        zero_missing_point_mode = self.mode_statuses_dict['Zero missing point'][1] 
+        general_solution = self.mode_statuses_dict['General solution'][1]
+        
+        return [deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                steps_change, zero_missing_point_mode, general_solution]
+    
+    
+    @property
+    def show_steps_params(self):
+        
+        params_layer = self.mode_statuses_dict['Parameters'][0]
+        text_unit = self.constants.text_unit
+        factors_dict = self.variables.factors_dict
+        var_params_dict = self.variables.variables_dict
+        steps_const_params_dict = self.constants.steps_constants_dict 
+        variables_factors_dict = self.variables.factors_dict
+        
+        steps_change = self.mode_statuses_dict['Steps change'][1]
+        
+        return [params_layer, text_unit, factors_dict, var_params_dict,
+                steps_const_params_dict, variables_factors_dict,
+                steps_change]
+    
+    @property
+    def draw_algorithm_params(self):
+        
+        algorithm_layer = self.animation_layers.layers_dict['algorithm_layer']
+        
+        center_point_width, center_point_height = self.get_curr_param('c')
+        screen_width = self.constants.screen_width
+        screen_height = self.constants.screen_height
+        length = self.get_curr_param('l')
+
+        total_n = self.algorithm_vars.algorithm_vars_dict['total_n']
+
+        m = self.algorithm_vars.algorithm_vars_dict['m']
+        n = self.algorithm_vars.algorithm_vars_dict['n']
+
+        line_intersections_t_params = self.line_intersections_t_params
+        
+        del line_intersections_t_params[9]
+        
+        return [algorithm_layer, total_n, n, m, center_point_width, center_point_height,
+                screen_width, screen_height, length] + line_intersections_t_params
+    
+    @property
+    def calc_sigle_t_approxim_params(self):
+        
+        deg_x, deg_y = self.get_curr_param('deg')
+        v = self.get_curr_param('v')
+        w = self.get_curr_param('w')
+        k = self.get_curr_param('k')  
+        
+        length = self.get_curr_param('l')
+        
+        center_point_width, center_point_height = self.get_curr_param('c')
+        screen_width = self.constants.screen_width     
+        
+        return [center_point_width, center_point_height, deg_x, deg_y, length, v, w, k]
+        
   
