@@ -101,6 +101,8 @@ def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, scr
                 i, length, x_line_start,vertical_line_start,
                 vertical_line_end, line_color,font_small,number_y):
     
+    font_height = font_small.get_height()
+    
     
     vertical_line_x_pos = center_point_x + i*length
    
@@ -114,12 +116,12 @@ def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, scr
         #Draw zero
         if i == 0:
             pos_number_text = font_small.render(f'{i}', True, line_color)
-            background_surface.blit(pos_number_text, (vertical_line_x_pos-15,number_y-4))
+            background_surface.blit(pos_number_text, (vertical_line_x_pos-(font_height/1.73) ,number_y-(font_height/6.5)))
 
         else:
             #Draw positive numbers
             pos_number_text = font_small.render(f'{i}', True, line_color)
-            background_surface.blit(pos_number_text, (vertical_line_x_pos-5,number_y-4))
+            background_surface.blit(pos_number_text, (vertical_line_x_pos-(font_height/5.2),number_y-(font_height/6.5)))
 
 
 
@@ -128,8 +130,11 @@ def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, scr
 def draw_x_axis_neg_values(background_surface, center_point_x, screen_width, screen_height,
                             i, length, x_line_start,vertical_line_start, vertical_line_end, line_color,
                            font_small,number_y):
+        
+    font_height = font_small.get_height()
     
     vertical_line_x_neg = center_point_x - i*length
+
     
     if vertical_line_x_neg >= 0:
         #Draw unit lines for negative x-axis
@@ -139,13 +144,15 @@ def draw_x_axis_neg_values(background_surface, center_point_x, screen_width, scr
         if i != 0:
             #Draw negative numbers
             neg_number_text = font_small.render(f'-{i}', True, line_color)
-            background_surface.blit(neg_number_text, (vertical_line_x_neg-12,number_y-4)) 
+            background_surface.blit(neg_number_text, (vertical_line_x_neg-(font_height/2.16),number_y-(font_height/6.5))) 
 
     
     
 def draw_y_axis_pos_values(background_surface, center_point_y, screen_width, screen_height,
                 i, length, y_line_start,horizontal_line_start,
                 horizontal_line_end, line_color,font_small, number_x):
+    
+    font_height = font_small.get_height()
 
     horizontal_line_y_pos = center_point_y - i*length
 
@@ -157,12 +164,14 @@ def draw_y_axis_pos_values(background_surface, center_point_y, screen_width, scr
 
         #Draw positive numbers
         neg_number_text = font_small.render(f'{i}', True, line_color)
-        background_surface.blit(neg_number_text, (number_x-46,horizontal_line_y_pos-4))
+        background_surface.blit(neg_number_text, (number_x-(font_height/0.56),horizontal_line_y_pos-(font_height/6.5)))
         
         
 def draw_y_axis_neg_values(background_surface, center_point_y, screen_width, screen_height,
                 i, length, y_line_start,horizontal_line_start,
                 horizontal_line_end, line_color,font_small, number_x):
+    
+    font_height = font_small.get_height()
     
     horizontal_line_y_neg = center_point_y + i*length
 
@@ -176,7 +185,7 @@ def draw_y_axis_neg_values(background_surface, center_point_y, screen_width, scr
        
         #Draw negative numbers
         neg_number_text = font_small.render(f'-{i}', True, line_color)
-        background_surface.blit(neg_number_text, (number_x-46,horizontal_line_y_neg-4)) 
+        background_surface.blit(neg_number_text, (number_x-(font_height/0.56),horizontal_line_y_neg-(font_height/6.5))) 
 
         
         
