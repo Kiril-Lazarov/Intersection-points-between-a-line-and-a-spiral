@@ -27,8 +27,8 @@ def get_nth_deg_x_derivative(deg,t, v,w,k):
     
     nth_cos_deriv = trig_derivatives_cycle[nth_der]
     nth_sin_deriv = trig_derivatives_cycle[next_nth]
-    
-    result = v * (X_bin(w) ** (deg-1)) * (deg * nth_cos_deriv + w*t * nth_sin_deriv)
+
+    result = v * (X_bin(w) ** (deg-1)) * (deg * nth_cos_deriv + X_bin(w)*t * nth_sin_deriv)
 
     return round(result, 13)
 
@@ -45,7 +45,7 @@ def get_nth_deg_y_derivative(deg, t, v, w, k):
     nth_cos_deriv = trig_derivatives_cycle[nth_der]
     nth_sin_deriv = trig_derivatives_cycle[prev_nth]
     
-    result = v * (X_bin(w) ** (deg-1)) * ( deg *  nth_sin_deriv + w * t * nth_cos_deriv)
+    result = v * (X_bin(w) ** (deg-1)) * ( deg *  nth_sin_deriv + X_bin(w) * t * nth_cos_deriv)
 
     return  round(result, 13)
 
