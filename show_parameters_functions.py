@@ -63,7 +63,8 @@ def show_parameters(data_processing, font_small):
         y = get_nth_deg_y_derivative(deg_y,t, v,w,k)
         
         rad_vec_length = np.sqrt(x**2 + y**2)
-        curr_spiral_angle = np.arccos(x / X_bin(rad_vec_length)) * 180/np.pi
+        # curr_spiral_angle = np.arccos(x / X_bin(rad_vec_length)) * 180/np.pi
+        curr_spiral_angle = t * w * 180/np.pi
         
         text_y += data_processing.constants.text_unit
         
@@ -206,21 +207,19 @@ def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
     
     
     
-def show_steps_variables(data_processing, font_small):
+def show_steps_variables(params_layer, text_unit, factors_dict, var_params_dict,
+                         steps_const_params_dict, variables_factors_dict,
+                         steps_change, font_small):
     
-    if data_processing.mode_statuses_dict['Steps change'][1]:
+    if steps_change:
     
-        params_layer = data_processing.mode_statuses_dict['Parameters'][0]
         params_layer.fill((0, 0, 0, 0))
 
-        factors_dict = data_processing.variables.factors_dict
-        var_params_dict = data_processing.variables.variables_dict
-        steps_const_params_dict = data_processing.constants.steps_constants_dict 
 
-        text_x = data_processing.constants.text_unit
+        text_x = text_unit
         text_y = 4 * text_x
 
-        for param, value in data_processing.variables.factors_dict.items():
+        for param, value in variables_factors_dict.items():
             
             step_const_value = steps_const_params_dict[param]
             total_value = step_const_value * value
@@ -229,4 +228,41 @@ def show_steps_variables(data_processing, font_small):
             text = font_small.render(f'{param_name}: {total_value}', True, (0, 0, 0))
 
             params_layer.blit(text, (text_x, text_y))
-            text_y += data_processing.constants.text_unit
+            text_y += text_unit
+            
+def show_circle_mode_parameters(data_processing, font_small):
+    
+    if data_processing.mode_statuses_dict['Circle layer'][1]:
+        circle_layer = data_processing.mode_statuses_dict['Circle layer'][0]
+        circle_layer.fill((0, 0, 0, 0))
+        
+        accuracy = data_processing.constants.accuracy
+        text_unit = data_processing.constants.text_unit
+        
+        # Curr angular velocity
+        w = data_processing.get_curr_param('w')
+        
+        w_sign = E(w)
+        
+        direction = 'clockwise' if w_sign < 0 else 'anticlockwise'
+
+        # Curr initial spiral angle
+        k = data_processing.get_curr_param('k')
+        
+        text_x = data_processing.constants.text_unit
+        text_y = 8 * text_unit
+        
+        text = font_small.render(f'Direction: {direction}', True, (0, 0, 0))
+        circle_layer.blit(text, (text_x, text_y))
+        text_y += text_unit
+        
+        text = font_small.render(f'k: {k}', True, (0, 0, 0))
+                    
+        circle_layer.blit(text, (text_x, text_y))
+        text_y += text_unit
+        
+        theta_0 = (k) * (np.pi /2) * 180 / np.pi 
+        text = font_small.render(f'Start angle: {theta_0:.{accuracy}f} deg', True, (0, 0, 0))
+        
+        circle_layer.blit(text, (text_x, text_y))
+        
