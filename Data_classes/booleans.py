@@ -18,6 +18,7 @@ class Booleans(Data):
     general_solution_mode = False
     rotated_background_mode = False
     zero_missing_point_mode = False
+    circle_mode = False
     
     update_screen = False
     update_spiral = False
