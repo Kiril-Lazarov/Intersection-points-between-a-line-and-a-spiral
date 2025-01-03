@@ -34,13 +34,17 @@ class AnimationLayers(Data):
     # Shows current status of the switch modes variables
     show_modes_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA) 
 
-    show_algorithm_data_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA) 
+    show_algorithm_data_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA)
+    
+    explanations_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA)
+    
+    circle_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA)
     
     def __init__(self):
         super().__init__()
         self.layers_dict = {}
-        self.excluded_methods_names = [name[0] for name in inspect.getmembers(AnimationLayers, predicate=inspect.isfunction)] + ['_abc_impl']
-
+        self.excluded_methods_names = [name[0] for name in inspect.getmembers(AnimationLayers,       
+                                        predicate=inspect.isfunction)] + ['_abc_impl']
     
     def create_dict(self):        
         
