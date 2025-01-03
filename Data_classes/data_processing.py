@@ -101,13 +101,18 @@ class DataProcessing():
                                     'Derivatives': [self.animation_layers.layers_dict['derivatives_layer'],
                                                  self.booleans.booleans_dict['derivatives_mode']],
                                     
+                                    'Explanations layer': [self.animation_layers.layers_dict['derivatives_layer'], True],
+                                    
                                     'Steps change': [None, self.booleans.booleans_dict['steps_change_mode']],
                                     
                                     'General solution': [None, self.booleans.booleans_dict['general_solution_mode']],
                                     
                                     'Rotated background': [None, self.booleans.booleans_dict['rotated_background_mode']],
                                     
-                                    'Zero missing point': [None, self.booleans.booleans_dict['zero_missing_point_mode']]
+                                    'Zero missing point': [None, self.booleans.booleans_dict['zero_missing_point_mode']],
+                                    
+                                    'Circle layer': [self.animation_layers.layers_dict['circle_layer'], 
+                                                     self.booleans.booleans_dict['circle_mode']],
                                    }
 
     def reset_dicts(self):
