@@ -23,6 +23,7 @@ def handle_line_param_a(a_param):
 
 
 def handle_key_commands(data_processing):
+
     
     if not data_processing.mode_statuses_dict['Steps change'][1]:
       
@@ -38,6 +39,13 @@ def handle_key_commands(data_processing):
 
         # Check for key combinations
         keys = pygame.key.get_pressed()
+        
+            
+        if keys[pygame.K_SPACE]:
+            print('Space')
+            pygame.image.save(data_processing.animation_layers.win, 'fig4.png')
+            pygame.time.delay(1000)
+
 
 
         if keys[pygame.K_z]:
@@ -90,8 +98,8 @@ def handle_key_commands(data_processing):
 
                 updates_dict['update_screen'], updates_dict['update_spiral'],\
                 updates_dict['update_line'], updates_dict['shift_coords'] = True, True, True, True
-
-
+                
+ 
         if not data_processing.mode_statuses_dict['Algorithm mode'][1]:    
 
 
@@ -170,8 +178,8 @@ def handle_key_commands(data_processing):
                 # Decrease spiral radius velocity `v`
                 elif keys[pygame.K_DOWN]:      
                     
-                    possible_v = const_params_dict['v'] + (var_params_dict['v'] - steps_dict_constants['v'] * factors_dict['v'])
-            
+                    possible_v = const_params_dict['v'] + (var_params_dict['v'] - steps_dict_constants['v'] * 
+                                 factors_dict['v'])
                     if possible_v >= 0:
                     
                         var_params_dict['v'] -= steps_dict_constants['v'] * factors_dict['v']
@@ -191,8 +199,9 @@ def handle_key_commands(data_processing):
                 # Decrease time `t`
                 elif keys[pygame.K_DOWN]:  
 
-                    possible_t = const_params_dict['t'] + (var_params_dict['t'] - steps_dict_constants['t'] * factors_dict['t']) 
-           
+                    possible_t = const_params_dict['t'] + (var_params_dict['t'] - steps_dict_constants['t'] * 
+                                 factors_dict['t']) 
+                    
                     if possible_t > 0:
                         var_params_dict['t'] -= steps_dict_constants['t'] * factors_dict['t']
 
@@ -353,7 +362,6 @@ def handle_ctrl_commands(event, data_processing):
                         mode_statuses_dict['Line-intersects'][1] = True
                         
 
-        # if not mode_statuses_dict['Algorithm mode'][1] and not mode_statuses_dict['T-diagram'][1]:
         if not mode_statuses_dict['Algorithm mode'][1]:
             if (mods & pygame.KMOD_CTRL) and event.key == pygame.K_f:
                 data_processing.switch_mode('Steps change')
@@ -381,7 +389,6 @@ def handle_algorithm_mode_controls(event, data_processing, t_mth_aproxim_list):
         data_processing.booleans.update_booleans_dict['update_screen'] = True
         
         if keys[pygame.K_n] and keys[pygame.K_UP]:
-
 
             if n+1 <= total_n-1:
 
@@ -443,7 +450,9 @@ def handle_switch_commands(event, data_processing):
 
                 elif event.key == pygame.K_p:
 
-                    data_processing.switch_mode('Parameters')
+                    # data_processing.switch_mode('Parameters')
+                    data_processing.switch_mode('Modes layer')
+                    
 
                 elif event.key == pygame.K_c:
 
@@ -473,6 +482,20 @@ def handle_switch_commands(event, data_processing):
                     data_processing.switch_mode('Zero missing point')
                     data_processing.booleans.update_booleans_dict['update_screen'] = True
                     data_processing.booleans.update_booleans_dict['update_line'] = True
+                    
+                elif event.key == pygame.K_o:
+                    data_processing.switch_mode('Circle layer')
+                    data_processing.booleans.update_booleans_dict['update_screen'] = True
+                    layer_status = data_processing.mode_statuses_dict['Circle layer'][1]
+                    data_processing.mode_statuses_dict['Explanations layer'][1] = layer_status
+                    data_processing.booleans.update_booleans_dict['update_circle'] = layer_status
+                    
+                    for layer, data in data_processing.mode_statuses_dict.items():
+                        if layer in ['Vertical line', 'Spiral', 'Y-intersects', 'Line-intersects', 
+                                     'Parameters', 'Derivatives']:
+                            data[1] = True if not layer_status else False
+                   
+           
 
                         
                         
