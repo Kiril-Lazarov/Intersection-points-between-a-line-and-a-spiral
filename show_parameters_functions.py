@@ -232,9 +232,9 @@ def show_steps_variables(params_layer, text_unit, factors_dict, var_params_dict,
             
 def show_circle_mode_parameters(data_processing, font_small):
     
-    if data_processing.mode_statuses_dict['Circle layer'][1]:
-        circle_layer = data_processing.mode_statuses_dict['Circle layer'][0]
-        circle_layer.fill((0, 0, 0, 0))
+    if data_processing.mode_statuses_dict['Explanations layer'][1]:
+        explanations_layer = data_processing.mode_statuses_dict['Explanations layer'][0]
+        explanations_layer.fill((0, 0, 0, 0))
         
         accuracy = data_processing.constants.accuracy
         text_unit = data_processing.constants.text_unit
@@ -253,16 +253,16 @@ def show_circle_mode_parameters(data_processing, font_small):
         text_y = 8 * text_unit
         
         text = font_small.render(f'Direction: {direction}', True, (0, 0, 0))
-        circle_layer.blit(text, (text_x, text_y))
+        explanations_layer.blit(text, (text_x, text_y))
         text_y += text_unit
         
         text = font_small.render(f'k: {k}', True, (0, 0, 0))
                     
-        circle_layer.blit(text, (text_x, text_y))
+        explanations_layer.blit(text, (text_x, text_y))
         text_y += text_unit
         
         theta_0 = (k) * (np.pi /2) * 180 / np.pi 
         text = font_small.render(f'Start angle: {theta_0:.{accuracy}f} deg', True, (0, 0, 0))
         
-        circle_layer.blit(text, (text_x, text_y))
+        explanations_layer.blit(text, (text_x, text_y))
         
