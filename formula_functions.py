@@ -185,9 +185,9 @@ def get_delta_theta_plus(k):
 
 
 def get_delta_theta(w, k, zero_missing_point=False):
+    w_bin = w / abs(E(w))
     if not zero_missing_point:
         b_bin = B_bin(np.floor(k) / 2)
-        w_bin = w / abs(E(w))
 
         k_1 = (k - 1) / E(k - 1)
         k_3 = (k - 3) / E(k - 3)
@@ -198,13 +198,13 @@ def get_delta_theta(w, k, zero_missing_point=False):
         final = k_1 * k_3 * (function + addition_term) + (1 - k_1 * k_3) * w / E(w) * 2
         return final * np.pi / 2
 
-        # Delta angle with missing zero point
+    # Delta angle with missing zero point
     W_coeff = W_bin(w)
     B_coeff = B_bin(k)
 
     delta_plus = get_delta_theta_plus(k)
 
-    return W_coeff * B_coeff * (np.pi - 2 * delta_plus) + delta_plus
+    return w_bin*(W_coeff * B_coeff * (np.pi - 2 * delta_plus) + delta_plus)
 
 
 def E(x):
