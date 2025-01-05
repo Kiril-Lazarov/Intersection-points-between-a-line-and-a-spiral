@@ -67,6 +67,12 @@ def get_delta_k_rotated(a, b, x):
 def get_n_coeff(n):
     return n / E(n)
 
+def greater(x):
+    return np.floor((1 + x/abs(E(x)))/2)
+
+def less(x):
+    return np.floor((1 - x/abs(E(x)))/2)
+
 
 def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point_mode, general_solution):
     if general_solution:
@@ -179,9 +185,13 @@ def x_max_line(deg_y, delta_theta, x_line, v, w, k):
 
 
 def get_delta_theta_plus(k):
-    D_coeff = (1 + (-1) ** np.floor(k + 1)) / 2
+    # D_coeff = (1 + (-1) ** np.floor(k + 1)) / 2
 
-    return (np.pi / 2) * (np.floor(k + 1) - k + D_coeff)
+    return (np.pi / 2) * (np.floor(k + 1) - k + B_bin(np.floor(k)/2))
+
+def get_delta_theta_minus(k):
+    
+    return (np.pi / 2) * ( k - np.floor(k) + B_bin(np.floor(k+1)/2))
 
 
 def get_delta_theta(w, k, zero_missing_point=False):
@@ -199,12 +209,17 @@ def get_delta_theta(w, k, zero_missing_point=False):
         return final * np.pi / 2
 
     # Delta angle with missing zero point
-    W_coeff = W_bin(w)
-    B_coeff = B_bin(k)
+    # W_coeff = W_bin(w)
+    # B_coeff = B_bin(k)
 
     delta_plus = get_delta_theta_plus(k)
+    delta_minus = get_delta_theta_minus(k)
+    
+    WPos = greater(w)
+    Wneg = less(w)
 
-    return w_bin*(W_coeff * B_coeff * (np.pi - 2 * delta_plus) + delta_plus)
+    # return w_bin*(W_coeff * B_coeff * (np.pi - 2 * delta_plus) + delta_plus)
+    return (WPos*delta_plus + Wneg * delta_minus)
 
 
 def E(x):
