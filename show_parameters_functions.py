@@ -174,7 +174,7 @@ def show_mode_statuses(data_processing, font_small):
                     text_y = 2*data_processing.constants.text_unit
         
 
-def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
+def show_algorithm_rows_and_cols(data_processing, nth_t, mth_t,  x, y, font_small):
     
     show_algorithm_data_layer = data_processing.mode_statuses_dict['Algorithm data mode'][0]
     show_algorithm_data_layer.fill((0, 0, 0, 0))
@@ -186,6 +186,9 @@ def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
     show_algorithm_data_layer.blit(text, (text_x, text_y))
     text_y += data_processing.constants.text_unit
     
+    n, m = data_processing.algorithm_vars.algorithm_vars_dict['n'],\
+           data_processing.algorithm_vars.algorithm_vars_dict['m']
+    
     for param, value in data_processing.algorithm_vars.algorithm_vars_dict.items():
 
         text = font_small.render(f'{param}: {value}', True, (0, 0, 0))
@@ -195,6 +198,17 @@ def show_algorithm_rows_and_cols(data_processing, x, y, font_small):
         text_y += data_processing.constants.text_unit
     
     text_y += data_processing.constants.text_unit
+    
+    text = font_small.render(f'nth_t {n}: {nth_t}', True, (0, 0, 0))
+    show_algorithm_data_layer.blit(text, (text_x, text_y))
+    
+    text_y += data_processing.constants.text_unit
+    
+    text = font_small.render(f'mth_t {m}: {mth_t}', True, (0, 0, 0))
+    show_algorithm_data_layer.blit(text, (text_x, text_y))
+    
+    text_y +=2* data_processing.constants.text_unit
+    
     
     text = font_small.render(f'Spiral x: {x}', True, (0, 0, 0))
     show_algorithm_data_layer.blit(text, (text_x, text_y))
@@ -250,7 +264,11 @@ def show_circle_mode_parameters(data_processing, font_small):
         k = data_processing.get_curr_param('k')
         
         text_x = data_processing.constants.text_unit
-        text_y = 8 * text_unit
+        text_y = 4 * text_unit
+        
+        text = font_small.render(f'w: {w}', True, (0, 0, 0))
+        explanations_layer.blit(text, (text_x, text_y))
+        text_y += text_unit
         
         text = font_small.render(f'Direction: {direction}', True, (0, 0, 0))
         explanations_layer.blit(text, (text_x, text_y))
