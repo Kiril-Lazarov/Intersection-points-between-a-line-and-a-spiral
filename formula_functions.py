@@ -185,7 +185,7 @@ def x_max_line(deg_y, delta_theta, x_line, v, w, k):
 
 
 def get_delta_theta_plus(k):
-    # D_coeff = (1 + (-1) ** np.floor(k + 1)) / 2
+  
 
     return (np.pi / 2) * (np.floor(k + 1) - k + B_bin(np.floor(k)/2))
 
@@ -208,18 +208,13 @@ def get_delta_theta(w, k, zero_missing_point=False):
         final = k_1 * k_3 * (function + addition_term) + (1 - k_1 * k_3) * w / E(w) * 2
         return final * np.pi / 2
 
-    # Delta angle with missing zero point
-    # W_coeff = W_bin(w)
-    # B_coeff = B_bin(k)
-
     delta_plus = get_delta_theta_plus(k)
     delta_minus = get_delta_theta_minus(k)
     
     WPos = greater(w)
     Wneg = less(w)
 
-    # return w_bin*(W_coeff * B_coeff * (np.pi - 2 * delta_plus) + delta_plus)
-    return (WPos*delta_plus + Wneg * delta_minus)
+    return w_bin*(WPos*delta_plus + Wneg * delta_minus)
 
 
 def E(x):
@@ -280,12 +275,14 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
             # and the x-coordinate of the current spiral radius vector
             c = abs(x_line) - abs(curr_x)
 
-            a = np.sqrt(x_line ** 2 + curr_y ** 2)
+#             a = np.sqrt(x_line ** 2 + curr_y ** 2)
 
-            # Current radius vector
-            b = np.sqrt(curr_x ** 2 + curr_y ** 2)
+#             # Current radius vector
+#             b = np.sqrt(curr_x ** 2 + curr_y ** 2)
 
-            cos_delta_phi = (a ** 2 + b ** 2 - c ** 2) / E((2 * a * b))
+#             cos_delta_phi = (a ** 2 + b ** 2 - c ** 2) / E((2 * a * b))
+            cos_delta_phi = (curr_y**2 + abs(x_line * curr_x)) / np.sqrt((curr_y**2 +x_line**2)*(curr_y**2 + curr_x**2))
+            
 
             if abs(cos_delta_phi) > 1:
                 cos_delta_phi = 1
