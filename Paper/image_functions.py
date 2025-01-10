@@ -32,3 +32,49 @@ def load_images(images):
         """
     html_string += "</div>"
     return HTML(html_string)
+
+def wxy_table():
+    html_table = """
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+        <h3>Table of Signs</h3>
+        <table border="1" style="border-collapse: collapse; text-align: center; width: 50%; font-size: 13px;">
+            <tr>
+                <th></th>
+                <th>$\\omega$</th>
+                <th>$x_l$</th>
+                <th>$y_s(t)$</th>
+                <th>$\\Delta \\phi$</th>        
+            </tr>
+            <tr>
+                <th>$Fig.17$</th>
+                <td>$1$</td>
+                <td>$-1$</td>
+                <td>$1$</td>
+                <td>$1$</td>
+            </tr>
+            <tr>
+                <th>$Fig.18$</th>
+                <td>$-1$</td>
+                <td>$-1$</td>
+                <td>$1$</td>
+                <td>$-1$</td>
+            </tr>
+            <tr>
+                <th>$Fig.19$</th>
+                <td>$1$</td>
+                <td>$-1$</td>
+                <td>$-1$</td>
+                <td>$-1$</td>
+            </tr>
+            <tr>
+                <th>$Fig.20$</th>
+                <td>$-1$</td>
+                <td>$1$</td>
+                <td>$-1$</td>
+                <td>$-1$</td>
+            </tr>
+        </table>
+        Fig.21
+    </div>
+    """
+    return display(HTML(html_table))
