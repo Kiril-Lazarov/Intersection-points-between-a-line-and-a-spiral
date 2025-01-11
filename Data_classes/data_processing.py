@@ -7,7 +7,7 @@ from Data_classes.booleans import Booleans
 from Data_classes.algorithm_variables import AlgorithmVariables
 from Animation_layers.animation_layers import AnimationLayers
 
-from formula_functions import X_bin
+from formula_functions import E
 
 
 class DataProcessing():
@@ -45,6 +45,8 @@ class DataProcessing():
             if boolean and layer is not None:
                 win.blit(layer, (0, 0))
 
+
+
     def get_curr_param(self, param):
         
         if param in ['c', 'deg']:
@@ -59,10 +61,10 @@ class DataProcessing():
             a = self.slope
             b = self.get_curr_param('b')
             
-            a_turn_on = a/X_bin(a)
-            b_turn_on = b/X_bin(b)
+            a_turn_on = a/E(a)
+            b_turn_on = b/E(b)
         
-            return (1- a_turn_on)* b + a_turn_on *b_turn_on* cos(pi/2 - abs(arctan(a))) * (X_bin(-b))/X_bin(a)
+            return (1- a_turn_on)* b + a_turn_on *b_turn_on* cos(pi/2 - abs(arctan(a))) * (E(-b))/E(a)
         
         result = self.constants.constants_dict[param] + self.variables.variables_dict[param]
         return float(f'{result:.{self.constants.accuracy + 9}f}')
@@ -99,10 +101,8 @@ class DataProcessing():
                                                  True],
 
                                     'Derivatives': [self.animation_layers.layers_dict['derivatives_layer'],
-                                                 self.booleans.booleans_dict['derivatives_mode']],
-                                    
-                                    'Explanations layer': [self.animation_layers.layers_dict['derivatives_layer'], True],
-                                    
+                                                 self.booleans.booleans_dict['derivatives_mode']],                         
+                                   
                                     'Steps change': [None, self.booleans.booleans_dict['steps_change_mode']],
                                     
                                     'General solution': [None, self.booleans.booleans_dict['general_solution_mode']],
@@ -111,8 +111,12 @@ class DataProcessing():
                                     
                                     'Zero missing point': [None, self.booleans.booleans_dict['zero_missing_point_mode']],
                                     
+                                    'X_line-X_s diff': [None, self.booleans.booleans_dict['x_l_x_s_diff_mode']],
+                                    
                                     'Circle layer': [self.animation_layers.layers_dict['circle_layer'], 
                                                      self.booleans.booleans_dict['circle_mode']],
+                                    
+                                    'Explanations layer': [self.animation_layers.layers_dict['explanations_layer'], True],
                                    }
 
     def reset_dicts(self):
@@ -287,9 +291,10 @@ class DataProcessing():
         steps_change = self.mode_statuses_dict['Steps change'][1]
         zero_missing_point_mode = self.mode_statuses_dict['Zero missing point'][1] 
         general_solution = self.mode_statuses_dict['General solution'][1]
+        x_l_x_s_diff_mode = self.mode_statuses_dict['X_line-X_s diff'][1]
         
         return [deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                steps_change, zero_missing_point_mode, general_solution]
+                steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode]
     
     
     @property
@@ -319,9 +324,11 @@ class DataProcessing():
         length = self.get_curr_param('l')
 
         total_n = self.algorithm_vars.algorithm_vars_dict['total_n']
+        
+        start_n = self.algorithm_vars.n if self.mode_statuses_dict['Zero missing point'] else 1
 
         m = self.algorithm_vars.algorithm_vars_dict['m']
-        n = self.algorithm_vars.algorithm_vars_dict['n']
+        n = self.algorithm_vars.algorithm_vars_dict['n'] + start_n
 
         line_intersections_t_params = self.line_intersections_t_params
         
