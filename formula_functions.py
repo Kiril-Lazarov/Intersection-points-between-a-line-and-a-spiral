@@ -245,7 +245,7 @@ def get_hide_coeff(deg_x, deg_y, t_nth, w, v, k, x_line):
 
 
 def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                          zero_missing_point_mode, general_solution, t_nth, n, i=200):
+                          zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, t_nth, n, i=200):
     if t_nth > 0:
 
         n_coeff = get_n_coeff(n)
@@ -275,15 +275,17 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
             # and the x-coordinate of the current spiral radius vector
             c = abs(x_line) - abs(curr_x)
 
-#             a = np.sqrt(x_line ** 2 + curr_y ** 2)
+            a = np.sqrt(x_line ** 2 + curr_y ** 2)
 
-#             # Current radius vector
-#             b = np.sqrt(curr_x ** 2 + curr_y ** 2)
+            # Current radius vector
+            b = np.sqrt(curr_x ** 2 + curr_y ** 2)
 
-#             cos_delta_phi = (a ** 2 + b ** 2 - c ** 2) / E((2 * a * b))
-            cos_delta_phi = (curr_y**2 + abs(x_line * curr_x)) / np.sqrt((curr_y**2 +x_line**2)*(curr_y**2 + curr_x**2))
-            
-
+            # cos_delta_phi = (a ** 2 + b ** 2 - c ** 2) / E((2 * a * b))
+            cos_delta_phi = (curr_y**2 + abs(x_line * curr_x)) / E(np.sqrt((curr_y**2 +x_line**2)*(curr_y**2 + curr_x**2)))
+            # sin_sq = np.sin(init_theta_angle + w*t_0_main)**2
+            # cos = np.cos(init_theta_angle + w*t_0_main)
+            # cos_delta_phi = (v*t_0_main * sin_sq + abs(x_line * cos))/(np.sqrt((v*t_0_main)**2 * sin_sq) + x_line**2)
+            # print(cos_delta_phi)
             if abs(cos_delta_phi) > 1:
                 cos_delta_phi = 1
 
@@ -292,8 +294,17 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
             WYX_coeff = WYX(x_line, w, curr_y)
 
             curr_t = (WYX_coeff * delta_phi) / abs(E(w))
+            
+            x_l_x_s_diff_sign = c / abs(E(c))
+            
+            if not x_l_x_s_diff_mode:
+                
+                t_0_main +=  curr_t
+                
+            else:
 
-            t_0_main += (c / abs(E(c))) * curr_t
+                t_0_main += x_l_x_s_diff_sign * curr_t
+            
 
             if not zero_missing_point_mode:
                 ''' Vector-Length Algorithm '''
