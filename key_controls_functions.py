@@ -43,7 +43,7 @@ def handle_key_commands(data_processing):
             
         if keys[pygame.K_SPACE]:
             print('Space')
-            pygame.image.save(data_processing.animation_layers.win, 'fig4.png')
+            pygame.image.save(data_processing.animation_layers.win, 'fig_.png')
             pygame.time.delay(1000)
 
 
@@ -202,7 +202,7 @@ def handle_key_commands(data_processing):
                     possible_t = const_params_dict['t'] + (var_params_dict['t'] - steps_dict_constants['t'] * 
                                  factors_dict['t']) 
                     
-                    if possible_t > 0:
+                    if possible_t >= 0:
                         var_params_dict['t'] -= steps_dict_constants['t'] * factors_dict['t']
 
                         updates_dict['update_screen'], updates_dict['update_spiral'] = True, True
@@ -341,7 +341,8 @@ def handle_ctrl_commands(event, data_processing):
                     # Set the layers to True
                     for mode, (_, boolean) in mode_statuses_dict.items():
                         if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode',
-                                        'Modes layer', 'Steps change', 'General solution', 'Zero missing point']:
+                                        'Modes layer', 'Steps change', 'General solution', 
+                                        'Zero missing point', 'X_line-X_s diff']:
                             if not boolean:
                                 mode_statuses_dict[mode][1] = True 
 
@@ -379,7 +380,7 @@ def handle_algorithm_mode_controls(event, data_processing, t_mth_aproxim_list):
 
     algorithm_variables_dict = data_processing.algorithm_vars.algorithm_vars_dict
 
-    n = algorithm_variables_dict['n']
+    n = algorithm_variables_dict['n'] 
     m = algorithm_variables_dict['m']
     total_n = algorithm_variables_dict['total_n']
 
@@ -450,7 +451,7 @@ def handle_switch_commands(event, data_processing):
 
                 elif event.key == pygame.K_p:
 
-                    # data_processing.switch_mode('Parameters')
+                    data_processing.switch_mode('Parameters')
                     data_processing.switch_mode('Modes layer')
                     
 
@@ -492,8 +493,11 @@ def handle_switch_commands(event, data_processing):
                     
                     for layer, data in data_processing.mode_statuses_dict.items():
                         if layer in ['Vertical line', 'Spiral', 'Y-intersects', 'Line-intersects', 
-                                     'Parameters', 'Derivatives']:
+                                     'Parameters']:
                             data[1] = True if not layer_status else False
+                            
+                elif event.key == pygame.K_1:
+                    data_processing.switch_mode('X_line-X_s diff')
                    
            
 
