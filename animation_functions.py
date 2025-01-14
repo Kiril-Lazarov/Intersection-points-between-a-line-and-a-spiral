@@ -293,7 +293,7 @@ def calc_y_intersects_t(deg_x, deg_y , t, v, w, k, x_line, a, b,
     return []
 
 def calc_line_intersections_t(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                              steps_change, zero_missing_point_mode, general_solution, t_nth_list) -> list:
+                              steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, t_nth_list) -> list:
     
     if not steps_change:
         
@@ -302,7 +302,7 @@ def calc_line_intersections_t(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, ac
         for index,t_nth in enumerate(t_nth_list):
    
             curr_t_mth = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                                               zero_missing_point_mode, general_solution,t_nth, index)
+                                               zero_missing_point_mode, general_solution,x_l_x_s_diff_mode, t_nth, index)
                 
             t_mth_list.append(curr_t_mth)
 
@@ -547,10 +547,10 @@ def draw_derivatives(layer, center_point_width, center_point_height,
                     length, deg_x, deg_y, t, v, w, k,
                     screen_width, screen_height, t_diagram,
                     derivative, derivative_slopes):  
-
+    layer.fill((0, 0, 0, 0))
     if derivative:
 
-        layer.fill((0, 0, 0, 0))
+        
 
 
         dx_dt_color = (255, 0, 0)
@@ -571,7 +571,7 @@ def draw_derivatives(layer, center_point_width, center_point_height,
         dy_dt = get_nth_deg_y_derivative(deg_y+1, t, v, w, k)
         
         # Spiral derivative
-        dy_dx = dy_dt/ X_bin(dx_dt)
+        dy_dx = dy_dt/ E(dx_dt)
         
 
         x_der_angle = np.arctan(dx_dt)
@@ -619,17 +619,28 @@ def draw_derivatives(layer, center_point_width, center_point_height,
                 pygame.draw.aalines(layer, next(colors),  False, [(back_xx, back_xy), (front_xx, front_xy)])
                 
             pygame.draw.circle(layer, color='purple', center=(x, y), radius=4)
+            
+def get_angle(slope, degrees = False):
+    if slope == 'inf':
+        if degrees:
+            return 90
+        return np.pi/2
+    if degrees:
+        return np.arctan(slope) * 180/np.pi
+    return np.arctan(slope)
 
         
 def show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line, 
-                            t_mth_aproxim_list, m, color, general_solution, draw_leg_and_hip=False):
+                            t_mth_aproxim_list, m, color, general_solution, x_l_x_s_diff_mode, draw_leg_and_hip=False):
 
     curr_t = t_mth_aproxim_list[m]
 
     x, y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, curr_t)
 
     start_pos, end_pos = (center_point_width, center_point_height), (x, y)
+    
+    x_line = x_transform(x_line, center_point_width, length)
 
     draw_vector(algorithm_layer, start_pos, end_pos, color=color)
     
@@ -642,17 +653,43 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
   
         if m+1 <= len(t_mth_aproxim_list):
           
-
+            
             if not general_solution:
-           
-                x_line = x_transform(x_line, center_point_width, length)
+                if not x_l_x_s_diff_mode:
+                    rad_vec_x, rad_vec_y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, curr_t, transform=False)
+                    next_rad_vec_x, next_rad_vec_y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, next_t, transform=False) 
+                    
+                    slope = next_rad_vec_y/E(next_rad_vec_x)
+                    angle = get_angle(slope)
+                    
+                    long_side = abs(rad_vec_y)/np.cos(np.pi/2 - abs(angle))
+                    long_side_x = next_rad_vec_x/abs(E(next_rad_vec_x))*   long_side * np.cos(abs(angle))
+                    long_side_y = next_rad_vec_y/abs(E(next_rad_vec_y))*long_side * np.sin(angle)
+                    
+                    long_side_x = x_transform(long_side_x, center_point_width, length)
+                    long_side_y = y_transform(long_side_y, center_point_height, length)
+                    
+                    # Draw horizontal leg
+                    pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(x, y), (long_side_x, y)])
+
+                    # Draw a part of the hipotenuse
+                    pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(next_x, next_y), (long_side_x, y)])
+                    
+       
+                  
+                    pygame.draw.circle(algorithm_layer, color='green', center=(long_side_x, y), radius=4)
+                    
+
+                else:
+                    
+
+                    # Draw horizontal leg
+                    pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(x, y), (x_line, y)])
+
+                    # Draw a part of the hipotenuse
+                    pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(next_x, next_y), (x_line, y)])
+                    
                 
-
-                # Draw horizontal leg
-                pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(x, y), (x_line, y)])
-
-                # Draw a part of the hipotenuse
-                pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(next_x, next_y), (x_line, y)])
 
                 # A point on the spiral curve
                 pygame.draw.circle(algorithm_layer, color='red', center=(next_x, next_y), radius=4)
@@ -661,20 +698,25 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
                 pygame.draw.circle(algorithm_layer, color='blue', center=(x_line, y), radius=4)
                 
             else:
-
-                x, y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, curr_t, transform=False)
-
-                next_x, next_y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, next_t, transform=False)
-       
-                curr_vec_slope = next_y/X_bin(next_x)
+          
+                x, y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k,    
+                                             curr_t, transform=False)
                 
-                x_intersect = -b_line/X_bin(a_slope- curr_vec_slope)
+                next_x, next_y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, 
+                                                       k, next_t, transform=False)
+                curr_vec_slope = next_y/E(next_x)
+                
+                x_intersect = -b_line/E(a_slope- curr_vec_slope)
                 y_intersect = curr_vec_slope * x_intersect
             
-                x, x_intersect = x_transform(x, center_point_width,length), x_transform(x_intersect, center_point_width,length)
-                y, y_intersect = y_transform(y, center_point_height,length), y_transform(y_intersect, center_point_height,length)
-                next_x, next_y = x_transform(next_x, center_point_width,length), y_transform(next_y, center_point_height,length)
-      
+                x, x_intersect = x_transform(x, center_point_width,length), x_transform(x_intersect, 
+                                             center_point_width,length)
+                
+                y, y_intersect = y_transform(y, center_point_height,length), y_transform(y_intersect, 
+                                             center_point_height,length)
+                
+                next_x, next_y = x_transform(next_x, center_point_width,length), y_transform(next_y, 
+                                             center_point_height,length)
                 
                 # Draw horizontal leg
                 pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(x, y), (x_intersect, y_intersect)])
@@ -691,7 +733,7 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
         
 def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, center_point_height,
                          screen_width, screen_height, length, deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                         zero_missing_point_mode, general_solution, t_nth_list, t_mth_aproxim_list,
+                         zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, t_nth_list, t_mth_aproxim_list,
                          curr_rad_vec_color='black', 
                          previous_rad_vec_color='lightgreen'):
 
@@ -711,19 +753,19 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
         if not t_mth_aproxim_list:
            
             first_intersect_t = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                                                      zero_missing_point_mode, general_solution, y_intersect_t, 0, i=1)
+                                                      zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, y_intersect_t, 0, i=1)
             t_mth_aproxim_list.append(first_intersect_t)
             
             # Show current radius-vector
             show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                     screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,  
-                                    t_mth_aproxim_list, m, curr_rad_vec_color, general_solution)
+                                    t_mth_aproxim_list, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
         else:
             if m +1 > len(t_mth_aproxim_list):
                 
                 
                 next_t = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                                               zero_missing_point_mode, general_solution, y_intersect_t, n, 
+                                               zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, y_intersect_t, n, 
                                                i=m+1)
                 t_mth_aproxim_list.append(next_t)
                 
@@ -731,13 +773,13 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
                 if m -1>= 0:
 
                     show_radius_vector_step(algorithm_layer, center_point_width, center_point_height,  
-                                            screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,
-                                            t_mth_aproxim_list, m-1, previous_rad_vec_color, general_solution, draw_leg_and_hip=True)
-                
+                                            screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, 
+                                            b_line, t_mth_aproxim_list, m-1, previous_rad_vec_color, general_solution,  
+                                            x_l_x_s_diff_mode, draw_leg_and_hip=True)
 
                 # Show current radius-vector
                 show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
-                                        screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,                                                                   t_mth_aproxim_list, m, curr_rad_vec_color, general_solution)
+                                        screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,                                                                   t_mth_aproxim_list, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
                 
             else:
               
@@ -746,12 +788,12 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
 
                     show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,
-                                            t_mth_aproxim_list, m-1, previous_rad_vec_color, general_solution, draw_leg_and_hip=True)
+                                            t_mth_aproxim_list, m-1, previous_rad_vec_color, general_solution, x_l_x_s_diff_mode, draw_leg_and_hip=True)
 
                 # Show current radius-vector
                 show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                         screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line,a_slope, b_line, 
-                                        t_mth_aproxim_list, m, curr_rad_vec_color, general_solution)
+                                        t_mth_aproxim_list, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
 
     return t_mth_aproxim_list, total_n
 
@@ -777,5 +819,40 @@ def draw_vector(layer, start_pos, end_pos, color=(255, 255, 255)):
  
     pygame.draw.aaline(layer, color, end_pos, arrow1)
     pygame.draw.aaline(layer, color, end_pos, arrow2)
+    
+def draw_circle_and_vector(data_processing, font_small):
+    
+    circle_layer = data_processing.mode_statuses_dict['Circle layer'][0]
+    circle_layer.fill((0, 0, 0, 0))
+    
+    if data_processing.mode_statuses_dict['Circle layer'][1]:
+    
+        center_point_width, center_point_height = data_processing.get_curr_param('c')
+
+        length = data_processing.get_curr_param('l') 
+
+        k = data_processing.get_curr_param('k')
+        
+        w = data_processing.get_curr_param('w')
+        
+        theta_0 = k * (np.pi/2)
+
+        pygame.draw.circle(circle_layer, color='green', center=(center_point_width, center_point_height), 
+                           radius=length, width=1)
+        
+        start_pos = (center_point_width, center_point_height)
+        end_pos = (center_point_width+length*np.cos(theta_0), center_point_height-length*np.sin(theta_0)) 
+        
+        draw_vector(circle_layer, start_pos, end_pos,color='black')
+        
+        # delta_theta = get_delta_theta(w, k, zero_missing_point=True) - np.pi/2
+        
+        delta_theta = get_delta_theta(w, k, zero_missing_point=True)
+        
+        theta_0 += delta_theta
+        
+        end_pos = (center_point_width+length*np.cos(theta_0), center_point_height-length*np.sin(theta_0)) 
+     
+        draw_vector(circle_layer, start_pos, end_pos,color='red')
 
     
