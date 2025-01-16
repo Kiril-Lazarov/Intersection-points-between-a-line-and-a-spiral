@@ -78,3 +78,37 @@ def wxy_table():
     </div>
     """
     return display(HTML(html_table))
+
+def intervals_table():
+    html_table = r"""
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+        <h3>Table of Intervals</h3>
+        <table border="1" style="border-collapse: collapse; text-align: center; width: 70%; font-size: 13px;">
+            <tr>
+                <th>Interval</th>
+                <th>$$(-\infty; x_{pr})$$</th>
+                <th>$(x_{pr};x_{pmd})$</th>
+                <th>$(x_{pmd};0)$</th>
+                 
+            </tr>
+            <tr>
+                <th>$S_{(|x_l| - |x_s(t_{[n; m-1]})|)}$</th>
+                <td>1</td>
+                <td>$-1$</td>
+                <td>$-1;1$</td>
+         
+            </tr>
+            <tr>
+                <th>$\left\{ t_{[n; m]} \right\}$</th>
+                <td>$\text{Monotonically } \nearrow$</td>
+                <td>$\text{Monotonically } \searrow$</td>
+                <td>$\text{Oscillating } \sim$</td>
+              
+            </tr>
+     
+         
+        </table>
+        Fig.49
+    </div>
+    """
+    return display(HTML(html_table))
