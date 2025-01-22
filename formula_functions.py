@@ -311,8 +311,12 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
 
                 XLN_coeff = XLN(n, k, x_line, w, v, deg_x)
                 opp_XLN_coeff = 1 - XLN_coeff
-
-                VL = (abs(x_line) * np.sqrt(1 + (curr_y / E(curr_x)) ** 2)) / E(v)
+                phi = np.arctan(abs(curr_y/E(curr_x)))
+                # VL = (abs(x_line) * np.sqrt(1 + (curr_y / E(curr_x)) ** 2)) / E(v)
+                VL = abs(x_line)/ (np.cos(phi)* E(v))
+                
+                
+                # print('VL: ', )
 
                 combined_t = opp_n_coeff * VL + opp_XLN_coeff * n_coeff * turn_on_angular_alg * t_0_main + \
                              n_coeff * XLN_coeff * VL
