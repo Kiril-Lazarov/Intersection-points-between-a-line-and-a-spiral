@@ -632,14 +632,14 @@ def get_angle(slope, degrees = False):
         
 def show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line, 
-                            t_mth_aproxim_list, m, color, general_solution, x_l_x_s_diff_mode, draw_leg_and_hip=False):
+                            t_mth_aproxim_list, n, m, color, general_solution, x_l_x_s_diff_mode, draw_leg_and_hip=False):
 
     curr_t = t_mth_aproxim_list[m]
 
     x, y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, curr_t)
 
     start_pos, end_pos = (center_point_width, center_point_height), (x, y)
-    
+    x_line_1 = np.copy(x_line)
     x_line = x_transform(x_line, center_point_width, length)
 
     draw_vector(algorithm_layer, start_pos, end_pos, color=color)
@@ -656,6 +656,7 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
             
             if not general_solution:
                 if not x_l_x_s_diff_mode:
+                   
                     rad_vec_x, rad_vec_y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, curr_t, transform=False)
                     next_rad_vec_x, next_rad_vec_y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, next_t, transform=False) 
                     
@@ -677,28 +678,35 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
                     
        
                   
-                    pygame.draw.circle(algorithm_layer, color='green', center=(long_side_x, y), radius=4)
+                    # pygame.draw.circle(algorithm_layer, color='green', center=(long_side_x, y), radius=4)
                     
 
                 else:
-                    
-
+                  
+                    if n == 0:
+                        
+                        x_1, y_1 = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, curr_t, transform=False)
+                        angle = abs(np.arctan(y_1/x_1))                      
+                        
+                
+                        shifted_y = y_1/abs(E(y_1)) * np.tan(angle) * abs(x_line_1) 
+                        shifted_y = y_transform(shifted_y, center_point_height, length)
+                
                     # Draw horizontal leg
-                    pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(x, y), (x_line, y)])
+                    pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(x, y), (x_line, shifted_y)])
 
                     # Draw a part of the hipotenuse
-                    pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(next_x, next_y), (x_line, y)])
-                    
-                
+                    pygame.draw.aalines(algorithm_layer, '#F2D9B2',  False, [(next_x, next_y), (x_line, shifted_y)])
+                   
 
                 # A point on the spiral curve
                 pygame.draw.circle(algorithm_layer, color='red', center=(next_x, next_y), radius=4)
 
                 # A crosspoint between horizontal leg and the hipotenuse 
-                pygame.draw.circle(algorithm_layer, color='blue', center=(x_line, y), radius=4)
+                pygame.draw.circle(algorithm_layer, color='blue', center=(x_line, shifted_y), radius=4)
                 
             else:
-          
+                # print('4')
                 x, y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k,    
                                              curr_t, transform=False)
                 
@@ -751,6 +759,7 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
     
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
+       
            
             first_intersect_t = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
                                                       zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, y_intersect_t, 0, i=1)
@@ -759,11 +768,11 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
             # Show current radius-vector
             show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                     screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,  
-                                    t_mth_aproxim_list, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
+                                    t_mth_aproxim_list,  n, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
         else:
             if m +1 > len(t_mth_aproxim_list):
                 
-                
+            
                 next_t = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
                                                zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, y_intersect_t, n, 
                                                i=m+1)
@@ -771,29 +780,29 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
                 
                 # Show previous radius vector if it exists
                 if m -1>= 0:
-
+               
                     show_radius_vector_step(algorithm_layer, center_point_width, center_point_height,  
                                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, 
-                                            b_line, t_mth_aproxim_list, m-1, previous_rad_vec_color, general_solution,  
+                                            b_line, t_mth_aproxim_list,  n, m-1, previous_rad_vec_color, general_solution, 
                                             x_l_x_s_diff_mode, draw_leg_and_hip=True)
-
+       
                 # Show current radius-vector
                 show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
-                                        screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,                                                                   t_mth_aproxim_list, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
+                                        screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,                                                                   t_mth_aproxim_list,  n, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
                 
             else:
               
                 # Show previous radius vector if it exists
                 if m -1>= 0:
-
+           
                     show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,
-                                            t_mth_aproxim_list, m-1, previous_rad_vec_color, general_solution, x_l_x_s_diff_mode, draw_leg_and_hip=True)
-
+                                            t_mth_aproxim_list,  n, m-1, previous_rad_vec_color, general_solution, x_l_x_s_diff_mode, draw_leg_and_hip=True)
+         
                 # Show current radius-vector
                 show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                         screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line,a_slope, b_line, 
-                                        t_mth_aproxim_list, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
+                                        t_mth_aproxim_list,  n, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
 
     return t_mth_aproxim_list, total_n
 
