@@ -34,6 +34,7 @@ class DataProcessing():
         self.derivative_slopes = {'dx_dt': 0, 'dy_dt': 0, 'dy_dx': 0}
         self.spiral_coordinates = {'x': 0, 'y': 0}
         self.initialize_mode_status_dict()
+        self.initialize_reduct_funcs_dict()
          
         self.variable_dict_objects = [self.variables, self.booleans, self.constants, self.algorithm_vars]
 
@@ -68,6 +69,14 @@ class DataProcessing():
         
         result = self.constants.constants_dict[param] + self.variables.variables_dict[param]
         return float(f'{result:.{self.constants.accuracy + 9}f}')
+    
+    def initialize_reduct_funcs_dict(self):
+        
+        self.reduct_funcs_dict = {'K_sign': 0,
+                                  'N_switch':0,
+                                  '~N_switch': 1,
+                                   'n': 0,
+                                   'm': 0 }
     
     def initialize_mode_status_dict(self):
 
@@ -251,9 +260,11 @@ class DataProcessing():
         zero_missing_point_mode = self.mode_statuses_dict['Zero missing point'][1]
         general_solution = self.mode_statuses_dict['General solution'][1]
         
+        reduct_funcs_dict = self.reduct_funcs_dict
+        
         return [deg_x, deg_y , t, v, w, k, x_line, a, b, 
                 steps_change, zero_missing_point_mode,
-                general_solution]
+                general_solution, reduct_funcs_dict]
     
     @property
     def draw_dots_params(self):
@@ -294,9 +305,10 @@ class DataProcessing():
         zero_missing_point_mode = self.mode_statuses_dict['Zero missing point'][1] 
         general_solution = self.mode_statuses_dict['General solution'][1]
         x_l_x_s_diff_mode = self.mode_statuses_dict['X_line-X_s diff'][1]
+        reduct_funcs_dict = self.reduct_funcs_dict
         
         return [deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode]
+                steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict]
     
     
     @property
@@ -331,6 +343,7 @@ class DataProcessing():
 
         m = self.algorithm_vars.algorithm_vars_dict['m']
         n = self.algorithm_vars.algorithm_vars_dict['n'] + start_n
+
 
         line_intersections_t_params = self.line_intersections_t_params
         
