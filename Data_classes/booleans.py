@@ -12,6 +12,7 @@ class Booleans(Data):
     y_axis_intersects_mode = True
     line_intersects_mode = True
     algorithm_data_mode = True
+    equation_mode = False
     parameters_mode = True 
     t_diagram_mode = False
     steps_change_mode = False
@@ -19,10 +20,12 @@ class Booleans(Data):
     rotated_background_mode = False
     zero_missing_point_mode = False
     circle_mode = False
+    x_l_x_s_diff_mode = True
     
     update_screen = False
     update_spiral = False
     update_line = False
+    update_circle = False
     reset_background = False
     is_t_diagram_change = False
     is_turn_off = None
