@@ -81,7 +81,9 @@ class DataProcessing():
                                                   self.booleans.booleans_dict['algorithm_data_mode']],
                           
                                     'T-diagram': [None,  self.booleans.booleans_dict['t_diagram_mode']],
-
+                                    
+                                    'Equation mode': [self.animation_layers.layers_dict['show_modes_layer'],    
+                                                      self.booleans.booleans_dict['equation_mode']],
                                     'Vertical line': [self.animation_layers.layers_dict['vertical_line_layer'],
                                                     self.booleans.booleans_dict['vertical_line_mode']],
 
@@ -153,7 +155,7 @@ class DataProcessing():
         length = self.get_curr_param('l')
 
         center_point = self.get_curr_param('c')
-        
+   
         return [background_surface, screen_width, screen_height, length, center_point, self.bg_color]
     
     @property
