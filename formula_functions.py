@@ -74,51 +74,6 @@ def less(x):
     return np.floor((1 - x/abs(E(x)))/2)
 
 
-def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point_mode, general_solution):
-    if general_solution:
-        k = np.copy(k)
-
-        delta_k_rotated_angle = get_delta_k_rotated(a, b, x_line)
-
-        k += delta_k_rotated_angle
-
-    delta_theta = get_delta_theta(w, k, zero_missing_point=zero_missing_point_mode)
-
-    if zero_missing_point_mode:
-        if n == 0:
-            n += 1
-
-        return (delta_theta + (n - 1) * np.pi) / abs(E(w))
-
-    zero_y_t = abs(x_line / E(v))
-
-    # deg_x, deg_y  =  data_processing.get_curr_param('deg')
-
-    kwx_coeff = KWX_line(k, w, x_line)
-    k_sign = K_sign(k, x_line)
-
-    n_coeff = get_n_coeff(n)
-    opp_n_coeff = 1 - n_coeff
-
-    # The x-derivative at t=0
-    x_der_t0 = get_nth_deg_x_derivative(deg_x + 1, 0, v, w, k)
-
-    # The x-derivative at the zero y-intersection point
-    x_der_y_zero = get_nth_deg_x_derivative(deg_x + 1, zero_y_t, v, w, k)
-
-    is_der_changed = derivative_change(x_der_t0, x_der_y_zero)
-
-    # The length of the first y-intersection point radius vector
-    x_max_dist = x_max_line(deg_y, delta_theta, x_line, v, w, k)
-
-    # The length of the nth y-component if the radius vector + pi/2 rotation
-    XLN_coeff = XLN(n, k, x_line, w, v, deg_x)
-    opp_XLN_coeff = 1 - XLN_coeff
-
-    result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
-             + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
-
-    return result
 
 
 def XLN(n, k, x_line, w, v, deg_x):
@@ -243,9 +198,64 @@ def get_hide_coeff(deg_x, deg_y, t_nth, w, v, k, x_line):
 
     return result
 
+def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point_mode, general_solution, reduct_funcs_dict):
+    if general_solution:
+        k = np.copy(k)
+
+        delta_k_rotated_angle = get_delta_k_rotated(a, b, x_line)
+
+        k += delta_k_rotated_angle
+
+    delta_theta = get_delta_theta(w, k, zero_missing_point=zero_missing_point_mode)
+
+    if zero_missing_point_mode:
+        if n == 0:
+            n += 1
+
+        return (delta_theta + (n - 1) * np.pi) / abs(E(w))
+
+    zero_y_t = abs(x_line / E(v))
+
+    # deg_x, deg_y  =  data_processing.get_curr_param('deg')
+
+    kwx_coeff = KWX_line(k, w, x_line)
+    k_sign = K_sign(k, x_line)
+    
+    reduct_funcs_dict['K_sign'] = k_sign
+  
+
+    n_coeff = get_n_coeff(n)
+    opp_n_coeff = 1 - n_coeff
+    
+    reduct_funcs_dict['N_switch'] = n_coeff
+    reduct_funcs_dict['~N_switch'] = opp_n_coeff
+
+    # The x-derivative at t=0
+    x_der_t0 = get_nth_deg_x_derivative(deg_x + 1, 0, v, w, k)
+
+    # The x-derivative at the zero y-intersection point
+    x_der_y_zero = get_nth_deg_x_derivative(deg_x + 1, zero_y_t, v, w, k)
+
+    is_der_changed = derivative_change(x_der_t0, x_der_y_zero)
+
+    # The length of the first y-intersection point radius vector
+    x_max_dist = x_max_line(deg_y, delta_theta, x_line, v, w, k)
+
+    # The length of the nth y-component if the radius vector + pi/2 rotation
+    XLN_coeff = XLN(n, k, x_line, w, v, deg_x)
+    opp_XLN_coeff = 1 - XLN_coeff
+
+    # result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
+    #          + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
+    
+    result = (k_sign + kwx_coeff)*opp_n_coeff * zero_y_t + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
+
+    return result
+
+
 
 def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                          zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, t_nth, n, i=200):
+                          zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, t_nth, n, i=200):
     if t_nth > 0:
 
         n_coeff = get_n_coeff(n)
