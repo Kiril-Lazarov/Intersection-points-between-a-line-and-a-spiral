@@ -33,6 +33,8 @@ def handle_key_commands(data_processing):
         var_params_dict = data_processing.variables.variables_dict
         steps_dict_constants = data_processing.constants.steps_constants_dict
         factors_dict = data_processing.variables.factors_dict
+        
+        # unit_scaler = data_processing.variables.unit_scaler
 
 
         updates_dict['shift_coords'] = False    
@@ -67,7 +69,6 @@ def handle_key_commands(data_processing):
 
                 updates_dict['update_screen'], updates_dict['update_spiral'],\
                 updates_dict['update_line'], updates_dict['shift_coords'] = True, True, True, True
-
 
         elif keys[pygame.K_h]:
 
@@ -330,6 +331,9 @@ def handle_ctrl_commands(event, data_processing):
                 if not mode_statuses_dict['T-diagram'][1]:
                     init_state = mode_statuses_dict['Algorithm mode'][1]
                     mode_statuses_dict['Algorithm mode'][1] = False if init_state else True
+                    
+                    if not mode_statuses_dict['Algorithm mode'][1]:
+                        mode_statuses_dict['Equation mode'][1] = False
 
                     if init_state:
                         updates_dict['is_turn_off'] = True
@@ -342,7 +346,7 @@ def handle_ctrl_commands(event, data_processing):
                     for mode, (_, boolean) in mode_statuses_dict.items():
                         if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode',
                                         'Modes layer', 'Steps change', 'General solution', 
-                                        'Zero missing point', 'X_line-X_s diff']:
+                                        'Zero missing point', 'X_line-X_s diff', 'Equation mode']:
                             if not boolean:
                                 mode_statuses_dict[mode][1] = True 
 
@@ -498,6 +502,14 @@ def handle_switch_commands(event, data_processing):
                             
                 elif event.key == pygame.K_1:
                     data_processing.switch_mode('X_line-X_s diff')
+            
+            else:
+            
+                if event.key == pygame.K_e:
+                
+                    if data_processing.mode_statuses_dict['Algorithm mode'][1]:
+                     
+                        data_processing.switch_mode('Equation mode')
                    
            
 
