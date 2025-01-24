@@ -147,6 +147,18 @@ def show_parameters(data_processing, font_small):
 
 def show_mode_statuses(data_processing, font_small):
     
+    algorithm_vars_dict = data_processing.algorithm_vars.algorithm_vars_dict
+    
+    reduct_funcs_dict = data_processing.reduct_funcs_dict
+    
+    reduct_funcs_dict['n'] = algorithm_vars_dict['n']
+    reduct_funcs_dict['m'] = algorithm_vars_dict['m']
+    
+        
+    reduct_funcs_dict['N_switch'] = get_n_coeff(reduct_funcs_dict['n'])
+
+    reduct_funcs_dict['~N_switch'] = 1 - reduct_funcs_dict['N_switch']
+    
     show_modes_layer = data_processing.mode_statuses_dict['Modes layer'][0]
     
     text_x = data_processing.constants.text_unit
@@ -183,12 +195,16 @@ def show_mode_statuses(data_processing, font_small):
     else:
         show_modes_layer.fill((0, 0, 0, 0))
 
-        expression = f'Expression'
+        expression = f'{reduct_funcs_dict}'
+        
+        expression_pixels_count = (len(expression) * data_processing.constants.text_unit)/2
+        
+        half_space_lefted = (data_processing.constants.screen_width - expression_pixels_count)/2
 
         text = font_small.render(expression, True, (0, 0, 0))
 
 
-        show_modes_layer.blit(text, (text_x, text_y))
+        show_modes_layer.blit(text, (half_space_lefted, text_y))
         
         
 
