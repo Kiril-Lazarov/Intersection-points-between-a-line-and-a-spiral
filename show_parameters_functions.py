@@ -16,6 +16,8 @@ def show_parameters(data_processing, font_small):
 
         text_x = data_processing.constants.text_unit
         text_y = 4*data_processing.constants.text_unit
+        # text_y = data_processing.constants.text_unit
+        
 
         text = font_small.render('Spiral parameters:', True, (0, 0, 0))
                     
@@ -145,33 +147,49 @@ def show_parameters(data_processing, font_small):
 
 def show_mode_statuses(data_processing, font_small):
     
-    if data_processing.mode_statuses_dict['Modes layer'][1]:
-        
-        show_modes_layer = data_processing.mode_statuses_dict['Modes layer'][0]
+    show_modes_layer = data_processing.mode_statuses_dict['Modes layer'][0]
+    
+    text_x = data_processing.constants.text_unit
+    text_y = data_processing.constants.text_unit
+    
+    if not data_processing.mode_statuses_dict['Equation mode'][1]:
+    
+        if data_processing.mode_statuses_dict['Modes layer'][1]:
+
+            
+            show_modes_layer.fill((0, 0, 0, 0))
+
+
+
+            for mode, status in data_processing.mode_statuses_dict.items():
+
+                if mode not in ['Algorithm data mode','Modes layer']:
+
+                    statement = 'On' if status[1] else 'Off'
+                    expression = f'{mode}: {statement}'
+
+                    text = font_small.render(expression, True, (0, 0, 0))
+
+
+                    show_modes_layer.blit(text, (text_x, text_y))
+
+                    x_text_displacement = len(mode) * 12 + 25
+
+                    text_x += x_text_displacement
+
+                    if mode == 'Parameters':
+                        text_x = data_processing.constants.text_unit
+                        text_y = 2*data_processing.constants.text_unit
+    else:
         show_modes_layer.fill((0, 0, 0, 0))
 
-        text_x = data_processing.constants.text_unit
-        text_y = data_processing.constants.text_unit
+        expression = f'Expression'
 
-        for mode, status in data_processing.mode_statuses_dict.items():
-
-            if mode not in ['Algorithm data mode','Modes layer']:
-
-                statement = 'On' if status[1] else 'Off'
-                expression = f'{mode}: {statement}'
-
-                text = font_small.render(expression, True, (0, 0, 0))
+        text = font_small.render(expression, True, (0, 0, 0))
 
 
-                show_modes_layer.blit(text, (text_x, text_y))
-
-                x_text_displacement = len(mode) * 12 + 25
-
-                text_x += x_text_displacement
-                
-                if mode == 'Derivatives':
-                    text_x = data_processing.constants.text_unit
-                    text_y = 2*data_processing.constants.text_unit
+        show_modes_layer.blit(text, (text_x, text_y))
+        
         
 
 def show_algorithm_rows_and_cols(data_processing, nth_t, mth_t,  x, y, font_small):
@@ -180,7 +198,9 @@ def show_algorithm_rows_and_cols(data_processing, nth_t, mth_t,  x, y, font_smal
     show_algorithm_data_layer.fill((0, 0, 0, 0))
     
     text_x = data_processing.constants.text_unit
-    text_y = 22 * data_processing.constants.text_unit
+    text_y = 15 * data_processing.constants.text_unit
+    # text_y = 12 * data_processing.constants.text_unit
+    
     
     text = font_small.render('Algorithm approximations:', True, (0, 0, 0))
     show_algorithm_data_layer.blit(text, (text_x, text_y))
