@@ -35,6 +35,7 @@ class DataProcessing():
         self.spiral_coordinates = {'x': 0, 'y': 0}
         self.initialize_mode_status_dict()
         self.initialize_reduct_funcs_dict()
+ 
          
         self.variable_dict_objects = [self.variables, self.booleans, self.constants, self.algorithm_vars]
 
@@ -69,14 +70,17 @@ class DataProcessing():
         
         result = self.constants.constants_dict[param] + self.variables.variables_dict[param]
         return float(f'{result:.{self.constants.accuracy + 9}f}')
+
     
     def initialize_reduct_funcs_dict(self):
         
-        self.reduct_funcs_dict = {'K_sign': 0,
-                                  'N_switch':0,
-                                  '~N_switch': 1,
-                                   'n': 0,
-                                   'm': 0 }
+        self.reduct_funcs_dict = {'~N_switch': [0, (0, 0, 0), (140, 0)],
+                                  # 'K_sign': [0, (0, 0, 0), (90, 0)], 
+                                  'LB-Alg': [0, (0, 0, 0), (85, 0)], 
+                                  'N_switch':[0, (0, 0, 0), (120, 0)],
+                                  'AB-Alg': [0, (0, 0, 0), (90, 0)], 
+                                  'n': 0,
+                                  'm': 0 }
     
     def initialize_mode_status_dict(self):
 
@@ -129,6 +133,29 @@ class DataProcessing():
                                     
                                     'Explanations layer': [self.animation_layers.layers_dict['explanations_layer'], True],
                                    }
+            
+    def update_reduct_funcs_dict(self):
+        
+        green = (0, 255, 0)
+        red = (255, 0, 0)
+        
+        for word, value in self.reduct_funcs_dict.items():
+            
+            if word not in ['n', 'm']:
+            
+                if word == 'LB-Alg':
+                    pass
+                    # product = self.reduct_funcs_dict['K_sign'][0] * self.reduct_funcs_dict['~N_switch'][0] 
+                    # color = red if product == 0 else green
+
+                elif word == 'AB-Alg':
+                    product = self.reduct_funcs_dict['N_switch'][0] 
+                    color = red if product == 0 else green
+
+                else:
+                    color = red if value[0] == 0 else green
+                self.reduct_funcs_dict[word][1] = color
+            # print(word, ': ', data)
 
     def reset_dicts(self):
         
@@ -344,7 +371,8 @@ class DataProcessing():
         m = self.algorithm_vars.algorithm_vars_dict['m']
         n = self.algorithm_vars.algorithm_vars_dict['n'] + start_n
 
-
+        reduct_funcs_dict = self.reduct_funcs_dict
+        
         line_intersections_t_params = self.line_intersections_t_params
         
         del line_intersections_t_params[9]
@@ -363,7 +391,7 @@ class DataProcessing():
         length = self.get_curr_param('l')
         
         center_point_width, center_point_height = self.get_curr_param('c')
-        screen_width = self.constants.screen_width     
+   
         
         return [center_point_width, center_point_height, deg_x, deg_y, length, v, w, k]
         
