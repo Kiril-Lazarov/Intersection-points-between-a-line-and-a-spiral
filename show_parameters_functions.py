@@ -1,7 +1,9 @@
 import pygame 
-import numpy as np
+import numpy as np 
 
 from formula_functions import *
+from equation_funcs import *
+
 
 def show_parameters(data_processing, font_small):
     
@@ -143,21 +145,8 @@ def show_parameters(data_processing, font_small):
                 text_y += data_processing.constants.text_unit
 
 
-
-
 def show_mode_statuses(data_processing, font_small):
-    
-    algorithm_vars_dict = data_processing.algorithm_vars.algorithm_vars_dict
-    
-    reduct_funcs_dict = data_processing.reduct_funcs_dict
-    
-    reduct_funcs_dict['n'] = algorithm_vars_dict['n']
-    reduct_funcs_dict['m'] = algorithm_vars_dict['m']
-    
-        
-    reduct_funcs_dict['N_switch'] = get_n_coeff(reduct_funcs_dict['n'])
 
-    reduct_funcs_dict['~N_switch'] = 1 - reduct_funcs_dict['N_switch']
     
     show_modes_layer = data_processing.mode_statuses_dict['Modes layer'][0]
     
@@ -193,20 +182,47 @@ def show_mode_statuses(data_processing, font_small):
                         text_x = data_processing.constants.text_unit
                         text_y = 2*data_processing.constants.text_unit
     else:
-        show_modes_layer.fill((0, 0, 0, 0))
-
-        expression = f'{reduct_funcs_dict}'
+        show_modes_layer.fill((0, 0, 0, 0))           
+     
+        font_path = r"C:\Users\lenovo\Desktop\Artificial Inteligence\Jupyter projects\Intersection point between a spiral and a line test file\Paper\DejaVuFonts\dejavu-fonts-ttf-2.37\ttf\DejaVuSans.ttf"
         
-        expression_pixels_count = (len(expression) * data_processing.constants.text_unit)/2
+        font = pygame.font.Font(font_path, 26)
+
+        average_letter_size, half_space_lefted = construct_expression(data_processing, font)
         
-        half_space_lefted = (data_processing.constants.screen_width - expression_pixels_count)/2
-
-        text = font_small.render(expression, True, (0, 0, 0))
-
+        n, m = data_processing.reduct_funcs_dict['n'], data_processing.reduct_funcs_dict['m']
+ 
+        index_n = contruct_index(n)
+        index_m = contruct_index(m)
+        
+        t_eq = f't{index_n} {index_m} = '
+        
+        text = font.render(t_eq, True, (0, 0, 0))
 
         show_modes_layer.blit(text, (half_space_lefted, text_y))
+        half_space_lefted += 75
         
-        
+        for word, data in data_processing.reduct_funcs_dict.items():
+            if word not in ['n', 'm']:
+
+                text = font.render(word, True, data[1])            
+
+                show_modes_layer.blit(text, (half_space_lefted, text_y))               
+
+                half_space_lefted += data[2][0]
+
+                if word == 'LB-Alg':
+                    text = font.render('+', True, (0, 0, 0))
+                    show_modes_layer.blit(text, (half_space_lefted, text_y))
+       
+                    half_space_lefted += 25
+                else:
+                    if word != 'AB-Alg':
+                        text = font.render('*', True, (0, 0, 0))
+
+                        show_modes_layer.blit(text, (half_space_lefted, text_y))
+
+                        half_space_lefted += 15
 
 def show_algorithm_rows_and_cols(data_processing, nth_t, mth_t,  x, y, font_small):
     
