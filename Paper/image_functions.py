@@ -112,3 +112,27 @@ def intervals_table():
     </div>
     """
     return display(HTML(html_table))
+
+def k_relative_num_table(number, figure):
+    html_table = f"""
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+        <h3>Sign of $k$ relative to {number}</h3>
+        <table border="1" style="border-collapse: collapse; text-align: center; width: 70%; font-size: 13px;">
+            <tr>
+                <th></th>
+                <th>$k<{number}$</th>
+                <th>$k={number}$</th>
+                <th>$k>{number}$</th>
+                 
+            </tr>
+            <tr>
+                <th>$\\frac{{k-{number}}}{{|E_{{(k-{number})}}|}}$</th>
+                <td>-1</td>
+                <td>$0$</td>
+                <td>$1$</td>         
+            </tr>
+        </table>
+        Fig.{figure}
+    </div>
+    """
+    return display(HTML(html_table))
