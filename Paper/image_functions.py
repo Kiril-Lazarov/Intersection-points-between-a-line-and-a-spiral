@@ -136,3 +136,81 @@ def k_relative_num_table(number, figure):
     </div>
     """
     return display(HTML(html_table))
+
+def k_relative_to_ordinate_axis_table():
+    html_table = r"""
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+        <h3>$k$ relative to ordinate axis</h3>
+        <table border="1" style="border-collapse: collapse; text-align: center; width: 85%; font-size: 13px;">
+            <tr>
+                <th>$K$</th>
+                <th>$0 \leq k < 1$</th>
+                <th>$ k = 1 $</th>
+                <th>$1 < k < 3$</th>
+                <th>$k=3$</th>
+                <th>$ 3 < k $</th>
+                 
+            </tr>
+  
+                <th>$\lfloor \frac{1+\frac{(k-1)(k-3)}{E_{((k-1)(k-3))}}}{2} \rfloor$</th>
+                <th>$1$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                <th>$1$</th>                
+            </tr>
+
+
+        </table>
+        Fig.77
+    </div>
+    """
+    return display(HTML(html_table))
+
+def kl_match_table():
+    html_table = r"""
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+        <h3>$kl$ match</h3>
+        <table border="1" style="border-collapse: collapse; text-align: center; width: 85%; font-size: 13px;">
+            <tr>
+                <th></th>
+                <th>$0 \leq k < 1$</th>
+                <th>$ k = 1 $</th>
+                <th>$1 < k < 3$</th>
+                <th>$k=3$</th>
+                <th>$ 3 < k $</th>
+                 
+            </tr>
+                <th>$x_l<0$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                <th>$1$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                
+            </tr>
+            </tr>
+                <th>$x_l=0$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                
+            </tr>
+            </tr>
+                <th>$x_l>0$</th>
+                <th>$1$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                <th>$0$</th>
+                <th>$1$</th>
+                
+            </tr>
+
+
+        </table>
+        Fig.78
+    </div>
+    """
+    return display(HTML(html_table))
