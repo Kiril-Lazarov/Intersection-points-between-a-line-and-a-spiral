@@ -63,7 +63,6 @@ def get_delta_k_rotated(a, b, x):
                 np.pi / 2 - a_coeff * slope_angle) / np.pi \
            + (1 - a_turn_on) * (1 - b_turn_on)
 
-
 def get_n_coeff(n):
     return n / E(n)
 
@@ -121,11 +120,9 @@ def KWX_line(k, w, x_line):
 
 
 def K_sign(k, x_line):
-    k_coeff = ((k - 1) / abs(E(k - 1))) * ((k - 3) / abs(E(k - 3)))
-
-    x_line_coeff = x_line / abs(E(x_line))
-
-    return np.floor((1 + k_coeff * x_line_coeff) / 2)
+    product = (k - 1) * (k - 3) * x_line
+    kl = product / abs(E(product))
+    return np.floor((1 + kl) / 2)
 
 
 def x_max_line(deg_y, delta_theta, x_line, v, w, k):
@@ -216,19 +213,14 @@ def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point
 
     zero_y_t = abs(x_line / E(v))
 
-    # deg_x, deg_y  =  data_processing.get_curr_param('deg')
-
     kwx_coeff = KWX_line(k, w, x_line)
     k_sign = K_sign(k, x_line)
     
-    reduct_funcs_dict['K_sign'] = k_sign
+    reduct_funcs_dict['KL'][0] = k_sign
   
 
     n_coeff = get_n_coeff(n)
     opp_n_coeff = 1 - n_coeff
-    
-    reduct_funcs_dict['N_switch'] = n_coeff
-    reduct_funcs_dict['~N_switch'] = opp_n_coeff
 
     # The x-derivative at t=0
     x_der_t0 = get_nth_deg_x_derivative(deg_x + 1, 0, v, w, k)
@@ -248,7 +240,7 @@ def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point
     # result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
     #          + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
     
-    result = (k_sign + kwx_coeff)*opp_n_coeff * zero_y_t + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
+    result = k_sign*opp_n_coeff * zero_y_t + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
 
     return result
 
