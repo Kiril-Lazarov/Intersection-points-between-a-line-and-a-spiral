@@ -214,3 +214,47 @@ def kl_match_table():
     </div>
     """
     return display(HTML(html_table))
+
+def expression_a_table():
+    html_table = r"""
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+        <h3>$Expression A$</h3>
+        <table border="1" style="border-collapse: collapse; text-align: center; width: 85%; font-size: 13px;">
+            <tr>
+                <th></th>
+                <th>$\omega < 0 $</th>
+                <th>$ \omega = 0 $</th>
+                <th>$\omega > 0 $</th>
+
+                 
+            </tr>
+                <th>$x_l<0$</th>
+                <th>$0$</th>
+                <th>$1$</th>
+                <th>$1$</th>
+
+                
+            </tr>
+            </tr>
+                <th>$x_l=0$</th>
+                <th>$1$</th>
+                <th>$0$</th>
+                <th>$1$</th>
+
+                
+            </tr>
+            </tr>
+                <th>$x_l>0$</th>
+                <th>$1$</th>
+                <th>$1$</th>
+                <th>$0$</th>
+
+                
+            </tr>
+
+
+        </table>
+        Fig.89
+    </div>
+    """
+    return display(HTML(html_table))
