@@ -74,10 +74,11 @@ class DataProcessing():
     
     def initialize_reduct_funcs_dict(self):
         
-        self.reduct_funcs_dict = {'~N_switch': [0, (0, 0, 0), (140, 0)],
-                                  # 'K_sign': [0, (0, 0, 0), (90, 0)], 
+        self.reduct_funcs_dict = {'~NSwitch': [0, (0, 0, 0), (130, 0)],
+                                  'KWL': [0, (0, 0, 0), (65, 0)],
+                                  'KL': [0, (0, 0, 0), (35, 0)], 
                                   'LB-Alg': [0, (0, 0, 0), (85, 0)], 
-                                  'N_switch':[0, (0, 0, 0), (120, 0)],
+                                  'NSwitch':[0, (0, 0, 0), (110, 0)],
                                   'AB-Alg': [0, (0, 0, 0), (90, 0)], 
                                   'n': 0,
                                   'm': 0 }
@@ -144,12 +145,12 @@ class DataProcessing():
             if word not in ['n', 'm']:
             
                 if word == 'LB-Alg':
-                    pass
-                    # product = self.reduct_funcs_dict['K_sign'][0] * self.reduct_funcs_dict['~N_switch'][0] 
-                    # color = red if product == 0 else green
+                    # pass
+                    product = (self.reduct_funcs_dict['KWL'][0] + self.reduct_funcs_dict['KL'][0]) * self.reduct_funcs_dict['~NSwitch'][0] 
+                    color = red if product == 0 else green
 
                 elif word == 'AB-Alg':
-                    product = self.reduct_funcs_dict['N_switch'][0] 
+                    product = self.reduct_funcs_dict['NSwitch'][0] 
                     color = red if product == 0 else green
 
                 else:
