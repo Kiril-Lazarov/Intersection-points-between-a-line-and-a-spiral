@@ -17,8 +17,8 @@ def show_parameters(data_processing, font_small):
         accuracy = data_processing.constants.accuracy
 
         text_x = data_processing.constants.text_unit
-        text_y = 4*data_processing.constants.text_unit
-        # text_y = data_processing.constants.text_unit
+        # text_y = 4*data_processing.constants.text_unit
+        text_y = data_processing.constants.text_unit
         
 
         text = font_small.render('Spiral parameters:', True, (0, 0, 0))
@@ -204,14 +204,28 @@ def show_mode_statuses(data_processing, font_small):
         
         for word, data in data_processing.reduct_funcs_dict.items():
             if word not in ['n', 'm']:
+                
+                if word == 'KWL':
+
+                    text = font.render('(', True, (0, 0, 0))            
+
+                    show_modes_layer.blit(text, (half_space_lefted, text_y))
+                    half_space_lefted += 10
 
                 text = font.render(word, True, data[1])            
 
                 show_modes_layer.blit(text, (half_space_lefted, text_y))               
 
                 half_space_lefted += data[2][0]
+                
+                if word == 'KL':
+                    
+                    text = font.render(')', True, (0, 0, 0))            
 
-                if word == 'LB-Alg':
+                    show_modes_layer.blit(text, (half_space_lefted, text_y))
+                    half_space_lefted += 10                    
+
+                if word == 'LB-Alg' or word =='KWL':
                     text = font.render('+', True, (0, 0, 0))
                     show_modes_layer.blit(text, (half_space_lefted, text_y))
        
@@ -230,8 +244,8 @@ def show_algorithm_rows_and_cols(data_processing, nth_t, mth_t,  x, y, font_smal
     show_algorithm_data_layer.fill((0, 0, 0, 0))
     
     text_x = data_processing.constants.text_unit
-    text_y = 15 * data_processing.constants.text_unit
-    # text_y = 12 * data_processing.constants.text_unit
+    # text_y = 15 * data_processing.constants.text_unit
+    text_y = 12 * data_processing.constants.text_unit
     
     
     text = font_small.render('Algorithm approximations:', True, (0, 0, 0))
