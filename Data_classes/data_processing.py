@@ -75,7 +75,7 @@ class DataProcessing():
     def initialize_reduct_funcs_dict(self):
         
         self.reduct_funcs_dict = {'~NSwitch': [0, (0, 0, 0), (130, 0)],
-                                  'KWL': [0, (0, 0, 0), (65, 0)],
+                                  'KWL': [0, (0, 0, 0), (62, 0)],
                                   'KL': [0, (0, 0, 0), (35, 0)], 
                                   'LB-Alg': [0, (0, 0, 0), (85, 0)], 
                                   'NSwitch':[0, (0, 0, 0), (110, 0)],
@@ -145,7 +145,7 @@ class DataProcessing():
             if word not in ['n', 'm']:
             
                 if word == 'LB-Alg':
-                    # pass
+
                     product = (self.reduct_funcs_dict['KWL'][0] + self.reduct_funcs_dict['KL'][0]) * self.reduct_funcs_dict['~NSwitch'][0] 
                     color = red if product == 0 else green
 
@@ -192,7 +192,7 @@ class DataProcessing():
         length = self.get_curr_param('l')
 
         center_point = self.get_curr_param('c')
-   
+
         return [background_surface, screen_width, screen_height, length, center_point, self.bg_color]
     
     @property
@@ -266,9 +266,11 @@ class DataProcessing():
         
         t_diagram = self.mode_statuses_dict['T-diagram'][1]
         
+        text_unit = self.constants.text_unit
+        
         return [spiral_layer, half_screen_width, half_screen_height, 
                 center_point_width, center_point_height, length,
-                deg, t, v, w, k, spiral_coordinates, t_diagram] 
+                deg, t, v, w, k, spiral_coordinates, t_diagram, text_unit] 
     
     @property
     def y_intersects_t_params(self):
