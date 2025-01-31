@@ -94,8 +94,8 @@ def create_background(background_surface, screen_width, screen_height, length, c
 
             draw_y_axis_neg_values(background_surface, center_point[1], screen_width, screen_height,
                     i, length, y_line_start,horizontal_line_start,
-                    horizontal_line_end, line_color,font_small, number_x) 
-
+                    horizontal_line_end, line_color,font_small, number_x)        
+        
             
 def draw_x_axis_pos_values(background_surface, center_point_x, screen_width, screen_height,
                 i, length, x_line_start,vertical_line_start,
@@ -265,7 +265,7 @@ def calc_spiral_coord(deg=[0, 0], t=1 ,v=1, w=1, k=0) -> tuple:
 
 def calc_y_intersects_t(deg_x, deg_y , t, v, w, k, x_line, a, b, 
                         steps_change, zero_missing_point_mode,
-                        general_solution) -> list:
+                        general_solution,reduct_funcs_dict) -> list:
     
     if not steps_change:
   
@@ -279,7 +279,7 @@ def calc_y_intersects_t(deg_x, deg_y , t, v, w, k, x_line, a, b,
  
         while not is_bigger:
             curr_t = get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, 
-                                       zero_missing_point_mode, general_solution)
+                                       zero_missing_point_mode, general_solution,reduct_funcs_dict)
          
             if abs(curr_t) <= abs(t):
                 t_list.append(curr_t)
@@ -293,7 +293,7 @@ def calc_y_intersects_t(deg_x, deg_y , t, v, w, k, x_line, a, b,
     return []
 
 def calc_line_intersections_t(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                              steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, t_nth_list) -> list:
+                              steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, t_nth_list) -> list:
     
     if not steps_change:
         
@@ -302,7 +302,7 @@ def calc_line_intersections_t(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, ac
         for index,t_nth in enumerate(t_nth_list):
    
             curr_t_mth = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                                               zero_missing_point_mode, general_solution,x_l_x_s_diff_mode, t_nth, index)
+                                               zero_missing_point_mode, general_solution,x_l_x_s_diff_mode, reduct_funcs_dict, t_nth, index)
                 
             t_mth_list.append(curr_t_mth)
 
@@ -408,7 +408,7 @@ def draw_line(line_layer, screen_height, screen_width, half_screen_width, half_s
 
 def draw_spiral(spiral_layer, half_screen_width, half_screen_height, 
                 center_point_width, center_point_height, length,
-                deg, t, v, w, k, spiral_coordinates, t_diagram):
+                deg, t, v, w, k, spiral_coordinates, t_diagram, text_unit, font_small):
 
     spiral_layer.fill((0, 0, 0, 0))
 
@@ -490,6 +490,18 @@ def draw_spiral(spiral_layer, half_screen_width, half_screen_height,
             start_pos = (last_t, y_transform(0 , center_point_height, length)) 
             end_pos = (last_t, last_rad_vec)            
             draw_vector(spiral_layer,start_pos, end_pos, color='black')
+
+            # Draw axises notations
+            t = font_small.render('t', True, (0, 0, 0))
+            x = font_small.render('x,', True, (0, 0, 0))
+            y = font_small.render('y', True, (0, 0, 0))
+
+            h_displacement = 20
+            v_displacement = 30
+
+            spiral_layer.blit(t, (2*(half_screen_width- h_displacement), center_point_height + (text_unit + h_displacement)))
+            spiral_layer.blit(x, (center_point_width - (2*text_unit + h_displacement), v_displacement))
+            spiral_layer.blit(y, (center_point_width - (text_unit + h_displacement), v_displacement))
                                                                           
                 
                 
@@ -634,9 +646,12 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line, 
                             t_mth_aproxim_list, n, m, color, general_solution, x_l_x_s_diff_mode, draw_leg_and_hip=False):
 
+
     curr_t = t_mth_aproxim_list[m]
 
     x, y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, curr_t)
+    
+    shifted_y = float(np.copy(y))
 
     start_pos, end_pos = (center_point_width, center_point_height), (x, y)
     x_line_1 = np.copy(x_line)
@@ -682,11 +697,11 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
                     
 
                 else:
-                  
+                    
                     if n == 0:
                         
                         x_1, y_1 = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k, curr_t, transform=False)
-                        angle = abs(np.arctan(y_1/x_1))                      
+                        angle = abs(np.arctan(y_1/E(x_1)))                      
                         
                 
                         shifted_y = y_1/abs(E(y_1)) * np.tan(angle) * abs(x_line_1) 
@@ -706,7 +721,7 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
                 pygame.draw.circle(algorithm_layer, color='blue', center=(x_line, shifted_y), radius=4)
                 
             else:
-                # print('4')
+          
                 x, y = calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y, length, v, w, k,    
                                              curr_t, transform=False)
                 
@@ -740,13 +755,13 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
         
         
 def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, center_point_height,
-                         screen_width, screen_height, length, deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                         zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, t_nth_list, t_mth_aproxim_list,
+                         screen_width, screen_height, length,  deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                         zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, t_nth_list, t_mth_aproxim_list,
                          curr_rad_vec_color='black', 
                          previous_rad_vec_color='lightgreen'):
 
     algorithm_layer.fill((0, 0, 0, 0))
-    
+
     total_n = len(t_nth_list) # Stores how many are the y-intersection points
 
     if t_nth_list:
@@ -760,9 +775,9 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
        
-           
+         
             first_intersect_t = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                                                      zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, y_intersect_t, 0, i=1)
+                                                      zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, y_intersect_t, 0, i=1)
             t_mth_aproxim_list.append(first_intersect_t)
             
             # Show current radius-vector
@@ -772,15 +787,15 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
         else:
             if m +1 > len(t_mth_aproxim_list):
                 
-            
+           
                 next_t = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                                               zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, y_intersect_t, n, 
+                                               zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, y_intersect_t, n, 
                                                i=m+1)
                 t_mth_aproxim_list.append(next_t)
                 
                 # Show previous radius vector if it exists
                 if m -1>= 0:
-               
+              
                     show_radius_vector_step(algorithm_layer, center_point_width, center_point_height,  
                                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, 
                                             b_line, t_mth_aproxim_list,  n, m-1, previous_rad_vec_color, general_solution, 
@@ -794,11 +809,11 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
               
                 # Show previous radius vector if it exists
                 if m -1>= 0:
-           
+                 
                     show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,
                                             t_mth_aproxim_list,  n, m-1, previous_rad_vec_color, general_solution, x_l_x_s_diff_mode, draw_leg_and_hip=True)
-         
+             
                 # Show current radius-vector
                 show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                         screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line,a_slope, b_line, 
