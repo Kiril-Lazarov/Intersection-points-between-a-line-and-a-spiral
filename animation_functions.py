@@ -818,7 +818,25 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
                 show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                         screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line,a_slope, b_line, 
                                         t_mth_aproxim_list,  n, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
+                
+    for t_0 in [0, t_nth_list[0]]:    
 
+        x = get_nth_deg_x_derivative(0, t_0, v, w, k)
+        y = get_nth_deg_y_derivative(0, t_0, v, w, k)
+
+        x = x_transform(x, center_point_width, length)
+        y = y_transform(y, center_point_height, length)
+
+        ll = 3* length
+
+        x_deriv = get_nth_deg_x_derivative(1, t_0, v, w, k)
+
+        x_deriv_angle = np.arctan(x_deriv)
+
+        front_xx, front_xy, back_xx, back_xy = get_line_boundary_points(ll, x_deriv_angle, x, y)
+
+        pygame.draw.aalines(algorithm_layer, 'red',  False, [(back_xx, back_xy), (front_xx, front_xy)])
+    
     return t_mth_aproxim_list, total_n
 
 
