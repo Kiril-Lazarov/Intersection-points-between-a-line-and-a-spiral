@@ -75,6 +75,7 @@ class DataProcessing():
     def initialize_reduct_funcs_dict(self):
         
         self.reduct_funcs_dict = {'~NSwitch': [0, (0, 0, 0), (130, 0)],
+                                  'SCDD': [0, (0, 0, 0), (75, 0)],
                                   'KWL': [0, (0, 0, 0), (62, 0)],
                                   'KL': [0, (0, 0, 0), (35, 0)], 
                                   'LB-Alg': [0, (0, 0, 0), (85, 0)], 
@@ -146,7 +147,7 @@ class DataProcessing():
             
                 if word == 'LB-Alg':
 
-                    product = (self.reduct_funcs_dict['KWL'][0] + self.reduct_funcs_dict['KL'][0]) * self.reduct_funcs_dict['~NSwitch'][0] 
+                    product = (self.reduct_funcs_dict['KWL'][0] + self.reduct_funcs_dict['KL'][0]) * self.reduct_funcs_dict['~NSwitch'][0] * self.reduct_funcs_dict['SCDD'][0]
                     color = red if product == 0 else green
 
                 elif word == 'AB-Alg':
