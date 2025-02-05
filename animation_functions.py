@@ -293,7 +293,7 @@ def calc_y_intersects_t(deg_x, deg_y , t, v, w, k, x_line, a, b,
     return []
 
 def calc_line_intersections_t(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                              steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, t_nth_list) -> list:
+                              steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list, t_nth_list) -> list:
     
     if not steps_change:
         
@@ -301,8 +301,8 @@ def calc_line_intersections_t(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, ac
         
         for index,t_nth in enumerate(t_nth_list):
    
-            curr_t_mth = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                                               zero_missing_point_mode, general_solution,x_l_x_s_diff_mode, reduct_funcs_dict, t_nth, index)
+            curr_t_mth, x_deriv_list = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                                               zero_missing_point_mode, general_solution,x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list, t_nth, index)
                 
             t_mth_list.append(curr_t_mth)
 
@@ -315,7 +315,6 @@ def calc_single_t_aproxim(center_point_width, center_point_height, deg_x, deg_y,
   
     x = get_nth_deg_x_derivative(deg_x, mth_t, v, w, k)
     y = get_nth_deg_y_derivative(deg_y, mth_t, v, w, k)
-    
     
     if transform:
         x = x_transform(x, center_point_width, length)
@@ -752,11 +751,12 @@ def show_radius_vector_step(algorithm_layer, center_point_width, center_point_he
                 
                 # A crosspoint between horizontal leg and the hipotenuse 
                 pygame.draw.circle(algorithm_layer, color='blue', center=(x_intersect, y_intersect), radius=4)
-        
+
         
 def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, center_point_height,
                          screen_width, screen_height, length,  deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                         zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, t_nth_list, t_mth_aproxim_list,
+                         zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list, 
+                         t_nth_list, t_mth_aproxim_list,
                          curr_rad_vec_color='black', 
                          previous_rad_vec_color='lightgreen'):
 
@@ -774,10 +774,9 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
     
         # Create list with interesection point aproximations and store it.
         if not t_mth_aproxim_list:
-       
-         
-            first_intersect_t = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                                                      zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, y_intersect_t, 0, i=1)
+
+            first_intersect_t, x_deriv_list = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                                                      zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list, y_intersect_t, 0, i=1)
             t_mth_aproxim_list.append(first_intersect_t)
             
             # Show current radius-vector
@@ -786,16 +785,15 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
                                     t_mth_aproxim_list,  n, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
         else:
             if m +1 > len(t_mth_aproxim_list):
-                
-           
-                next_t = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                                               zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, y_intersect_t, n, 
+
+                next_t, x_deriv_list = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                                               zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list, y_intersect_t, n, 
                                                i=m+1)
                 t_mth_aproxim_list.append(next_t)
                 
                 # Show previous radius vector if it exists
                 if m -1>= 0:
-              
+                    
                     show_radius_vector_step(algorithm_layer, center_point_width, center_point_height,  
                                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, 
                                             b_line, t_mth_aproxim_list,  n, m-1, previous_rad_vec_color, general_solution, 
@@ -806,10 +804,12 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
                                         screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,                                                                   t_mth_aproxim_list,  n, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
                 
             else:
-              
+                _, x_deriv_list = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                                               zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list, y_intersect_t, n, 
+                                               i=m+1)
                 # Show previous radius vector if it exists
                 if m -1>= 0:
-                 
+   
                     show_radius_vector_step(algorithm_layer, center_point_width, center_point_height, 
                                             screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line, a_slope, b_line,
                                             t_mth_aproxim_list,  n, m-1, previous_rad_vec_color, general_solution, x_l_x_s_diff_mode, draw_leg_and_hip=True)
@@ -819,9 +819,31 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
                                         screen_width, screen_height, deg_x, deg_y, length, v, w, k, x_line,a_slope, b_line, 
                                         t_mth_aproxim_list,  n, m, curr_rad_vec_color, general_solution, x_l_x_s_diff_mode)
                 
-    for t_0 in [0, t_nth_list[0]]:    
+                
+    """
+    Visualize derivatives at mth iteration
+    
+    """
+    draw_mth_derivative(algorithm_layer, center_point_width, center_point_height, 
+                        length, v, w, k, deg_x, m, x_deriv_list, t_mth_aproxim_list, reduct_funcs_dict)
+  
+    return t_mth_aproxim_list, total_n
 
+def draw_mth_derivative(algorithm_layer, center_point_width, center_point_height, 
+                        length, v, w, k, deg_x, m, x_deriv_list, t_mth_aproxim_list, reduct_funcs_dict, t_0_deriv=False):
+    
+    if  m  < len(x_deriv_list):
+        init_x_derivative = x_deriv_list[0]
+        last_x_derivative = x_deriv_list[m]
+
+        reduct_funcs_dict['ISSCDD'][0] = derivative_change(init_x_derivative, last_x_derivative)
+
+    init_deriv = t_mth_aproxim_list[0] if not t_0_deriv else 0
+    
+    for t_0 in [init_deriv, t_mth_aproxim_list[m]]:    
+        
         x = get_nth_deg_x_derivative(0, t_0, v, w, k)
+
         y = get_nth_deg_y_derivative(0, t_0, v, w, k)
 
         x = x_transform(x, center_point_width, length)
@@ -829,17 +851,12 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
 
         ll = 3* length
 
-        x_deriv = get_nth_deg_x_derivative(1, t_0, v, w, k)
-
-        x_deriv_angle = np.arctan(x_deriv)
+        x_deriv = get_nth_deg_x_derivative(deg_x+ 1, t_0, v, w, k)
+        x_deriv_angle = np.arctan(x_deriv)  
 
         front_xx, front_xy, back_xx, back_xy = get_line_boundary_points(ll, x_deriv_angle, x, y)
 
         pygame.draw.aalines(algorithm_layer, 'red',  False, [(back_xx, back_xy), (front_xx, front_xy)])
-    
-    return t_mth_aproxim_list, total_n
-
-
 
 
 def draw_vector(layer, start_pos, end_pos, color=(255, 255, 255)):
