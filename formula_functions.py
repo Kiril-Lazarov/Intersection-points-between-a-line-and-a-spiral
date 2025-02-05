@@ -81,8 +81,8 @@ def XLN(n, k, x_line, w, v, deg_x):
     delta_plus_pi_0_5_t = (delta_theta + (n - 1) * np.pi + np.pi / 2) / abs(w)
     delta_plus_pi_1_t = (delta_theta + (n - 1) * np.pi + np.pi) / abs(w)
 
-    diff_1_pi_x_line = abs(delta_plus_pi_1_t) - abs(x_line) / abs(v)
-    diff_x_line_0_5_pi = abs(x_line) / abs(v) - abs(delta_plus_pi_0_5_t)
+    diff_1_pi_x_line = abs(delta_plus_pi_1_t) - abs(x_line) / E(abs(v))
+    diff_x_line_0_5_pi = abs(x_line) / E(abs(v)) - abs(delta_plus_pi_0_5_t)
 
     is_x_line_between = np.floor((1 + (diff_1_pi_x_line) / abs(E(diff_1_pi_x_line))) / 2) \
                         * np.floor((1 + (diff_x_line_0_5_pi) / abs(E(diff_x_line_0_5_pi))) / 2)
@@ -216,6 +216,7 @@ def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point
     kwx_coeff = KWX_line(k, w, x_line)
     k_sign = K_sign(k, x_line)
     
+    reduct_funcs_dict['KWL'][0] = kwx_coeff
     reduct_funcs_dict['KL'][0] = k_sign
   
 
@@ -229,27 +230,32 @@ def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point
     x_der_y_zero = get_nth_deg_x_derivative(deg_x + 1, zero_y_t, v, w, k)
 
     is_der_changed = derivative_change(x_der_t0, x_der_y_zero)
+    
+    reduct_funcs_dict['SCDD'][0] = is_der_changed
 
     # The length of the first y-intersection point radius vector
     x_max_dist = x_max_line(deg_y, delta_theta, x_line, v, w, k)
+    
+    reduct_funcs_dict['XMD'][0] = x_max_dist
 
     # The length of the nth y-component if the radius vector + pi/2 rotation
     XLN_coeff = XLN(n, k, x_line, w, v, deg_x)
     opp_XLN_coeff = 1 - XLN_coeff
 
-    # result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
-    #          + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
+    result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
+             + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
     
-    result = k_sign*opp_n_coeff * zero_y_t + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
+    # result = is_der_changed * (k_sign + kwx_coeff)*opp_n_coeff * zero_y_t + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
 
     return result
 
 
 
 def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                          zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, t_nth, n, i=200):
+                          zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list, t_nth, n, i=200):
+    
     if t_nth > 0:
-
+        
         n_coeff = get_n_coeff(n)
         opp_n_coeff = 1 - n_coeff
 
@@ -264,6 +270,9 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
         init_theta_angle = k * np.pi / 2
 
         init_x_derivative = get_nth_deg_x_derivative(deg_x + 1, combined_t, v, w, k)
+
+        x_deriv_list = []
+        x_deriv_list.append(init_x_derivative)
 
         last_t = np.copy(combined_t)
 
@@ -316,10 +325,7 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
                 phi = np.arctan(abs(curr_y/E(curr_x)))
                 # VL = (abs(x_line) * np.sqrt(1 + (curr_y / E(curr_x)) ** 2)) / E(v)
                 VL = abs(x_line)/ (np.cos(phi)* E(v))
-                
-                
-                # print('VL: ', )
-
+ 
                 combined_t = opp_n_coeff * VL + opp_XLN_coeff * n_coeff * turn_on_angular_alg * t_0_main + \
                              n_coeff * XLN_coeff * VL
 
@@ -329,20 +335,26 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
             statement = f'{combined_t:.{accuracy}f}' == f'{last_t:.{accuracy}f}'
 
             if statement:
-                return combined_t
+
+                return combined_t, x_deriv_list
 
             last_t = np.copy(combined_t)
 
             if not zero_missing_point_mode:
 
+                
                 last_x_derivative = get_nth_deg_x_derivative(deg_x + 1, last_t, v, w, k)
-                derivative_change_coeff = derivative_change(init_x_derivative, last_x_derivative)
 
+                derivative_change_coeff = derivative_change(init_x_derivative, last_x_derivative)
+               
+                x_deriv_list.append(last_x_derivative)
+                
                 last_t *= derivative_change_coeff
 
                 if last_t == 0:
-                    return last_t
+                    
+                    return last_t, x_deriv_list
 
-        return last_t
+        return last_t, x_deriv_list
 
-    return t_nth
+    return t_nth, x_deriv_list
