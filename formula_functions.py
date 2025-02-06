@@ -242,10 +242,11 @@ def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point
     XLN_coeff = XLN(n, k, x_line, w, v, deg_x)
     opp_XLN_coeff = 1 - XLN_coeff
 
-    result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
-             + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
+    # result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
+    #          + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
     
-    # result = is_der_changed * (k_sign + kwx_coeff)*opp_n_coeff * zero_y_t + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
+    result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
+             + n_coeff * ((delta_theta + (n - 1) * np.pi)) / abs(w)
 
     return result
 
@@ -358,3 +359,71 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
         return last_t, x_deriv_list
 
     return t_nth, x_deriv_list
+
+
+
+
+def whole_equation(n, m, v, w, k, x_line):
+    
+    delta_theta = get_delta_theta(w, k)
+    t = ((delta_theta + (n - 1) * np.pi)) / abs(E(w))
+    
+    init_x_derivative = get_nth_deg_x_derivative(1, t, v, w, k)
+    
+    n_switch = get_n_coeff(n)
+    opp_n_switch = 1 - n_switch
+ 
+    KL = K_sign(k, x_line)
+    KWL = KWX_line(k, w, x_line)
+    
+    x_der_t0 = get_nth_deg_x_derivative(1, 0, v, w, k)
+    
+    zero_y_t = abs(x_line / E(v))
+
+    # The x-derivative at the zero y-intersection point
+    x_der_y_zero = get_nth_deg_x_derivative(1, zero_y_t, v, w, k)
+
+    SCDD = derivative_change(x_der_t0, x_der_y_zero)
+    
+    XMD = x_max_line(0, delta_theta, x_line, v, w, k)
+ 
+    for _ in range(m):
+        
+        curr_x = get_nth_deg_x_derivative(0, t, v, w, k)
+        curr_y = get_nth_deg_y_derivative(0, t, v, w, k)
+        
+        c = abs(x_line) - abs(curr_x)
+
+        a = np.sqrt(x_line ** 2 + curr_y ** 2)
+
+            # Current radius vector
+        b = np.sqrt(curr_x ** 2 + curr_y ** 2)
+        
+        cos_delta_phi = (curr_y**2 + abs(x_line * curr_x)) / E(np.sqrt((curr_y**2 +x_line**2)*(curr_y**2 + curr_x**2)))
+        
+        if abs(cos_delta_phi) > 1:
+            cos_delta_phi = 1
+
+        delta_phi = np.arccos(cos_delta_phi)
+
+        WYX_coeff = WYX(x_line, w, curr_y)
+        
+        x_l_x_s_diff_sign = c / abs(E(c))
+        
+        AB_alg = t + x_l_x_s_diff_sign * WYX_coeff * (delta_phi/abs(E(w)))
+        
+        phi = np.arctan(abs(curr_y/E(curr_x)))
+                # VL = (abs(x_line) * np.sqrt(1 + (curr_y / E(curr_x)) ** 2)) / E(v)
+        LB_alg = abs(x_line)/ (np.cos(phi)* E(v))
+        
+            
+        last_x_derivative = get_nth_deg_x_derivative(1, t, v, w, k)
+
+        ISSCDD = derivative_change(init_x_derivative, last_x_derivative)
+    
+   
+        
+        t =  ISSCDD * (opp_n_switch * XMD * SCDD * (KWL + KL) * LB_alg + n_switch * AB_alg)
+        
+    return t
+        
