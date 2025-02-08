@@ -75,27 +75,24 @@ def less(x):
 
 
 
-def XLN(n, k, x_line, w, v, deg_x):
+def XYSwitch(n, k, x_line, w, v, deg_x):
+
     delta_theta = get_delta_theta(w, k)
-
-    delta_plus_pi_0_5_t = (delta_theta + (n - 1) * np.pi + np.pi / 2) / abs(w)
-    delta_plus_pi_1_t = (delta_theta + (n - 1) * np.pi + np.pi) / abs(w)
-
-    diff_1_pi_x_line = abs(delta_plus_pi_1_t) - abs(x_line) / E(abs(v))
-    diff_x_line_0_5_pi = abs(x_line) / E(abs(v)) - abs(delta_plus_pi_0_5_t)
-
-    is_x_line_between = np.floor((1 + (diff_1_pi_x_line) / abs(E(diff_1_pi_x_line))) / 2) \
-                        * np.floor((1 + (diff_x_line_0_5_pi) / abs(E(diff_x_line_0_5_pi))) / 2)
-
-    x_line_sign = x_line / abs(E(x_line))
-
-    x_coord_nth_intersect = get_nth_deg_x_derivative(deg_x, delta_plus_pi_0_5_t, v, w, k)
-
-    x_coord_nth_intersect_sign = x_coord_nth_intersect / abs(E(x_coord_nth_intersect))
-
-    sign_product = x_line_sign * x_coord_nth_intersect_sign
-
-    x_l_nth_coeff = np.floor((1 + sign_product / abs(E(sign_product))) / 2)
+    
+    x_rad_vec_t = (delta_theta + (n - 1) * np.pi + np.pi / 2) / abs(w)
+    y_rad_vec_t = (delta_theta + (n - 1) * np.pi + np.pi) / abs(w)
+    
+    x_line /= E(v)
+    
+    product = abs(x_line) * (abs(x_line) - abs(x_rad_vec_t)) * (abs(y_rad_vec_t) - abs(x_line))
+    product /= abs(E(product))
+    
+    x_nth_coord = get_nth_deg_x_derivative(deg_x, x_rad_vec_t, v, w, k)
+    x_signs_product =  x_line / abs(E(x_line)) * x_nth_coord / abs(E(x_nth_coord))
+    
+    
+    
+    return np.floor((1 +  product))/2 * np.floor((1 +  x_signs_product))/2
 
     return is_x_line_between * x_l_nth_coeff
 
@@ -239,8 +236,8 @@ def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point
     reduct_funcs_dict['XMD'][0] = x_max_dist
 
     # The length of the nth y-component if the radius vector + pi/2 rotation
-    XLN_coeff = XLN(n, k, x_line, w, v, deg_x)
-    opp_XLN_coeff = 1 - XLN_coeff
+    # XLN_coeff = XYSwitch(n, k, x_line, w, v, deg_x)
+    # opp_XLN_coeff = 1 - XLN_coeff
 
     # result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
     #          + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
@@ -321,14 +318,18 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
             if not zero_missing_point_mode:
                 ''' Vector-Length Algorithm '''
 
-                XLN_coeff = XLN(n, k, x_line, w, v, deg_x)
-                opp_XLN_coeff = 1 - XLN_coeff
+                XYSwitch_coeff = XYSwitch(n, k, x_line, w, v, deg_x)
+                opp_XYSwitch_coeff = 1 - XYSwitch_coeff
                 phi = np.arctan(abs(curr_y/E(curr_x)))
                 # VL = (abs(x_line) * np.sqrt(1 + (curr_y / E(curr_x)) ** 2)) / E(v)
                 VL = abs(x_line)/ (np.cos(phi)* E(v))
  
-                combined_t = opp_n_coeff * VL + opp_XLN_coeff * n_coeff * turn_on_angular_alg * t_0_main + \
-                             n_coeff * XLN_coeff * VL
+                # combined_t = opp_n_coeff * VL + opp_XYSwitch_coeff * n_coeff * turn_on_angular_alg * t_0_main + \
+                #              n_coeff * XYSwitch_coeff * VL
+                # combined_t = opp_n_coeff * VL + n_coeff* (opp_XYSwitch_coeff* t_0_main + XYSwitch_coeff* VL)
+                combined_t = opp_n_coeff * VL + n_coeff* t_0_main 
+                
+                             
 
             else:
                 combined_t = np.copy(t_0_main)
@@ -386,6 +387,9 @@ def whole_equation(n, m, v, w, k, x_line):
     SCDD = derivative_change(x_der_t0, x_der_y_zero)
     
     XMD = x_max_line(0, delta_theta, x_line, v, w, k)
+    
+    XYSwitch = XLN(n, k, x_line, w, v, deg_x)
+    opp_XYSwitch = 1 - XYSwitch
  
     for _ in range(m):
         
@@ -413,7 +417,7 @@ def whole_equation(n, m, v, w, k, x_line):
         AB_alg = t + x_l_x_s_diff_sign * WYX_coeff * (delta_phi/abs(E(w)))
         
         phi = np.arctan(abs(curr_y/E(curr_x)))
-                # VL = (abs(x_line) * np.sqrt(1 + (curr_y / E(curr_x)) ** 2)) / E(v)
+
         LB_alg = abs(x_line)/ (np.cos(phi)* E(v))
         
             
@@ -423,7 +427,8 @@ def whole_equation(n, m, v, w, k, x_line):
     
    
         
-        t =  ISSCDD * (opp_n_switch * XMD * SCDD * (KWL + KL) * LB_alg + n_switch * AB_alg)
+        t =  ISSCDD * (opp_n_switch * XMD * SCDD * (KWL + KL) * LB_alg + n_switch * \
+                       (opp_XYSwitch*AB_alg + XYSwitch* LB_alg))
         
     return t
         
