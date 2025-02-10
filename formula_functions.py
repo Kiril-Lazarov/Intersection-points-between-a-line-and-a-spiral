@@ -80,21 +80,19 @@ def XYSwitch(n, k, x_line, w, v, deg_x):
     delta_theta = get_delta_theta(w, k)
     
     x_rad_vec_t = (delta_theta + (n - 1) * np.pi + np.pi / 2) / abs(w)
-    y_rad_vec_t = (delta_theta + (n - 1) * np.pi + np.pi) / abs(w)
-    
-    x_line /= E(v)
-    
-    product = abs(x_line) * (abs(x_line) - abs(x_rad_vec_t)) * (abs(y_rad_vec_t) - abs(x_line))
-    product /= abs(E(product))
+    y_rad_vec_t = (delta_theta + n * np.pi) / abs(w)
     
     x_nth_coord = get_nth_deg_x_derivative(deg_x, x_rad_vec_t, v, w, k)
-    x_signs_product =  x_line / abs(E(x_line)) * x_nth_coord / abs(E(x_nth_coord))
-    
-    
-    
-    return np.floor((1 +  product))/2 * np.floor((1 +  x_signs_product))/2
+    x_signs_product =  x_line * x_nth_coord / abs(E(x_line * x_nth_coord))
 
-    return is_x_line_between * x_l_nth_coeff
+    x_line_t = abs(x_line)/E(v)
+
+    
+    product = (x_line_t - x_rad_vec_t) * (y_rad_vec_t - x_line_t)
+    product_sign = product/ abs(E(product))
+         
+    return (np.floor((1 +  product_sign))/2) * (np.floor((1 +  x_signs_product))/2)
+
 
 
 def W_bin(w):
@@ -236,14 +234,17 @@ def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point
     reduct_funcs_dict['XMD'][0] = x_max_dist
 
     # The length of the nth y-component if the radius vector + pi/2 rotation
-    # XLN_coeff = XYSwitch(n, k, x_line, w, v, deg_x)
-    # opp_XLN_coeff = 1 - XLN_coeff
+    XYSwitch_coeff = XYSwitch(n, k, x_line, w, v, deg_x)
+
 
     # result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
-    #          + n_coeff * ((delta_theta + (n - 1) * np.pi + XLN_coeff * np.pi / 2)) / abs(w)
+    #          + n_coeff * ((delta_theta + (n - 1) * np.pi + XYSwitch_coeff *(abs(x_line))/E(v))) / abs(w)
     
     result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
-             + n_coeff * ((delta_theta + (n - 1) * np.pi)) / abs(w)
+         + n_coeff * ((delta_theta + (n - 1) * np.pi + XYSwitch_coeff *np.pi/2)) / abs(w)
+    
+    # result = x_max_dist * is_der_changed * (k_sign + kwx_coeff) * opp_n_coeff * zero_y_t \
+    #          + n_coeff * ((delta_theta + (n - 1) * np.pi)) / abs(w)
 
     return result
 
@@ -280,6 +281,7 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
             curr_y = get_nth_deg_y_derivative(deg_y, combined_t, v, w, k)
 
             ''' Angular Algorithm '''
+            
             # The difference between the x-coordinate of the vertical line 
             # and the x-coordinate of the current spiral radius vector
             c = abs(x_line) - abs(curr_x)
@@ -289,12 +291,8 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
             # Current radius vector
             b = np.sqrt(curr_x ** 2 + curr_y ** 2)
 
-            # cos_delta_phi = (a ** 2 + b ** 2 - c ** 2) / E((2 * a * b))
             cos_delta_phi = (curr_y**2 + abs(x_line * curr_x)) / E(np.sqrt((curr_y**2 +x_line**2)*(curr_y**2 + curr_x**2)))
-            # sin_sq = np.sin(init_theta_angle + w*t_0_main)**2
-            # cos = np.cos(init_theta_angle + w*t_0_main)
-            # cos_delta_phi = (v*t_0_main * sin_sq + abs(x_line * cos))/(np.sqrt((v*t_0_main)**2 * sin_sq) + x_line**2)
-            # print(cos_delta_phi)
+
             if abs(cos_delta_phi) > 1:
                 cos_delta_phi = 1
 
@@ -320,14 +318,25 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
 
                 XYSwitch_coeff = XYSwitch(n, k, x_line, w, v, deg_x)
                 opp_XYSwitch_coeff = 1 - XYSwitch_coeff
+                # print('XYSwitch_coeff: ', XYSwitch_coeff)
+                # print('opp_XYSwitch_coeff: ', opp_XYSwitch_coeff)
+                
+                
+                reduct_funcs_dict['XYSwitch'][0] = XYSwitch_coeff
+                reduct_funcs_dict['~XYSwitch'][0] = opp_XYSwitch_coeff
+                
+                # print('reduct_funcs_dict["XYSwitch"][0]: ', reduct_funcs_dict['XYSwitch'][0])
+                # print('reduct_funcs_dict["~XYSwitch"][0]: ', reduct_funcs_dict['~XYSwitch'][0])
+                
+       
                 phi = np.arctan(abs(curr_y/E(curr_x)))
-                # VL = (abs(x_line) * np.sqrt(1 + (curr_y / E(curr_x)) ** 2)) / E(v)
+
                 VL = abs(x_line)/ (np.cos(phi)* E(v))
  
                 # combined_t = opp_n_coeff * VL + opp_XYSwitch_coeff * n_coeff * turn_on_angular_alg * t_0_main + \
                 #              n_coeff * XYSwitch_coeff * VL
-                # combined_t = opp_n_coeff * VL + n_coeff* (opp_XYSwitch_coeff* t_0_main + XYSwitch_coeff* VL)
-                combined_t = opp_n_coeff * VL + n_coeff* t_0_main 
+                combined_t = opp_n_coeff * VL + n_coeff* (opp_XYSwitch_coeff* t_0_main + XYSwitch_coeff* VL)
+                # combined_t = opp_n_coeff * VL + n_coeff* t_0_main 
                 
                              
 
@@ -366,8 +375,11 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
 
 def whole_equation(n, m, v, w, k, x_line):
     
+    XYSwitch_coeff = XYSwitch(n, k, x_line, w, v, 0)
+    opp_XYSwitch_coeff = 1 - XYSwitch_coeff
+    
     delta_theta = get_delta_theta(w, k)
-    t = ((delta_theta + (n - 1) * np.pi)) / abs(E(w))
+    t = ((delta_theta + (n - 1) * np.pi + XYSwitch_coeff * np.pi / 2)) / abs(E(w))
     
     init_x_derivative = get_nth_deg_x_derivative(1, t, v, w, k)
     
@@ -387,9 +399,6 @@ def whole_equation(n, m, v, w, k, x_line):
     SCDD = derivative_change(x_der_t0, x_der_y_zero)
     
     XMD = x_max_line(0, delta_theta, x_line, v, w, k)
-    
-    XYSwitch = XLN(n, k, x_line, w, v, deg_x)
-    opp_XYSwitch = 1 - XYSwitch
  
     for _ in range(m):
         
@@ -428,7 +437,7 @@ def whole_equation(n, m, v, w, k, x_line):
    
         
         t =  ISSCDD * (opp_n_switch * XMD * SCDD * (KWL + KL) * LB_alg + n_switch * \
-                       (opp_XYSwitch*AB_alg + XYSwitch* LB_alg))
+                       (opp_XYSwitch_coeff*AB_alg + XYSwitch_coeff* LB_alg))
         
     return t
         
