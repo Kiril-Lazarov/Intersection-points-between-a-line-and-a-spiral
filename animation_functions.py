@@ -561,9 +561,6 @@ def draw_derivatives(layer, center_point_width, center_point_height,
     layer.fill((0, 0, 0, 0))
     if derivative:
 
-        
-
-
         dx_dt_color = (255, 0, 0)
         dy_dt_color = (0, 0, 255)
         dy_dx_color = (0, 255, 0)
@@ -763,6 +760,12 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
     algorithm_layer.fill((0, 0, 0, 0))
 
     total_n = len(t_nth_list) # Stores how many are the y-intersection points
+    
+    
+    XYSwitch_coeff = XYSwitch(n, k, x_line, w, v, deg_x)
+    
+    reduct_funcs_dict['XYSwitch'][0] = XYSwitch_coeff
+    reduct_funcs_dict['~XYSwitch'][0] = 1 - XYSwitch_coeff
 
     if t_nth_list:
     
@@ -840,23 +843,23 @@ def draw_mth_derivative(algorithm_layer, center_point_width, center_point_height
 
     init_deriv = t_mth_aproxim_list[0] if not t_0_deriv else 0
     
-    for t_0 in [init_deriv, t_mth_aproxim_list[m]]:    
+#     for t_0 in [init_deriv, t_mth_aproxim_list[m]]:    
         
-        x = get_nth_deg_x_derivative(0, t_0, v, w, k)
+#         x = get_nth_deg_x_derivative(0, t_0, v, w, k)
 
-        y = get_nth_deg_y_derivative(0, t_0, v, w, k)
+#         y = get_nth_deg_y_derivative(0, t_0, v, w, k)
 
-        x = x_transform(x, center_point_width, length)
-        y = y_transform(y, center_point_height, length)
+#         x = x_transform(x, center_point_width, length)
+#         y = y_transform(y, center_point_height, length)
 
-        ll = 3* length
+#         ll = 3* length
 
-        x_deriv = get_nth_deg_x_derivative(deg_x+ 1, t_0, v, w, k)
-        x_deriv_angle = np.arctan(x_deriv)  
+#         x_deriv = get_nth_deg_x_derivative(deg_x+ 1, t_0, v, w, k)
+#         x_deriv_angle = np.arctan(x_deriv)  
 
-        front_xx, front_xy, back_xx, back_xy = get_line_boundary_points(ll, x_deriv_angle, x, y)
+#         front_xx, front_xy, back_xx, back_xy = get_line_boundary_points(ll, x_deriv_angle, x, y)
 
-        pygame.draw.aalines(algorithm_layer, 'red',  False, [(back_xx, back_xy), (front_xx, front_xy)])
+#         pygame.draw.aalines(algorithm_layer, 'red',  False, [(back_xx, back_xy), (front_xx, front_xy)])
 
 
 def draw_vector(layer, start_pos, end_pos, color=(255, 255, 255)):
