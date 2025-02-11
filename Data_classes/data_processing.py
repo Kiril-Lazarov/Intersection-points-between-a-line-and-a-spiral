@@ -35,6 +35,8 @@ class DataProcessing():
         self.spiral_coordinates = {'x': 0, 'y': 0}
         self.initialize_mode_status_dict()
         self.initialize_reduct_funcs_dict()
+        
+        self.x_deriv_list = []
  
          
         self.variable_dict_objects = [self.variables, self.booleans, self.constants, self.algorithm_vars]
@@ -74,14 +76,18 @@ class DataProcessing():
     
     def initialize_reduct_funcs_dict(self):
         
-        self.reduct_funcs_dict = {'~NSwitch': [0, (0, 0, 0), (130, 0)],
+        self.reduct_funcs_dict = {'ISSCDD': [0, (0, 0, 0), (100, 0)],
+                                  '~NSwitch': [0, (0, 0, 0), (130, 0)],                                 
                                   'XMD': [0, (0, 0, 0), (62, 0)],
                                   'SCDD': [0, (0, 0, 0), (75, 0)],
                                   'KWL': [0, (0, 0, 0), (62, 0)],
                                   'KL': [0, (0, 0, 0), (35, 0)], 
                                   'LB-Alg': [0, (0, 0, 0), (85, 0)], 
-                                  'NSwitch':[0, (0, 0, 0), (110, 0)],
-                                  'AB-Alg': [0, (0, 0, 0), (90, 0)], 
+                                  'NSwitch':[0, (0, 0, 0), (110, 30)],
+                                  '~XYSwitch': [0, (0, 0, 0), (140, 30)], 
+                                  'AB-Alg': [0, (0, 0, 0), (90, 30)],
+                                  'XYSwitch': [0, (0, 0, 0), (120, 30)],
+                                  'NLB-Alg': [0, (0, 0, 0), (100, 30)],
                                   'n': 0,
                                   'm': 0 }
     
@@ -148,14 +154,28 @@ class DataProcessing():
             
                 if word == 'LB-Alg':
                     product = 1
-                    for key in ['~NSwitch', 'SCDD', 'XMD']:
+                    for key in ['ISSCDD', '~NSwitch', 'SCDD', 'XMD']:
                         product *= self.reduct_funcs_dict[key][0]
                     product *= (self.reduct_funcs_dict['KWL'][0] + self.reduct_funcs_dict['KL'][0]) 
+
                     color = red if product == 0 else green
 
                 elif word == 'AB-Alg':
-                    product = self.reduct_funcs_dict['NSwitch'][0] 
+                    product = 1
+                    product = self.reduct_funcs_dict['NSwitch'][0]
+                    product *= self.reduct_funcs_dict['ISSCDD'][0]
+                    product *= self.reduct_funcs_dict['~XYSwitch'][0]
                     color = red if product == 0 else green
+                    
+                elif word == 'NLB-Alg':
+ 
+                    product = 1
+                    product = self.reduct_funcs_dict['NSwitch'][0]
+                    product *= self.reduct_funcs_dict['ISSCDD'][0]
+                    product *= self.reduct_funcs_dict['XYSwitch'][0]
+
+                    color = red if product == 0 else green
+                    
 
                 else:
                     color = red if value[0] == 0 else green
@@ -340,9 +360,10 @@ class DataProcessing():
         general_solution = self.mode_statuses_dict['General solution'][1]
         x_l_x_s_diff_mode = self.mode_statuses_dict['X_line-X_s diff'][1]
         reduct_funcs_dict = self.reduct_funcs_dict
+        x_deriv_list = self.x_deriv_list
         
         return [deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
-                steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict]
+                steps_change, zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list]
     
     
     @property
