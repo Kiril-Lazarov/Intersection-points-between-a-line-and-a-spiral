@@ -128,9 +128,13 @@ def show_parameters(data_processing, font_small):
 
             text_y += data_processing.constants.text_unit
 
-            dx_dt = data_processing.derivative_slopes['dx_dt'] * np.pi/180
-            dy_dt = data_processing.derivative_slopes['dy_dt'] * np.pi/180
-            dy_dx = data_processing.derivative_slopes['dy_dx'] * np.pi/180
+#             dx_dt = data_processing.derivative_slopes['dx_dt'] * np.pi/180
+#             dy_dt = data_processing.derivative_slopes['dy_dt'] * np.pi/180
+#             dy_dx = data_processing.derivative_slopes['dy_dx'] * np.pi/180
+            
+            dx_dt = data_processing.derivative_slopes['dx_dt'] 
+            dy_dt = data_processing.derivative_slopes['dy_dt'] 
+            dy_dx = data_processing.derivative_slopes['dy_dx'] 
 
             derivatives_list = list(zip(data_processing.derivative_slopes.keys(), [dx_dt, dy_dt, dy_dx]))
 
@@ -142,7 +146,7 @@ def show_parameters(data_processing, font_small):
                 text = font_small.render(f'{name}: {slope:.6f} deg', True, next(colors))
                 params_layer.blit(text, (text_x, text_y))
 
-                text_y += data_processing.constants.text_unit
+                text_y += data_processing.constants.text_unit            
 
 
 def show_mode_statuses(data_processing, font_small):
@@ -163,9 +167,9 @@ def show_mode_statuses(data_processing, font_small):
 
 
             for mode, status in data_processing.mode_statuses_dict.items():
-
+                
                 if mode not in ['Algorithm data mode','Modes layer']:
-
+  
                     statement = 'On' if status[1] else 'Off'
                     expression = f'{mode}: {statement}'
 
@@ -189,6 +193,7 @@ def show_mode_statuses(data_processing, font_small):
         font = pygame.font.Font(font_path, 26)
 
         average_letter_size, half_space_lefted = construct_expression(data_processing, font)
+        copy_half_space = np.copy(half_space_lefted)
         
         n, m = data_processing.reduct_funcs_dict['n'], data_processing.reduct_funcs_dict['m']
  
@@ -200,24 +205,31 @@ def show_mode_statuses(data_processing, font_small):
         text = font.render(t_eq, True, (0, 0, 0))
 
         show_modes_layer.blit(text, (half_space_lefted, text_y))
-        half_space_lefted += 75
-        
+
         for word, data in data_processing.reduct_funcs_dict.items():
             if word not in ['n', 'm']:
+                if word == 'NSwitch':
+                    text_y += 30
+                    half_space_lefted = copy_half_space + (len(t_eq)-2) * average_letter_size
+                    text = font.render('+', True, (0, 0, 0))
+                    show_modes_layer.blit(text, (half_space_lefted, text_y))
+                    half_space_lefted += 25
                 
-                if word == 'KWL':
+                if word == 'KWL' or word == '~XYSwitch':
 
                     text = font.render('(', True, (0, 0, 0))            
 
                     show_modes_layer.blit(text, (half_space_lefted, text_y))
                     half_space_lefted += 10
+                    
+                
 
                 text = font.render(word, True, data[1])            
 
                 show_modes_layer.blit(text, (half_space_lefted, text_y))               
 
-                half_space_lefted += data[2][0]
-                
+                half_space_lefted += data[2][0]                    
+                    
                 if word == 'KL':
                     
                     text = font.render(')', True, (0, 0, 0))            
@@ -225,18 +237,32 @@ def show_mode_statuses(data_processing, font_small):
                     show_modes_layer.blit(text, (half_space_lefted, text_y))
                     half_space_lefted += 10                    
 
-                if word == 'LB-Alg' or word =='KWL':
+                if word in ['LB-Alg', 'KWL', 'AB-Alg']:
                     text = font.render('+', True, (0, 0, 0))
                     show_modes_layer.blit(text, (half_space_lefted, text_y))
        
                     half_space_lefted += 25
                 else:
-                    if word != 'AB-Alg':
+                    if word not in ['AB-Alg', 'NLB-Alg']:
                         text = font.render('*', True, (0, 0, 0))
 
                         show_modes_layer.blit(text, (half_space_lefted, text_y))
 
                         half_space_lefted += 15
+                        
+                        if  word == 'ISSCDD':
+                            text = font.render('(', True, (0, 0, 0))            
+
+                            show_modes_layer.blit(text, (half_space_lefted, text_y))
+                            half_space_lefted += 10
+                        
+                    else:
+                        
+                        text = font.render(')', True, (0, 0, 0))
+
+                        show_modes_layer.blit(text, (half_space_lefted, text_y)) 
+                        
+                        
 
 def show_algorithm_rows_and_cols(data_processing, nth_t, mth_t,  x, y, font_small):
     
