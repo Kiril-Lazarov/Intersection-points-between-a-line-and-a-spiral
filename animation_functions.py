@@ -766,6 +766,8 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
     
     reduct_funcs_dict['XYSwitch'][0] = XYSwitch_coeff
     reduct_funcs_dict['~XYSwitch'][0] = 1 - XYSwitch_coeff
+    
+    reduct_funcs_dict['ABSwitch'][0] = ABSwitch(deg_x, deg_y, t_nth_list[n], w, v, k, x_line)
 
     if t_nth_list:
     
