@@ -66,9 +66,10 @@ class DataProcessing():
             b = self.get_curr_param('b')
             
             a_turn_on = a/E(a)
-            b_turn_on = b/E(b)
-        
-            return (1- a_turn_on)* b + a_turn_on *b_turn_on* cos(pi/2 - abs(arctan(a))) * (E(-b))/E(a)
+            
+            result = (1- a_turn_on)* b + a_turn_on * cos(pi/2 - abs(arctan(a))) * (-b)/E(a)
+           
+            return result
         
         result = self.constants.constants_dict[param] + self.variables.variables_dict[param]
         return float(f'{result:.{self.constants.accuracy + 9}f}')
@@ -166,6 +167,7 @@ class DataProcessing():
                     product = self.reduct_funcs_dict['NSwitch'][0]
                     product *= self.reduct_funcs_dict['ISSCDD'][0]
                     product *= self.reduct_funcs_dict['~XYSwitch'][0]
+                    product *= self.reduct_funcs_dict['ABSwitch'][0]
                     color = red if product == 0 else green
                     
                 elif word == 'NLB-Alg':
