@@ -34,11 +34,17 @@ def construct_expression(data_processing, font):
     
 
     t_eq = f't{index_n} {index_m} = '
-    k_sign = ''
+    ISSCDD = 'ISSCDD'
+    XMD = 'XMD'
+    SCDD = 'SCDD'
+    KWL = 'KWL'
+    KL = 'KL'
     n_switch = 'NSwitch'
     opp_n_switch = '~NSwitch'
+    XYSwitch = 'XYSwitch'
+    opp_XYSwitch = '~XYSwitch'
 
-    expression = f'{t_eq}{opp_n_switch}*{k_sign}*LB-Alg + {n_switch}*AB-Alg'
+    expression = f'{t_eq}{ISSCDD}({opp_n_switch}*{XMD}*{SCDD}*({KWL}+{KL})*LB-Alg +'
     
     expression_pixels_count = ((len(expression) + 20) * 20)/2
 
