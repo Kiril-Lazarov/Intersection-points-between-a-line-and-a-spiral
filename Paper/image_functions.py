@@ -258,3 +258,123 @@ def expression_a_table():
     </div>
     """
     return display(HTML(html_table))
+
+def expression_b_table():
+    html_table = r"""
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+        <h3>$Expression B$</h3>
+        <table border="1" style="border-collapse: collapse; text-align: center; width: 85%; font-size: 13px;">
+            <tr>
+                <th></th>
+                <th>$\omega < 0 $</th>
+                <th>$ \omega = 0 $</th>
+                <th>$\omega > 0 $</th>
+
+                 
+            </tr>
+                <th>$x_l<0$</th>
+                <th>$1$</th>
+                <th>$1$</th>
+                <th>$0$</th>
+
+                
+            </tr>
+            </tr>
+                <th>$x_l=0$</th>
+                <th>$1$</th>
+                <th>$0$</th>
+                <th>$1$</th>
+
+                
+            </tr>
+            </tr>
+                <th>$x_l>0$</th>
+                <th>$0$</th>
+                <th>$1$</th>
+                <th>$1$</th>
+
+                
+            </tr>
+
+
+        </table>
+        Fig.90
+    </div>
+    """
+    return display(HTML(html_table))
+
+def XMD_table():
+    html_table = r"""
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+        <h3>X Maximum Distance</h3>
+        <table border="1" style="border-collapse: collapse; text-align: center; width: 80%; font-size: 13px;">
+            <tr>
+                <th></th>
+                <th>$|y_s(t_{[1; 0]})| > |x_l|$</th>
+                <th>$|y_s(t_{[1; 0]})| \le |x_l|$</th>
+
+                 
+            </tr>
+            <tr>
+                <th>$\lfloor 
+\frac{1+\frac{|y_s(t_{[1; 0]})| - |x_l|}{ E_{\left( |y_s(t_{[1; 0]})| - |x_l| \right)}}}
+{2}
+\rfloor$</th>
+                <td>$1$</td>
+                <td>$0$</td>
+
+         
+            </tr>
+
+        </table>
+        Fig.122
+    </div>
+    """
+    return display(HTML(html_table))
+
+def rotational_coeff_table():
+    html_table = """
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+        <h3>Rotational Coefficient Table</h3>
+        <table border="1" style="border-collapse: collapse; text-align: center; width: 50%; font-size: 13px;">
+            <tr>
+                <th></th>
+                <th>$b$</th>
+                <th>$x_l$</th>
+                <th>$-bx_l$</th>
+       
+            </tr>
+            <tr>
+                <th>$Fig.173$</th>
+                <td>$1$</td>
+                <td>$1$</td>
+                <td>$-1$</td>
+      
+            </tr>
+            <tr>
+                <th>$Fig.174$</th>
+                <td>$1$</td>
+                <td>$-1$</td>
+                <td>$1$</td>
+                <td>$1$</td>
+       
+            </tr>
+            <tr>
+                <th>$Fig.175$</th>
+                <td>$1$</td>
+                <td>$-1$</td>
+                <td>$1$</td>
+         
+            </tr>
+            <tr>
+                <th>$Fig.176$</th>
+                <td>$-1$</td>
+                <td>$-1$</td>
+                <td>$-1$</td>
+          
+            </tr>
+        </table>
+        Fig.177
+    </div>
+    """
+    return display(HTML(html_table))
