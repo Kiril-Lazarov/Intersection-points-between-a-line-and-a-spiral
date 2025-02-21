@@ -57,11 +57,14 @@ def get_delta_k_rotated(a, b, x):
     a_turn_on = a / E(a)
     b_turn_on = b / E(b)
     slope_angle = abs(np.arctan(a))
-    expr = delta_k_coeff * 2 * (np.pi / 2 - a_coeff * delta_k_coeff * slope_angle) / np.pi
+    expr = delta_k_coeff * 2 * (np.pi / 2 - slope_angle) / np.pi
+    
 
-    return (1 - a_turn_on) * (-1) + a_turn_on * b_turn_on * expr + (1 - b_turn_on) * 2 * (
+    result = (1 - a_turn_on) * (-1) + a_turn_on * b_turn_on * expr + (1 - b_turn_on) * 2 * (
                 np.pi / 2 - a_coeff * slope_angle) / np.pi \
            + (1 - a_turn_on) * (1 - b_turn_on)
+
+    return result
 
 def get_n_coeff(n):
     return n / E(n)
@@ -83,15 +86,17 @@ def XYSwitch(n, k, x_line, w, v, deg_x):
     y_rad_vec_t = (delta_theta + n * np.pi) / abs(w)
     
     x_nth_coord = get_nth_deg_x_derivative(deg_x, x_rad_vec_t, v, w, k)
+
     x_signs_product =  x_line * x_nth_coord / abs(E(x_line * x_nth_coord))
 
     x_line_t = abs(x_line)/E(v)
 
-    
     product = (x_line_t - x_rad_vec_t) * (y_rad_vec_t - x_line_t)
     product_sign = product/ abs(E(product))
-         
-    return (np.floor((1 +  product_sign))/2) * (np.floor((1 +  x_signs_product))/2)
+
+    result = (np.floor((1 +  product_sign))/2) * (np.floor((1 +  x_signs_product))/2)
+        
+    return result
 
 
 
@@ -175,7 +180,7 @@ def WYX(x_line, w, y):
     return product / abs(E(product))
 
 
-def get_hide_coeff(deg_x, deg_y, t_nth, w, v, k, x_line):
+def ABSwitch(deg_x, deg_y, t_nth, w, v, k, x_line, rot_vector=False):
     curr_y = get_nth_deg_y_derivative(deg_y, t_nth, v, w, k)
 
     WYX_coeff = WYX(x_line, w, curr_y)
@@ -187,7 +192,8 @@ def get_hide_coeff(deg_x, deg_y, t_nth, w, v, k, x_line):
     diff = abs(rot_rad_vec_x) - abs(x_line)
 
     result = np.floor((1 + (diff) / abs(E(diff))) / 2)
-
+    if rot_vector:
+        return rot_rad_vec_x
     return result
 
 def get_nth_intersect(n, deg_x, deg_y, a, b, v, w, k, x_line, zero_missing_point_mode, general_solution, reduct_funcs_dict):
@@ -262,8 +268,11 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
             delta_k_rotated_angle = get_delta_k_rotated(a_slope, b_line, x_line)
 
             k += delta_k_rotated_angle
+            
+        XYSwitch_coeff = XYSwitch(n, k, x_line, w, v, deg_x)
+        opp_XYSwitch_coeff = 1 - XYSwitch_coeff
 
-        turn_on_angular_alg = get_hide_coeff(deg_x, deg_y, t_nth, w, v, k, x_line)
+        ABSwitch_coeff = ABSwitch(deg_x, deg_y, t_nth, w, v, k, x_line)
 
         t_0_main, t_0_zero_alg, combined_t = np.copy(t_nth), np.copy(t_nth), np.copy(t_nth)
         init_theta_angle = k * np.pi / 2
@@ -316,26 +325,13 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
             if not zero_missing_point_mode:
                 ''' Vector-Length Algorithm '''
 
-                XYSwitch_coeff = XYSwitch(n, k, x_line, w, v, deg_x)
-                opp_XYSwitch_coeff = 1 - XYSwitch_coeff
-                # print('XYSwitch_coeff: ', XYSwitch_coeff)
-                # print('opp_XYSwitch_coeff: ', opp_XYSwitch_coeff)
-                
-                
-                reduct_funcs_dict['XYSwitch'][0] = XYSwitch_coeff
-                reduct_funcs_dict['~XYSwitch'][0] = opp_XYSwitch_coeff
-                
-                # print('reduct_funcs_dict["XYSwitch"][0]: ', reduct_funcs_dict['XYSwitch'][0])
-                # print('reduct_funcs_dict["~XYSwitch"][0]: ', reduct_funcs_dict['~XYSwitch'][0])
-                
-       
                 phi = np.arctan(abs(curr_y/E(curr_x)))
 
                 VL = abs(x_line)/ (np.cos(phi)* E(v))
  
-                # combined_t = opp_n_coeff * VL + opp_XYSwitch_coeff * n_coeff * turn_on_angular_alg * t_0_main + \
-                #              n_coeff * XYSwitch_coeff * VL
-                combined_t = opp_n_coeff * VL + n_coeff* (opp_XYSwitch_coeff* t_0_main + XYSwitch_coeff* VL)
+                combined_t = opp_n_coeff * VL + opp_XYSwitch_coeff * n_coeff * ABSwitch_coeff * t_0_main + \
+                             n_coeff * XYSwitch_coeff * VL
+                # combined_t = opp_n_coeff * VL + n_coeff* (opp_XYSwitch_coeff* t_0_main + XYSwitch_coeff* VL)
                 # combined_t = opp_n_coeff * VL + n_coeff* t_0_main 
                 
                              
