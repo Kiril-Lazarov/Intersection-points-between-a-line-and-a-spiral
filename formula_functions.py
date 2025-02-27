@@ -60,9 +60,8 @@ def get_delta_k_rotated(a, b, x):
     expr = delta_k_coeff * 2 * (np.pi / 2 - slope_angle) / np.pi
     
 
-    result = (1 - a_turn_on) * (-1) + a_turn_on * b_turn_on * expr + (1 - b_turn_on) * 2 * (
-                np.pi / 2 - a_coeff * slope_angle) / np.pi \
-           + (1 - a_turn_on) * (1 - b_turn_on)
+    result = -(1 - a_turn_on) + a_turn_on * expr + (1 - b_turn_on) * 2 * (
+                np.pi/2 - np.arctan(a)) / np.pi + (1 - a_turn_on) * (1 - b_turn_on)
 
     return result
 
@@ -395,6 +394,8 @@ def whole_equation(n, m, v, w, k, x_line):
     SCDD = derivative_change(x_der_t0, x_der_y_zero)
     
     XMD = x_max_line(0, delta_theta, x_line, v, w, k)
+    
+    ABSwitch_coeff = ABSwitch(0, 0, t, w, v, k, x_line, rot_vector=False)
  
     for _ in range(m):
         
@@ -433,7 +434,7 @@ def whole_equation(n, m, v, w, k, x_line):
    
         
         t =  ISSCDD * (opp_n_switch * XMD * SCDD * (KWL + KL) * LB_alg + n_switch * \
-                       (opp_XYSwitch_coeff*AB_alg + XYSwitch_coeff* LB_alg))
+                       (opp_XYSwitch_coeff*ABSwitch_coeff*AB_alg + XYSwitch_coeff* LB_alg))
         
     return t
         
