@@ -171,6 +171,9 @@ def get_delta_theta(w, k, zero_missing_point=False):
 def E(x):
     return x ** (1 - 0 ** abs(x))
 
+def R(x, a, b):
+    return (b**(0**abs(a-x)))*x**(1 - 0**abs(a-x))
+
 
 
 def WYX(x_line, w, y):
