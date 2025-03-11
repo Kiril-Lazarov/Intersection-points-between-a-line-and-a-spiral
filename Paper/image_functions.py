@@ -1,4 +1,5 @@
 from IPython.display import Image, HTML
+import matplotlib.pyplot as plt
 
 def get_caption_text(image_filename):
     image_number = image_filename.split('fig')[1]
@@ -378,3 +379,41 @@ def rotational_coeff_table():
     </div>
     """
     return display(HTML(html_table))
+
+def show_number_line(a, b=None, c=None, d=None):
+
+    fig, ax = plt.subplots(figsize=(8, 1))  
+    ax.axhline(0, color='black', linewidth=1)  
+
+
+    positions = list(range(-5, 6))  
+    
+
+    labels = []  
+    
+    for i in range(len(positions)):
+        if positions[i] == a:
+            if b is None:
+                labels.append(1)
+            else:
+                labels.append(b)
+            
+
+            
+        elif c is not None and positions[i] == c:
+            labels.append(d)
+            
+        else:
+            labels.append(positions[i])
+
+
+    ax.set_xticks(positions)
+    ax.set_xticklabels(labels)
+
+    ax.set_yticks([])  
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+
+    plt.show()
+
