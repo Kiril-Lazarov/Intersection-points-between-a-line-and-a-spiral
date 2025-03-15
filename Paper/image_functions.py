@@ -416,4 +416,40 @@ def show_number_line(a, b=None, c=None, d=None):
     ax.spines['left'].set_visible(False)
 
     plt.show()
+    
+def E(x):
+    return x ** (1 - 0 ** abs(x))
 
+def sign_func(x,a,b=None):
+    if b is None:
+        return (x-a)/abs(E(x-a))
+    prod = (x-a)*(x-b)
+    return prod/abs(E(prod))
+
+def show_sign_func_number_line(a, b=None):
+
+    fig, ax = plt.subplots(figsize=(8, 1))  
+    ax.axhline(0, color='black', linewidth=1)  
+
+
+    positions = list(range(-5, 6))  
+    
+
+    labels = []  
+    
+    for i in range(len(positions)):
+        n = positions[i]
+        if b is None:        
+            labels.append(int(abs(n) * sign_func(n,a)))
+        else:
+            labels.append(int(abs(n) * sign_func(n,a,b)))
+
+    ax.set_xticks(positions)
+    ax.set_xticklabels(labels)
+
+    ax.set_yticks([])  
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['left'].set_visible(False)
+
+    plt.show()
