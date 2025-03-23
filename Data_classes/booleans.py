@@ -43,9 +43,11 @@ class Booleans(Data):
         
         return [self.background_mode, self.algorithm_mode, self.vertical_line_mode, self.derivatives_mode,
                 self.spiral_mode, self.y_axis_intersects_mode, self.line_intersects_mode, self.algorithm_data_mode,
-                self.parameters_mode, self.t_diagram_mode, self.steps_change_mode, self.general_solution_mode,
-                self.rotated_background_mode, self.zero_missing_point_mode]
-  
+                self.equation_mode, self.parameters_mode, self.t_diagram_mode, self.steps_change_mode,   
+                self.general_solution_mode, self.rotated_background_mode, self.zero_missing_point_mode, self.circle_mode, 
+                self.x_l_x_s_diff_mode]
+    
+    
     def create_dict(self, update_dict=True):        
         
         for name, value in Booleans.__dict__.items():            
@@ -61,7 +63,7 @@ class Booleans(Data):
     def reset_dict(self):
         
         index = 0
-        
+
         for key in self.booleans_dict.keys():
             
             self.booleans_dict[key] = self.class_init_values[index]
