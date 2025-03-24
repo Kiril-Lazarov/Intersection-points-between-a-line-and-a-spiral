@@ -25,6 +25,10 @@ class AnimationLayers(Data):
     ''''Mode layers'''
     # A layer that visualizes the consecutive steps of the algorithm for finding the intersection point between the spiral and the line. 
     algorithm_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA)
+    
+    circle_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA)
+    
+    equation_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA)
 
     '''Data layers'''
 
@@ -38,7 +42,7 @@ class AnimationLayers(Data):
     
     explanations_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA)
     
-    circle_layer = pygame.Surface((screen_width, screen_height),pygame.SRCALPHA)
+    
     
     def __init__(self):
         super().__init__()
