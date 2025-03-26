@@ -345,7 +345,7 @@ def handle_ctrl_commands(event, data_processing):
                     # Set the layers to True
                     for mode, (_, boolean) in mode_statuses_dict.items():
                         if mode not in ['Algorithm mode', 'T-diagram', 'Algorithm data mode',
-                                        'Modes layer', 'Steps change', 'General solution', 
+                                        'Steps change', 'General solution', 
                                         'Zero missing point', 'X_line-X_s diff', 'Equation mode']:
                             if not boolean:
                                 mode_statuses_dict[mode][1] = True 
@@ -382,7 +382,7 @@ def handle_ctrl_commands(event, data_processing):
 
 def handle_algorithm_mode_controls(event, data_processing, t_mth_aproxim_list):
 
-    algorithm_variables_dict = data_processing.algorithm_vars.algorithm_vars_dict
+    algorithm_variables_dict = data_processing.algorithm_vars.algorithm_vars_dict    
 
     n = algorithm_variables_dict['n'] 
     m = algorithm_variables_dict['m']
@@ -421,6 +421,7 @@ def handle_algorithm_mode_controls(event, data_processing, t_mth_aproxim_list):
 
             if m-1 >= 0:
                 algorithm_variables_dict['m'] -=1
+
                 
     return t_mth_aproxim_list
 
@@ -456,7 +457,7 @@ def handle_switch_commands(event, data_processing):
                 elif event.key == pygame.K_p:
 
                     data_processing.switch_mode('Parameters')
-                    data_processing.switch_mode('Modes layer')
+                    # data_processing.switch_mode('Modes layer')
                     
 
                 elif event.key == pygame.K_c:
@@ -478,6 +479,9 @@ def handle_switch_commands(event, data_processing):
                 elif event.key == pygame.K_g:
                     data_processing.switch_mode('General solution')
                     data_processing.booleans.update_booleans_dict['update_line'] = True
+                    data_processing.mode_statuses_dict['Equation mode'][1] = False
+                    
+                    data_processing.mode_statuses_dict['Modes layer'][1] = True
                     
                 elif event.key == pygame.K_j:
                     data_processing.switch_mode('Rotated background')
@@ -510,6 +514,8 @@ def handle_switch_commands(event, data_processing):
                     if data_processing.mode_statuses_dict['Algorithm mode'][1]:
                      
                         data_processing.switch_mode('Equation mode')
+                        data_processing.mode_statuses_dict['Modes layer'][1] = not data_processing.mode_statuses_dict['Equation mode'][1]     
+                        
                    
            
 
