@@ -1,0 +1,48 @@
+Coordinate system:
+
+The visualization of all objects uses a standard Cartesian coordinate system. It is controlled using the following combinations:
+
+c - toggle the coordinate system on/off 
+z + up/down arrow - zoom in/zoom out 
+h + up/down/left/right arrow - move the coordinate system in the respective direction
+
+
+
+Spiral:
+
+s - toggle the spiral on/off
+
+t + up/down arrow - incr/decr the time `t`; non-negative values 
+v + up/down arrow - incr/decr the radial speed `v`; non-negative values 
+w + up/down arrow - incr/decr the angular speed `w`; real values 
+Shift + w - change the spiral direction
+k + up/down arrow - incr/decr the coefficient of the initial angle of expansion of the spiral `k`; values from 0 to 4 
+
+Shift + e + right/left arrow - increase/decrease the degree of the x-component of the parametric spiral; integer values 
+Shift + e + up/down arrow - increase/decrease the degree of the y-component of the parametric spiral; integer values
+
+
+
+Line:
+
+Two modes - vertical line and inclined line
+
+g - toggle the mode from vertical to inclined line and vice versa
+
+l - toggle the line on/off
+
+When g = off - vertical line:
+
+x + right/left arrow - move the vertical line to the right/left; real values
+
+When g = on - inclined line:
+
+a + up/down arrow - incr/decr the slope; real values 
+b + up/down arrow - incr/decr the height of the inclined line
+
+
+
+Intersection points:
+
+n - toggle the initial values of the algorithm (black points) 
+m - toggle the intersection points (purple points)
