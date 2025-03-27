@@ -38,7 +38,7 @@ x + right/left arrow - move the vertical line to the right/left; real values
 When g = on - inclined line:
 
 a + up/down arrow - incr/decr the slope; real values 
-b + up/down arrow - incr/decr the height of the inclined line
+b + up/down arrow - incr/decr the height of the inclined line; real values
 
 
 
@@ -46,3 +46,44 @@ Intersection points:
 
 n - toggle the initial values of the algorithm (black points) 
 m - toggle the intersection points (purple points)
+
+
+
+Fine-Tuning of Parameters:
+
+All parameters of the line and the spiral (except for the exponent) are continuous real values. Control over them is applied in discrete steps. Each parameter has default values (for example, the _ parameter has a default step of 0.01), which can be adjusted for finer or coarser control.
+
+Ctrl + f - toggle step adjustment settings.
+
+When steps controls = on:
+
+t + up/down arrow - incr/decr the `t` step by a factor of 10.
+v + up/down arrow  - incr/decr the `v` step by a factor of 10.
+w + up/down arrow  - incr/decr the `w` step by a factor of 10.
+k + up/down arrow  - incr/decr the `k` step by a factor of 10.
+x + up/down arrow  - incr/decr the `x` step by a factor of 10.
+a + up/down arrow  - incr/decr the `a` step by a factor of 10.
+b + up/down arrow  - incr/decr the `b` step by a factor of 10.
+
+
+
+Algorithm Mode:
+
+Displays the step-by-step approximation of the spiral’s radius vector toward its intersection point with the line. Available for both vertical and inclined lines.
+
+Ctrl + a - toggle the algorithm mode
+
+If algorithm mode = on:
+
+n + up/down arrow - move forward/backward through the initial radius vectors;  non-negative integers
+
+m + up/down - move forward/backward through the successive approximations to the intersection point;  non-negative integers
+
+
+
+t-Diagram Mode:
+
+Represents the spiral as waves with variable amplitude. The horizontal axis corresponds to time `t` , while the vertical axis simultaneously represents the `x` and `y` coordinates of the corresponding point on the spiral curve as a function of `t`. Available when the algorithm mode is off.
+The spiral, line, and intersection points are drawn using the previously described key combinations.
+
+Ctrl + t - toggle t-diagram mode.
