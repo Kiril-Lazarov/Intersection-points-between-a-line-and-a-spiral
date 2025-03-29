@@ -515,7 +515,7 @@ def handle_switch_commands(event, data_processing):
                      
                         data_processing.switch_mode('Equation mode')
                         data_processing.mode_statuses_dict['Modes layer'][1] = not data_processing.mode_statuses_dict['Equation mode'][1]     
-                        
+
                    
            
 

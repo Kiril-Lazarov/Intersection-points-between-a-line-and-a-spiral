@@ -164,7 +164,7 @@ def draw_y_axis_pos_values(background_surface, center_point_y, screen_width, scr
 
         #Draw positive numbers
         neg_number_text = font_small.render(f'{i}', True, line_color)
-        background_surface.blit(neg_number_text, (number_x-(font_height/0.56),horizontal_line_y_pos-(font_height/6.5)))
+        background_surface.blit(neg_number_text, (number_x-(font_height/0.36),horizontal_line_y_pos-(font_height/6.5)))
         
         
 def draw_y_axis_neg_values(background_surface, center_point_y, screen_width, screen_height,
@@ -185,7 +185,7 @@ def draw_y_axis_neg_values(background_surface, center_point_y, screen_width, scr
        
         #Draw negative numbers
         neg_number_text = font_small.render(f'-{i}', True, line_color)
-        background_surface.blit(neg_number_text, (number_x-(font_height/0.56),horizontal_line_y_neg-(font_height/6.5))) 
+        background_surface.blit(neg_number_text, (number_x-(font_height/0.36),horizontal_line_y_neg-(font_height/6.5))) 
 
         
         
@@ -301,7 +301,7 @@ def calc_line_intersections_t(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, ac
         
         for index,t_nth in enumerate(t_nth_list):
    
-            curr_t_mth, x_deriv_list = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+            curr_t_mth, x_deriv_list, = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
                                                zero_missing_point_mode, general_solution,x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list, t_nth, index)
                 
             t_mth_list.append(curr_t_mth)
@@ -492,7 +492,7 @@ def draw_spiral(spiral_layer, half_screen_width, half_screen_height,
 
             # Draw axises notations
             t = font_small.render('t', True, (0, 0, 0))
-            x = font_small.render('x,', True, (0, 0, 0))
+            x = font_small.render('x, ', True, (0, 0, 0))
             y = font_small.render('y', True, (0, 0, 0))
 
             h_displacement = 20
@@ -791,7 +791,7 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
         else:
             if m +1 > len(t_mth_aproxim_list):
 
-                next_t, x_deriv_list = get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
+                next_t, x_deriv_list= get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accuracy,
                                                zero_missing_point_mode, general_solution, x_l_x_s_diff_mode, reduct_funcs_dict, x_deriv_list, y_intersect_t, n, 
                                                i=m+1)
                 t_mth_aproxim_list.append(next_t)
@@ -829,10 +829,10 @@ def draw_algorithm_steps(algorithm_layer, total_n, n, m, center_point_width, cen
     Visualize derivatives at mth iteration
     
     """
-    draw_mth_derivative(algorithm_layer, center_point_width, center_point_height, 
-                        length, v, w, k, deg_x, m, x_deriv_list, t_mth_aproxim_list, reduct_funcs_dict)
+    # draw_mth_derivative(algorithm_layer, center_point_width, center_point_height, 
+    #                     length, v, w, k, deg_x, m, x_deriv_list, t_mth_aproxim_list, reduct_funcs_dict)
   
-    return t_mth_aproxim_list, total_n
+    return t_mth_aproxim_list, total_n, reduct_funcs_dict
 
 def draw_mth_derivative(algorithm_layer, center_point_width, center_point_height, 
                         length, v, w, k, deg_x, m, x_deriv_list, t_mth_aproxim_list, reduct_funcs_dict, t_0_deriv=False):

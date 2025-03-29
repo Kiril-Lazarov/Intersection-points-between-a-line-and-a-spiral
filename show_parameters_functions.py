@@ -15,16 +15,20 @@ def show_parameters(data_processing, font_small):
         const_params_dict = data_processing.constants.constants_dict
         var_params_dict = data_processing.variables.variables_dict
         accuracy = data_processing.constants.accuracy
+        
+        text_unit = data_processing.constants.text_unit
+        
+        # font_small = pygame.font.Font(None, data_processing.constants.text_spacing)
 
-        text_x = data_processing.constants.text_unit
-        # text_y = 4*data_processing.constants.text_unit
-        text_y = data_processing.constants.text_unit
+        text_x = text_unit
+        text_y = 4*text_unit
+        # text_y = temp_text_init
         
 
         text = font_small.render('Spiral parameters:', True, (0, 0, 0))
                     
         params_layer.blit(text, (text_x, text_y))
-        text_y += data_processing.constants.text_unit
+        text_y += text_unit
 
         for param in data_processing.constants.constants_dict.keys():  
 
@@ -34,7 +38,7 @@ def show_parameters(data_processing, font_small):
                     text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
                     
                     params_layer.blit(text, (text_x, text_y))
-                    text_y += data_processing.constants.text_unit
+                    text_y += text_unit
                     
                     theta_0 = (curr_value) * (np.pi /2) * 180 / np.pi 
                     text = font_small.render(f'Start angle: {theta_0:.{accuracy}f} deg', True, (0, 0, 0))
@@ -44,10 +48,11 @@ def show_parameters(data_processing, font_small):
                     if param == 'deg':
                         text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
                     else:
-                        text = font_small.render(f'{param}: {curr_value:.{accuracy}f}', True, (0, 0, 0))
-
+                         text = font_small.render(f'{param}: {curr_value:.{accuracy}f}', True, (0, 0, 0))
+                         
+                        
                 params_layer.blit(text, (text_x, text_y))
-                text_y += data_processing.constants.text_unit
+                text_y += text_unit
                 
          # Curr time
         t = data_processing.get_curr_param('t')
@@ -70,15 +75,15 @@ def show_parameters(data_processing, font_small):
         # curr_spiral_angle = np.arccos(x / X_bin(rad_vec_length)) * 180/np.pi
         curr_spiral_angle = t * w * 180/np.pi
         
-        text_y += data_processing.constants.text_unit
+        text_y += text_unit
         
         text = font_small.render(f'Spiral angle: {curr_spiral_angle:.5f} deg', True, (0, 0, 0))
         params_layer.blit(text, (text_x, text_y))
         
-        text_y += data_processing.constants.text_unit
+        text_y += text_unit
  
         if not data_processing.mode_statuses_dict['Algorithm mode'][1]:
-            text_y += data_processing.constants.text_unit
+            text_y += text_unit
 
             x = data_processing.spiral_coordinates['x']
             y = data_processing.spiral_coordinates['y']
@@ -91,42 +96,42 @@ def show_parameters(data_processing, font_small):
                 text = font_small.render(f'Spiral {name}: {coord:.{accuracy}f}', True, (0, 0, 0))
                 params_layer.blit(text, (text_x, text_y))
 
-                text_y += data_processing.constants.text_unit
+                text_y += text_unit
                 
-        if data_processing.mode_statuses_dict['General solution'][1]:
-             
-            text_y += data_processing.constants.text_unit
+            if data_processing.mode_statuses_dict['General solution'][1]: 
 
-            text = font_small.render('Line parameters:', True, (0, 0, 0))
+                text_y += text_unit
 
-            params_layer.blit(text, (text_x, text_y))
-            text_y += data_processing.constants.text_unit
+                text = font_small.render('Line parameters:', True, (0, 0, 0))
 
-            for param in data_processing.constants.line_constants_dict.keys():
-                curr_value = data_processing.get_curr_param(param)
-                if param == 'a':
-
-                    text = font_small.render(f'line angle: {curr_value} deg', True, (0, 0, 0))
-                    params_layer.blit(text, (text_x, text_y))
-                    # text_y += data_processing.text_unit
-
-                    a_param = data_processing.slope
-
-                    text = font_small.render(f'{param}: {a_param}', True, (0, 0, 0))
-
-                    text_y += data_processing.constants.text_unit
-
-                else:
-                    text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
                 params_layer.blit(text, (text_x, text_y))
-                text_y += data_processing.constants.text_unit
+                text_y += text_unit
+
+                for param in data_processing.constants.line_constants_dict.keys():
+                    curr_value = data_processing.get_curr_param(param)
+                    if param == 'a':
+
+                        text = font_small.render(f'line angle: {curr_value} deg', True, (0, 0, 0))
+                        params_layer.blit(text, (text_x, text_y))
+                        # text_y += data_processing.text_unit
+
+                        a_param = data_processing.slope
+
+                        text = font_small.render(f'{param}: {a_param}', True, (0, 0, 0))
+
+                        text_y += text_unit
+
+                    else:
+                        text = font_small.render(f'{param}: {curr_value}', True, (0, 0, 0))
+                    params_layer.blit(text, (text_x, text_y))
+                    text_y += text_unit
 
         if data_processing.mode_statuses_dict['Derivatives'][1]:
 
 
             colors = iter([(255, 0, 0),  (0, 0,255), (0, 255, 0)])
 
-            text_y += data_processing.constants.text_unit
+            text_y += text_unit
 
 #             dx_dt = data_processing.derivative_slopes['dx_dt'] * np.pi/180
 #             dy_dt = data_processing.derivative_slopes['dy_dt'] * np.pi/180
@@ -146,7 +151,7 @@ def show_parameters(data_processing, font_small):
                 text = font_small.render(f'{name}: {slope:.6f} deg', True, next(colors))
                 params_layer.blit(text, (text_x, text_y))
 
-                text_y += data_processing.constants.text_unit            
+                text_y += text_unit           
 
 
 def show_mode_statuses(data_processing, font_small):
@@ -185,8 +190,17 @@ def show_mode_statuses(data_processing, font_small):
                     if mode == 'Parameters':
                         text_x = data_processing.constants.text_unit
                         text_y = 2*data_processing.constants.text_unit
-    else:
-        show_modes_layer.fill((0, 0, 0, 0))           
+  
+        
+def show_equation(data_processing):
+
+    if data_processing.mode_statuses_dict['Equation mode'][1]:
+        
+        text_x = data_processing.constants.text_unit
+        text_y = data_processing.constants.text_unit
+        
+        equation_layer = data_processing.mode_statuses_dict['Equation mode'][0]
+        equation_layer.fill((0, 0, 0, 0))           
      
         font_path = r"C:\Users\lenovo\Desktop\Artificial Inteligence\Jupyter projects\Intersection point between a spiral and a line test file\Paper\DejaVuFonts\dejavu-fonts-ttf-2.37\ttf\DejaVuSans.ttf"
         
@@ -204,29 +218,34 @@ def show_mode_statuses(data_processing, font_small):
         
         text = font.render(t_eq, True, (0, 0, 0))
 
-        show_modes_layer.blit(text, (half_space_lefted, text_y))
-
+        equation_layer.blit(text, (half_space_lefted, text_y))
+        
+        half_space_lefted+=75
+        
+        # print('General solution: ', data_processing.mode_statuses_dict['General solution'][1])
+        # print('n: ', n, ' m:', m)
+        # print()
         for word, data in data_processing.reduct_funcs_dict.items():
             if word not in ['n', 'm']:
                 if word == 'NSwitch':
                     text_y += 30
                     half_space_lefted = copy_half_space + (len(t_eq)-2) * average_letter_size
                     text = font.render('+', True, (0, 0, 0))
-                    show_modes_layer.blit(text, (half_space_lefted, text_y))
+                    equation_layer.blit(text, (half_space_lefted, text_y))
                     half_space_lefted += 25
                 
                 if word == 'KWL' or word == '~XYSwitch':
 
                     text = font.render('(', True, (0, 0, 0))            
 
-                    show_modes_layer.blit(text, (half_space_lefted, text_y))
+                    equation_layer.blit(text, (half_space_lefted, text_y))
                     half_space_lefted += 10
                     
                 
 
                 text = font.render(word, True, data[1])            
 
-                show_modes_layer.blit(text, (half_space_lefted, text_y))               
+                equation_layer.blit(text, (half_space_lefted, text_y))               
 
                 half_space_lefted += data[2][0]                    
                     
@@ -234,34 +253,37 @@ def show_mode_statuses(data_processing, font_small):
                     
                     text = font.render(')', True, (0, 0, 0))            
 
-                    show_modes_layer.blit(text, (half_space_lefted, text_y))
+                    equation_layer.blit(text, (half_space_lefted, text_y))
                     half_space_lefted += 10                    
 
                 if word in ['LB-Alg', 'KWL', 'AB-Alg']:
                     text = font.render('+', True, (0, 0, 0))
-                    show_modes_layer.blit(text, (half_space_lefted, text_y))
+                    equation_layer.blit(text, (half_space_lefted, text_y))
        
                     half_space_lefted += 25
                 else:
                     if word not in ['AB-Alg', 'NLB-Alg']:
                         text = font.render('*', True, (0, 0, 0))
 
-                        show_modes_layer.blit(text, (half_space_lefted, text_y))
+                        equation_layer.blit(text, (half_space_lefted, text_y))
 
                         half_space_lefted += 15
                         
                         if  word == 'ISSCDD':
                             text = font.render('(', True, (0, 0, 0))            
 
-                            show_modes_layer.blit(text, (half_space_lefted, text_y))
+                            equation_layer.blit(text, (half_space_lefted, text_y))
                             half_space_lefted += 10
                         
                     else:
                         
                         text = font.render(')', True, (0, 0, 0))
 
-                        show_modes_layer.blit(text, (half_space_lefted, text_y)) 
+                        equation_layer.blit(text, (half_space_lefted, text_y)) 
                         
+        text = font.render(')', True, (0, 0, 0))
+
+        equation_layer.blit(text, (half_space_lefted+5, text_y))
                         
 
 def show_algorithm_rows_and_cols(data_processing, nth_t, mth_t,  x, y, font_small):
@@ -270,8 +292,8 @@ def show_algorithm_rows_and_cols(data_processing, nth_t, mth_t,  x, y, font_smal
     show_algorithm_data_layer.fill((0, 0, 0, 0))
     
     text_x = data_processing.constants.text_unit
-    # text_y = 15 * data_processing.constants.text_unit
-    text_y = 12 * data_processing.constants.text_unit
+    text_y = 15 * data_processing.constants.text_unit
+    # text_y = 12 * data_processing.constants.text_unit
     
     
     text = font_small.render('Algorithm approximations:', True, (0, 0, 0))

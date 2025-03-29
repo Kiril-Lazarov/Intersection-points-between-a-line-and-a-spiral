@@ -85,15 +85,15 @@ def XYSwitch(n, k, x_line, w, v, deg_x):
     y_rad_vec_t = (delta_theta + n * np.pi) / abs(w)
     
     x_nth_coord = get_nth_deg_x_derivative(deg_x, x_rad_vec_t, v, w, k)
-
-    x_signs_product =  x_line * x_nth_coord / abs(E(x_line * x_nth_coord))
+    product =  x_line * x_nth_coord
+    x_signs_product = product / abs(E(product))
 
     x_line_t = abs(x_line)/E(v)
 
     product = (x_line_t - x_rad_vec_t) * (y_rad_vec_t - x_line_t)
     product_sign = product/ abs(E(product))
 
-    result = (np.floor((1 +  product_sign))/2) * (np.floor((1 +  x_signs_product))/2)
+    result = (np.floor((1 +  product_sign)/2)) * (np.floor((1 +  x_signs_product)/2))
         
     return result
 
@@ -275,6 +275,11 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
         opp_XYSwitch_coeff = 1 - XYSwitch_coeff
 
         ABSwitch_coeff = ABSwitch(deg_x, deg_y, t_nth, w, v, k, x_line)
+        reduct_funcs_dict['XYSwitch'][0] = XYSwitch_coeff
+        reduct_funcs_dict['~XYSwitch'][0] = opp_XYSwitch_coeff
+        reduct_funcs_dict['ABSwitch'][0] = ABSwitch_coeff
+        
+        
 
         t_0_main, t_0_zero_alg, combined_t = np.copy(t_nth), np.copy(t_nth), np.copy(t_nth)
         init_theta_angle = k * np.pi / 2
@@ -355,6 +360,8 @@ def get_mth_approximation(deg_x, deg_y, v, w, k, x_line, b_line, a_slope, accura
                 last_x_derivative = get_nth_deg_x_derivative(deg_x + 1, last_t, v, w, k)
 
                 derivative_change_coeff = derivative_change(init_x_derivative, last_x_derivative)
+
+                reduct_funcs_dict['ISSCDD'][0] = derivative_change_coeff
                
                 x_deriv_list.append(last_x_derivative)
                 

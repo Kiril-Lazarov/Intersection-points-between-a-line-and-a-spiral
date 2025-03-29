@@ -106,7 +106,7 @@ class DataProcessing():
                           
                                     'T-diagram': [None,  self.booleans.booleans_dict['t_diagram_mode']],
                                     
-                                    'Equation mode': [self.animation_layers.layers_dict['show_modes_layer'],    
+                                    'Equation mode': [self.animation_layers.layers_dict['equation_layer'],    
                                                       self.booleans.booleans_dict['equation_mode']],
                                     'Vertical line': [self.animation_layers.layers_dict['vertical_line_layer'],
                                                     self.booleans.booleans_dict['vertical_line_mode']],
@@ -142,7 +142,7 @@ class DataProcessing():
                                     'Circle layer': [self.animation_layers.layers_dict['circle_layer'], 
                                                      self.booleans.booleans_dict['circle_mode']],
                                     
-                                    'Explanations layer': [self.animation_layers.layers_dict['explanations_layer'], True],
+                                    'Explanations layer': [self.animation_layers.layers_dict['explanations_layer'], True],                                    
                                    }
             
     def update_reduct_funcs_dict(self):
@@ -168,10 +168,11 @@ class DataProcessing():
                     product *= self.reduct_funcs_dict['ISSCDD'][0]
                     product *= self.reduct_funcs_dict['~XYSwitch'][0]
                     product *= self.reduct_funcs_dict['ABSwitch'][0]
+                    
                     color = red if product == 0 else green
                     
                 elif word == 'NLB-Alg':
- 
+
                     product = 1
                     product = self.reduct_funcs_dict['NSwitch'][0]
                     product *= self.reduct_funcs_dict['ISSCDD'][0]
@@ -183,7 +184,7 @@ class DataProcessing():
                 else:
                     color = red if value[0] == 0 else green
                 self.reduct_funcs_dict[word][1] = color
-            # print(word, ': ', data)
+ 
 
     def reset_dicts(self):
         
