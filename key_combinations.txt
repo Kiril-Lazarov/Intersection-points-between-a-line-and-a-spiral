@@ -4,7 +4,7 @@ The visualization of all objects uses a standard Cartesian coordinate system. It
 
 c - toggle the coordinate system on/off 
 z + up/down arrow - zoom in/zoom out 
-h + up/down/left/right arrow - move the coordinate system in the respective direction
+h + up/down/left/right arrow - move the coordinate system in the respective direction.
 
 
 
@@ -87,3 +87,11 @@ Represents the spiral as waves with variable amplitude. The horizontal axis corr
 The spiral, line, and intersection points are drawn using the previously described key combinations.
 
 Ctrl + t - toggle t-diagram mode.
+
+
+
+Derivatives Mode:
+
+Displays the three derivatives of the parameterized Archimedean spiral at any given point as slanted straight lines. Not available when algotithm mode = on. Available in the Cartesian coordinate system and in t-diagram mode.
+
+d - toggle derivatives mode.
