@@ -95,3 +95,12 @@ Derivatives Mode:
 Displays the three derivatives of the parameterized Archimedean spiral at any given point as slanted straight lines. Not available when algotithm mode = on. Available in the Cartesian coordinate system and in t-diagram mode.
 
 d - toggle derivatives mode.
+
+
+
+Other Modes:
+
+p - toggle parameters.
+j - rotated coordinate system, available only in _.
+y - toggle the solution for the missing zero point.
+1 - toggle the solution for the x-line - x-spiral difference.
